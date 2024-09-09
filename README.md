@@ -1,5 +1,9 @@
 # CS2024-2Grupo01
 
+AUTORES: 
+- Abel Luciano Aragon Alvaro
+- Carlos Mijail Mamani Anccasi 
+
 # MentoriaApp
 
 ## Enlace del Repositorio
@@ -19,7 +23,7 @@
   - El sistema generará cuentas automáticamente tras validar y aceptar la carga de coordinadores, mentores y mentoreados.
   - Las credenciales serán: DNI y contraseña numérica (1 al 6), compartidas por email.
 
-- **Preguntas Abiertas:**
+- **Preguntas de análisis:**
   - "¿Podríamos usar solo DNI para los mentoreados?"
 
 - **Registro y Notificaciones:**

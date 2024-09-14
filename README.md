@@ -52,6 +52,50 @@ AUTORES:
 
 (Se detallarán en la documentación específica de casos de uso.)
 
+### Login
+- Actores: Todos.
+- Idea: La primera vez que usuario inicie sesión puede ingresar mediante su DNI, el sistema valida si el DNI pertenece a la organización y si es asi le permite poner una contraseña de respaldo.
+
+### Carga Masiva:
+- Actores: Psicología.
+- 
+- DATA-USUARIOS: Se aplicara para el llenado de datos de los coodinadores, mentores y mentoriados. Se manejra por carrera, o sea en caso del CSV un CSV por carrera. O un SOLO CSV bien estructurado.
+  - CSV: Se podra subir la data desde un CSV que previamente se proporcionara como platilla para que pueda ser leido.
+  - Manual: Cuadros de textos para insertar los datos de una entidad en especifico.
+-> Pregunta a la Psicologa como es que recibe los datos de los estudiantes cada inicio de semestre(formato, cantidas de archivos).
+
+- DATA-AULAS: Una vez que la universidad le otorgue el permiso de ciertas **aulas** en ciertos **horarios** este podra ser subido mediante un CSV como un pull de aulas.
+- La inserción podria ser manual, podria agregarse más o modificarse los ya existentes horarios.
+- Se puede publicar para el uso de los mentoriados.
+
+### Creación y Reparto de grupos
+- Actores: Coordinadores.
+- Primero se selecciona a el mentor o a los mentores(dupla).
+- Se puede poner un cantidad de mentoriados para asignar a este grupo, como por ejemplo 20.
+- // Te deria dejar editar(quitar o agregar más)
+- Listo.
+
+
+### Modificar grupos ya creados.
+- Actores: Coordinadores.
+- Una vez creado el grupo puede hacer correciones como.
+  -  Quitar mentoriados de un grupo
+  -  Cambiar de mentor a un grupo
+  -  Agregar mentoriados a un grupo (trazladar mentoriados de un grupo a otro)
+- El coodinador puede modificar los grupos a cada rato o cuando se plazca o tendria que haber ciertos parametros:
+  -  Tiempo máximo para que pueda editar una vez guarda o modificada por ultima vez el grupo.
+  -  Solicitud a Psicología para realizar cambios.
+
+### Gestion de Horario:
+- Actores: Mentores.
+- Selecciona un horario disponible. Se remite este horario a los mentoriados(notificaiones o que se publique en el tablon automaticamnte.).
+- Puedes hacer cambio de horario. Solicitando permiso a Psicología o al coodinador, esperando un visto bueno.
+- Tambien puedes dar una propuesta ingresando el dia, la hora y el aula. Seria enviado a Psicología.
+
+
+
+OJO: Como controlar el reparto de aulas.
+
 ## Fase: Diseño
 
 - **Login**

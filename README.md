@@ -1,10 +1,72 @@
 # CS2024-2Grupo01
 
-AUTORES: 
-- Abel Luciano Aragon Alvaro
-- Carlos Mijail Mamani Anccasi 
+## Autores
 
-# MentoriaApp
+**Abel Luciano Aragon Alvaro**  
+[aaragona@ulasalle.edu.pe](mailto:aaragona@ulasalle.edu.pe)
+
+**Carlos Mijail Mamani Anccasi**  
+[cmamania@ulasalle.edu.pe](mailto:cmamania@ulasalle.edu.pe)
+
+---
+
+## Problematica:
+El programa de **mentoría** en la **Universidad La Salle de Arequipa**, aunque beneficioso, enfrenta varios desafíos debido a la falta de un sistema automatizado para gestionar su funcionamiento. Actualmente, las tareas administrativas y de seguimiento se realizan de manera manual o con herramientas inadecuadas como Excel, lo que trae consigo una serie de principales problemas.
+
+- Descoordinacion en la definición de horarios
+- Muchos intermediarios para comunicar un evento u mensaje a la comunidad de mentoria.
+- Llamado de asistencia manual y no tan fiable.
+- Demora a la hora de definir manualmente la carga de mentoriados a cada mentor. 
+
+
+## Proposito del proyecto:
+Desarrollar una aplicación móvil que **automatice** la gestión del programa de mentoría, facilitando tanto el proceso organizativo como la participación de los estudiantes y mentores(administración y coordinadores). 
+
+## Aplicaciones similares:
+
+### 1. **MentorMe**
+Una aplicación diseñada para conectar a estudiantes con mentores más avanzados o profesionales. Se enfoca en brindar apoyo académico y personal, ayudando a los estudiantes a mejorar en sus estudios y tomar decisiones informadas sobre su carrera. Los mentores pueden proporcionar orientación a los estudiantes en áreas específicas según sus necesidades.
+
+### 2. **Scholarly**
+Scholarly es una plataforma que ofrece un sistema de tutoría académica para estudiantes, permitiendo que aquellos en los primeros años de sus estudios se conecten con tutores o mentores más avanzados. El enfoque principal es la mejora académica, con una estructura simple que facilita la mentoría entre pares.
+
+### 3. **Brightside**
+Brightside está diseñada para ofrecer apoyo académico y personal a estudiantes de educación superior. Los mentores ayudan a los alumnos en temas de estudio y orientación, con el objetivo de fomentar el éxito académico y proporcionar un espacio de apoyo personalizado para quienes están comenzando sus estudios universitarios.
+
+
+## Tegnologias a usar:
+
+- **Entorno: Kotlin Multi Platform (Android Studio)**  
+  ![Android Studio](https://img.icons8.com/color/48/000000/android-studio.png)
+
+- **Base de Datos (SL): Firebase**  
+  ![Firebase](https://img.icons8.com/color/48/000000/firebase.png)
+
+- **Prototipo: Figma**  
+  ![Figma](https://img.icons8.com/color/48/000000/figma.png)
+
+- **Lenguaje: Kotlin**  
+  ![Kotlin](https://img.icons8.com/color/48/000000/kotlin.png)
+
+- **Repositorio: Git y GitHub**  
+  ![Git](https://img.icons8.com/ios-filled/50/000000/git.png) ![GitHub](https://img.icons8.com/ios-filled/50/000000/github.png)
+
+- **Base de Datos Relacional (por definir: MySQL o PostgreSQL)**  
+  ![MySQL](https://img.icons8.com/color/48/000000/mysql-logo.png)
+
+- **Conexión Remota a Bases de Datos (Tecnología a definir)**  
+--> GLIDE
+
+---
+
+
+<h1 align="center">MentoriaApp</h1>
+
+<p align="center">
+  <img src="imagenes/mentoriapp_logo.png" alt="Logo de MentoriaApp">
+</p>
+
+
 
 ## Enlace del Repositorio
 [GitHub Repository](https://github.com/eluqm/CS2024-2Grupo01)
@@ -50,7 +112,6 @@ AUTORES:
 
 ## Fase: Casos de Uso
 
-(Se detallarán en la documentación específica de casos de uso.)
 
 ### 1. Login
 - Actores: Todos.
@@ -58,7 +119,6 @@ AUTORES:
 
 ### 2. Carga Masiva:
 - Actores: Psicología.
-- 
 - DATA-USUARIOS: Se aplicara para el llenado de datos de los coodinadores, mentores y mentoriados. Se manejra por carrera, o sea en caso del CSV un CSV por carrera. O un SOLO CSV bien estructurado.
   - CSV: Se podra subir la data desde un CSV que previamente se proporcionara como platilla para que pueda ser leido.
   - Manual: Cuadros de textos para insertar los datos de una entidad en especifico.
@@ -72,7 +132,7 @@ AUTORES:
 - Actores: Coordinadores.
 - Primero se selecciona a el mentor o a los mentores(dupla).
 - Se puede poner un cantidad de mentoriados para asignar a este grupo, como por ejemplo 20.
-- // Te deberia dejar editar(quitar o agregar más)
+- Te deberia dejar editar(quitar o agregar más)
 - Listo.
 
 ### 4. Modificar grupos ya creados.
@@ -144,7 +204,6 @@ Actores: Psicología.
   - Descripción:
 - Publicar para toda la comunidad.
 
-
 ### 12. Estadisticas de mentoria:
 - General:
   - Número de participantes, decertores, separaron matricula.
@@ -155,23 +214,19 @@ Actores: Psicología.
   - Mentores que no hacen sus sesiones
 - *Se puede general graficos de sumo valor si es que se puede*
 
-### Evaluación categorica final.
+### 13. Evaluación categorica final.
 - Es como un fomrulario para evaluar el redimiento de su superior.
 - O sea de mentor a coodinador y de mentoriado a mentor.
 - Esta evaluacion se activara cuando Psicología lo ve conveniente.
 
-### 13. Historial de Asistencia(Mentoriado)
+### 14. Historial de Asistencia(Mentoriado)
 - Cada mentoriado podra ver su hsitorial asitencias.
 
-### Reportes finales.
+### 15. Reportes finales.
 - Permitira subir al mentor su informe final. Adjuntar el link de un PDF en todo caso.
 
 
-
-
-
-
-### Quejas y justificaiones.
+### 16. Quejas y justificaiones.
 
 ## Fase: Diseño
 

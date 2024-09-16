@@ -71,6 +71,12 @@ Brightside está diseñada para ofrecer apoyo académico y personal a estudiante
 ## Enlace del Repositorio
 [GitHub Repository](https://github.com/eluqm/CS2024-2Grupo01)
 
+## Modelado de Base De Datos
+
+<p align="center">
+  <img src="imagenes/modelo_de_datos.png" alt="Modelo de Base de datos">
+</p>
+
 ## Fase: Análisis
 
 ### Requisitos y Funcionalidades Importantes

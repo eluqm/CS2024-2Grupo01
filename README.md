@@ -37,13 +37,11 @@ Scholarly es una plataforma que ofrece un sistema de tutoría académica para es
 Brightside está diseñada para ofrecer apoyo académico y personal a estudiantes de educación superior. Los mentores ayudan a los alumnos en temas de estudio y orientación, con el objetivo de fomentar el éxito académico y proporcionar un espacio de apoyo personalizado para quienes están comenzando sus estudios universitarios.
 
 
+
 ## Tegnologias a usar:
 
-- **Entorno: Kotlin Multi Platform (Android Studio)**  
+- **Entorno: Android Studio**  
   ![Android Studio](https://img.icons8.com/color/48/000000/android-studio.png)
-
-- **Base de Datos (SL): Firebase**  
-  ![Firebase](https://img.icons8.com/color/48/000000/firebase.png)
 
 - **Prototipo: Figma**  
   ![Figma](https://img.icons8.com/color/48/000000/figma.png)
@@ -54,11 +52,11 @@ Brightside está diseñada para ofrecer apoyo académico y personal a estudiante
 - **Repositorio: Git y GitHub**  
   ![Git](https://img.icons8.com/ios-filled/50/000000/git.png) ![GitHub](https://img.icons8.com/ios-filled/50/000000/github.png)
 
-- **Base de Datos Relacional (por definir: MySQL o PostgreSQL)**  
-  ![MySQL](https://img.icons8.com/color/48/000000/mysql-logo.png)
+- **Base de Datos Relacional (PostgreSQL)**  
+  ![PostgreSQL](https://img.icons8.com/color/48/000000/postgresql.png)
 
-- **Conexión Remota a Bases de Datos (Tecnología a definir)**  
---> GLIDE
+- **Conexión Remota a Bases de Datos (Ktor)**  
+  ![Ktor](https://img.icons8.com/external-tal-revivo-color-tal-revivo/48/000000/external-ktor-is-a-framework-used-to-build-web-applications-and-apis-in-kotlin-logo-color-tal-revivo.png)  
 
 ---
 

@@ -75,7 +75,7 @@ Brightside está diseñada para ofrecer apoyo académico y personal a estudiante
 ## Modelado de Base De Datos
 
 <p align="center">
-  <img src="imagenes/modelo_de_datos.png" alt="Modelo de Base de datos">
+  <img src="imagenes/ModeloEntidadRelacion2.0.png" alt="Modelo de Base de datos">
 </p>
 
 ## Fase: Análisis

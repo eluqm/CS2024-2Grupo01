@@ -12,7 +12,7 @@
 
 ## Problematica:
 <p align="justify">
-  El programa de <br>mentoría</br> en la **Universidad La Salle de Arequipa**, aunque beneficioso, enfrenta varios desafíos debido a la falta de un sistema automatizado para gestionar su funcionamiento. Actualmente, las tareas administrativas y de seguimiento se realizan de manera manual o con herramientas inadecuadas como Excel, lo que trae consigo una serie de principales problemas.
+  El programa de <b>mentoría</b> en la **Universidad La Salle de Arequipa**, aunque beneficioso, enfrenta varios desafíos debido a la falta de un sistema automatizado para gestionar su funcionamiento. Actualmente, las tareas administrativas y de seguimiento se realizan de manera manual o con herramientas inadecuadas como Excel, lo que trae consigo una serie de principales problemas.
 </p>
 
 

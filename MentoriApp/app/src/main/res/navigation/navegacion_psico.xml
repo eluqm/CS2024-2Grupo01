@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navegacion_psico"
+    app:startDestination="@id/piscoHomeFragment">
+
+    <fragment
+        android:id="@+id/piscoHomeFragment"
+        android:name="edu.cram.mentoriapp.Psicologia.PiscoHomeFragment"
+        android:label="PiscoHomeFragment" >
+        <action
+            android:id="@+id/action_piscoHomeFragment_to_psicoGestionarHorariosFragment"
+            app:destination="@id/psicoGestionarHorariosFragment" />
+        <action
+            android:id="@+id/action_piscoHomeFragment_to_psicoCargaDatosFragment"
+            app:destination="@id/psicoCargaDatosFragment" />
+        <action
+            android:id="@+id/action_piscoHomeFragment_to_psicoEstadisticasFragment"
+            app:destination="@id/psicoEstadisticasFragment" />
+        <action
+            android:id="@+id/action_piscoHomeFragment_to_psicoCrearEventoFragment"
+            app:destination="@id/psicoCrearEventoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/psicoGestionarHorariosFragment"
+        android:name="edu.cram.mentoriapp.Psicologia.PsicoGestionarHorariosFragment"
+        android:label="fragment_psico_gestionar_horarios"
+        tools:layout="@layout/fragment_psico_gestionar_horarios" />
+    <fragment
+        android:id="@+id/psicoEstadisticasFragment"
+        android:name="edu.cram.mentoriapp.Psicologia.PsicoEstadisticasFragment"
+        android:label="fragment_psico_estadisticas"
+        tools:layout="@layout/fragment_psico_estadisticas" />
+    <fragment
+        android:id="@+id/psicoCargaDatosFragment"
+        android:name="edu.cram.mentoriapp.Psicologia.PsicoCargaDatosFragment"
+        android:label="fragment_psico_carga_datos"
+        tools:layout="@layout/fragment_psico_carga_datos" />
+    <fragment
+        android:id="@+id/psicoCrearEventoFragment"
+        android:name="edu.cram.mentoriapp.Psicologia.PsicoCrearEventoFragment"
+        android:label="fragment_psico_crear_evento"
+        tools:layout="@layout/fragment_psico_crear_evento" />
+</navigation>

@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/navegacion_mentoria">
-
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navegacion_mentoria"
+    app:startDestination="@id/loginFragment">
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="edu.cram.mentoriapp.Common.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_psicoActivity"
+            app:destination="@id/psicoActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/psicoActivity"
+        android:name="edu.cram.mentoriapp.Psicologia.PsicoActivity"
+        android:label="activity_psico"
+        tools:layout="@layout/activity_psico" />
 </navigation>

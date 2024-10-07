@@ -9,4 +9,5 @@
     <string name="stat_icon">icno de estadistica\t</string>
     <string name="upload_icon">img de subir archivo\n</string>
     <string name="btn_cargar_datos">Cargar</string>
+    <string name="login_background">imagen de fondo del login</string>
 </resources>

@@ -5,4 +5,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tablon_value">Value</string>
     <string name="tablon_mentor_coordinador">Mentor-Coordinador</string>
+    <string name="back_button">icono de retroceder</string>
+    <string name="tittle_estadisticas">Estadísticas</string>
+    <string name="stat_icon">icno de estadistica\t</string>
+    <string name="upload_icon">img de subir archivo\n</string>
+    <string name="btn_cargar_datos">Cargar</string>
 </resources>

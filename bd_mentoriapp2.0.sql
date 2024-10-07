@@ -5,7 +5,7 @@ create table usuarios (
     apellido_usuario varchar(255) not null,
     celular_usuario varchar(15) not null,
     password_hash varchar(255) not null,
-    semestre varchar(2) check (semestre in ('I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII')),
+    semestre varchar(5) check (semestre in ('I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII')),
     email varchar(255) not null, -- agregar edad
     tipo_usuario varchar(20) check (tipo_usuario in ('psicología', 'coordinador', 'mentor', 'mentoriado')) not null,
     creado_en timestamp default current_timestamp,

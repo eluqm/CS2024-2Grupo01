@@ -1,5 +1,7 @@
 package com.example.plugins
 
+import com.example.model.Usuarios
+import com.example.service.UsuariosService
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -89,6 +91,43 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.OK)
         }
     }
+
+    val usuariosService = UsuariosService(dbConnection)
+    routing {
+        // Create user
+        post("/usuarios") {
+            val usuarios = call.receive<Usuarios>()
+            val id = usuariosService.create(usuarios)
+            call.respond(HttpStatusCode.Created, id)
+        }
+
+        // Read user
+        get("/usuarios/{id}") {
+            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
+            val usuarios = usuariosService.read(id)
+            if (usuarios != null) {
+                call.respond(HttpStatusCode.OK, usuarios)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
+        // Update user
+        put("/usuarios/{id}") {
+            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
+            val usuarios = call.receive<Usuarios>()
+            usuariosService.update(id, usuarios)
+            call.respond(HttpStatusCode.OK)
+        }
+
+        // Delete user
+        delete("/usuarios/{id}") {
+            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
+            usuariosService.delete(id)
+            call.respond(HttpStatusCode.OK)
+        }
+    }
+
 }
 
 /**

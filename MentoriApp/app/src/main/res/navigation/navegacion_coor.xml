@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navegacion_coor"
+    app:startDestination="@id/coorHomeFragment">
+
+    <fragment
+        android:id="@+id/coorGruposFragment"
+        android:name="edu.cram.mentoriapp.Coordinacion.CoorGruposFragment"
+        android:label="fragment_coor_grupos"
+        tools:layout="@layout/fragment_coor_grupos" />
+    <fragment
+        android:id="@+id/coorHomeFragment"
+        android:name="edu.cram.mentoriapp.Coordinacion.CoorHomeFragment"
+        android:label="fragment_coor_home"
+        tools:layout="@layout/fragment_coor_home" >
+        <action
+            android:id="@+id/action_coorHomeFragment_to_coorSesionesGruposFragment"
+            app:destination="@id/coorSesionesGruposFragment" />
+        <action
+            android:id="@+id/action_coorHomeFragment_to_coorGruposFragment"
+            app:destination="@id/coorGruposFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/coorSesionesGruposFragment"
+        android:name="edu.cram.mentoriapp.Coordinacion.CoorSesionesGruposFragment"
+        android:label="fragment_coor_sesiones_grupos"
+        tools:layout="@layout/fragment_coor_sesiones_grupos" />
+</navigation>

@@ -12,10 +12,18 @@
         <action
             android:id="@+id/action_loginFragment_to_psicoActivity"
             app:destination="@id/psicoActivity" />
+        <action
+            android:id="@+id/action_loginFragment_to_coorActivity"
+            app:destination="@id/coorActivity" />
     </fragment>
     <activity
         android:id="@+id/psicoActivity"
         android:name="edu.cram.mentoriapp.Psicologia.PsicoActivity"
         android:label="activity_psico"
         tools:layout="@layout/activity_psico" />
+    <activity
+        android:id="@+id/coorActivity"
+        android:name="edu.cram.mentoriapp.Coordinacion.CoorActivity"
+        android:label="activity_coor"
+        tools:layout="@layout/activity_coor" />
 </navigation>

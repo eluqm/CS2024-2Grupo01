@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/rounded_edittext">
+
+    <!-- Título del evento -->
+    <TextView
+        android:id="@+id/tv_event_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+
+    <!-- Descripción del evento -->
+    <TextView
+        android:id="@+id/tv_event_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Selector de usuarios -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <!-- Icono A -->
+        <ImageView
+            android:id="@+id/icon_user"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/baseline_supervised_user_circle_24" />
+
+        <!-- Texto "Todos los usuarios" -->
+        <TextView
+            android:id="@+id/tv_todos_usuarios"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Todos los usuarios"
+            android:layout_marginStart="16dp"
+            android:layout_gravity="center_vertical"/>
+
+        <!-- Checkbox -->
+        <CheckBox
+            android:id="@+id/cb_todos_usuarios"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="2dp"/>
+    </LinearLayout>
+
+    <!-- Fecha -->
+    <EditText
+        android:id="@+id/et_event_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="mm/dd/yyyy"
+        android:layout_marginTop="16dp"
+        android:inputType="date"/>
+
+    <!-- Botones Cancelar y Enviar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="24dp">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:layout_marginEnd="16dp"/>
+
+        <Button
+            android:id="@+id/btn_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enviar"/>
+    </LinearLayout>
+
+</LinearLayout>

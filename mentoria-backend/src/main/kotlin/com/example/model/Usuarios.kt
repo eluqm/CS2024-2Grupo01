@@ -14,6 +14,7 @@ data class Usuarios(
     val apellido_usuario: String,
     val celular_usuario: String,
     val password_hash: String,
+    val escuelaId: Int,
     val semestre: String?,
     val email: String,
     val tipo_usuario: String,

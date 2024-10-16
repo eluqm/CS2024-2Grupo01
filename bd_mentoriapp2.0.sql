@@ -1,3 +1,8 @@
+create table escuelas (
+    escuela_id serial primary key,
+    nombre varchar(255)
+);
+
 create table usuarios (
     user_id serial primary key, -- dni
     dni_usuario varchar(20) not null,
@@ -5,9 +10,11 @@ create table usuarios (
     apellido_usuario varchar(255) not null,
     celular_usuario varchar(15) not null,
     password_hash varchar(255) not null,
+    escuela_id int not null,
     semestre varchar(5) check (semestre in ('I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII')),
     email varchar(255) not null, -- agregar edad
-    tipo_usuario varchar(20) check (tipo_usuario in ('psicología', 'coordinador', 'mentor', 'mentoriado')) not null,
+    tipo_usuario varchar(20) check (tipo_usuario in ('psicologia', 'coordinador', 'mentor', 'mentoriado')) not null,
+    foreign key (escuela_id) references escuelas(escuela_id) on delete cascade,
     creado_en timestamp default current_timestamp,
     unique(dni_usuario)
 );
@@ -15,36 +22,25 @@ create table usuarios (
 create table psicologia (
     psicologia_id serial primary key,
     user_id int not null,
-    cargo varchar(255),
     foreign key (user_id) references usuarios(user_id) on delete cascade
 );
 
-create table escuelas (
-    escuela_id serial primary key,
-    nombre varchar(255)
-);
 
 create table coordinadores (
     coordinador_id serial primary key,
     user_id int not null,
-    escuela_id int not null,
-    foreign key (escuela_id) references escuelas(escuela_id) on delete cascade,
     foreign key (user_id) references usuarios(user_id) on delete cascade
 );
 
 create table mentores (
     mentor_id serial primary key,
     user_id int not null,
-    escuela_id int not null,
-    foreign key (escuela_id) references escuelas(escuela_id) on delete cascade,
     foreign key (user_id) references usuarios(user_id) on delete cascade
 );
 
 create table mentoriados (
     mentoriado_id serial primary key,
     user_id int not null,
-    escuela_id int,
-    foreign key (escuela_id) references escuelas(escuela_id) on delete set null,
     foreign key (user_id) references usuarios(user_id) on delete cascade
 );
 
@@ -57,14 +53,14 @@ create table horarios (
     estado boolean
 );
 
-create table grupos_mentoria (
+create table grupos (
     grupo_id serial primary key,
-    mentor_id int not null,
+    jefe_id int not null,
     nombre varchar(255),
     horario_id int not null,
     descripcion text null,
     creado_en timestamp default current_timestamp,
-    foreign key (mentor_id) references mentores(mentor_id) on delete cascade,
+    foreign key (jefe_id) references usuarios(user_id) on delete cascade,
     foreign key (horario_id) references horarios(horario_id) on delete cascade
 );
 
@@ -72,7 +68,7 @@ create table miembros_grupo (
     miembro_grupo_id serial primary key,
     grupo_id int not null,
     user_id int not null,
-    foreign key (grupo_id) references grupos_mentoria(grupo_id) on delete cascade,
+    foreign key (grupo_id) references grupos(grupo_id) on delete cascade,
     foreign key (user_id) references usuarios(user_id) on delete cascade
 );
 
@@ -84,7 +80,7 @@ create table sesiones_mentoria (
     tema_sesion varchar(100) not null,
     notas text null,
     fotografia bytea not null,
-    foreign key (grupo_id) references grupos_mentoria(grupo_id) on delete cascade
+    foreign key (grupo_id) references grupos(grupo_id) on delete cascade
 );
 
 create table asistencias_sesiones (
@@ -124,7 +120,7 @@ create table mensajes_grupo (
     remitente_id int not null,
     texto_mensaje text not null,
     enviado_en timestamp default current_timestamp,
-    foreign key (grupo_id) references grupos_mentoria(grupo_id) on delete cascade,
+    foreign key (grupo_id) references grupos(grupo_id) on delete cascade,
     foreign key (remitente_id) references usuarios(user_id) on delete cascade
 );
 

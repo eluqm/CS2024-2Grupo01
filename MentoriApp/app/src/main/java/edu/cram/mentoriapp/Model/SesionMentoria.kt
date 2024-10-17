@@ -3,7 +3,7 @@ package edu.cram.mentoriapp.Model
 import java.time.LocalDateTime
 
 data class SesionMentoria(
-    val sesionId: Int,
+    val sesionId: Int? = null,
     val grupoId: Int,
     val horaProgramada: LocalDateTime,
     val estado: String,

@@ -3,7 +3,7 @@ package edu.cram.mentoriapp.Model
 import java.time.LocalDateTime
 
 data class Notificacion(
-    val notificacionId: Int,
+    val notificacionId: Int? = null,
     val userId: Int,
     val textoNotificacion: String,
     val tipoNotificacion: String,

@@ -1,12 +1,19 @@
-package com.example.DAO
+package com.example.service
 
-import com.example.model.Grupo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
 
-class GruposDAO(private val connection: Connection) {
+data class Grupo(
+    val jefeId: Int,
+    val nombre: String,
+    val horarioId: Int,
+    val descripcion: String?,
+    val creadoEn: String
+)
+
+class GruposService(private val connection: Connection) {
     companion object {
         private const val INSERT_GRUPO = "INSERT INTO grupos (jefe_id, nombre, horario_id, descripcion, creado_en) VALUES (?, ?, ?, ?, ?)"
         private const val SELECT_GRUPO_BY_ID = "SELECT * FROM grupos WHERE grupo_id = ?"
@@ -38,7 +45,6 @@ class GruposDAO(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext Grupo(
-                grupoId = resultSet.getInt("grupo_id"),
                 jefeId = resultSet.getInt("jefe_id"),
                 nombre = resultSet.getString("nombre_grupo"),
                 horarioId = resultSet.getInt("horario_id"),

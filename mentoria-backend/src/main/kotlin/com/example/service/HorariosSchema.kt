@@ -2,10 +2,11 @@ package com.example.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
 import java.sql.Time
-
+@Serializable
 data class Horario(
     val lugar: String?,
     val dia: String,

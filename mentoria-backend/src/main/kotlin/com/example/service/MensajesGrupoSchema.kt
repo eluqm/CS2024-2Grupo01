@@ -2,6 +2,7 @@ package com.example.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
 
@@ -11,7 +12,7 @@ data class MensajeGrupo(
     val textoMensaje: String,
     val enviadoEn: String
 )
-
+@Serializable
 class MensajesGrupoService(private val connection: Connection) {
     companion object {
         private const val INSERT_MENSAJE = "INSERT INTO mensajes_grupo (grupo_id, remitente_id, texto_mensaje) VALUES (?, ?, ?)"

@@ -2,9 +2,10 @@ package com.example.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
-
+@Serializable
 data class MiembroGrupo(
     val grupoId: Int,
     val userId: Int
@@ -38,7 +39,6 @@ class MiembrosGrupoService(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext MiembroGrupo(
-                miembroGrupoId = resultSet.getInt("miembro_grupo_id"),
                 grupoId = resultSet.getInt("grupo_id"),
                 userId = resultSet.getInt("user_id")
             )

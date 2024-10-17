@@ -2,12 +2,13 @@ package com.example.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
 
 data class Mentoriado(
     val userId: Int
-)
+)@Serializable
 class MentoriadosService(private val connection: Connection) {
     companion object {
         private const val INSERT_MENTORIADO = "INSERT INTO mentoriados (user_id) VALUES (?)"

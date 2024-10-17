@@ -7,7 +7,6 @@ import java.sql.Connection
 import java.sql.Statement
 @Serializable
 data class Usuarios(
-
     val dniUsuario: String,
     val nombreUsuario: String,
     val apellidoUsuario: String,
@@ -17,7 +16,7 @@ data class Usuarios(
     val semestre: String?,
     val email: String,
     val tipoUsuario: String,
-    val creadoEn: String
+    val creadoEn: String?
 )
 
 class UsuariosService(private val connection: Connection) {

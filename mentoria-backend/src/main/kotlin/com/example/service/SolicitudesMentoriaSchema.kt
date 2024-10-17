@@ -2,14 +2,18 @@ package com.example.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
 import java.time.LocalDateTime
 
+@Serializable
 data class SolicitudMentoria(
     val coordinadorId: Int,
     val mentorId: Int,
-    val fechaSolicitud: LocalDateTime,
+    @Contextual
+    val fechaSolicitud: LocalDateTime?,
     val estado: String,
     val mensaje: String
 )

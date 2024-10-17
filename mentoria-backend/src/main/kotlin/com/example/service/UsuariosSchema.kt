@@ -81,7 +81,7 @@ class UsuariosService(private val connection: Connection) {
         statement.setInt(6, usuario.escuelaId)
         statement.setString(7, usuario.semestre)
         statement.setString(8, usuario.email)
-        statement.setString(8, usuario.tipoUsuario)
+        statement.setString(9, usuario.tipoUsuario)
         statement.setInt(10, userId)
         statement.executeUpdate()
     }

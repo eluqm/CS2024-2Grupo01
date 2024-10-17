@@ -1,13 +1,20 @@
-package com.example.DAO
+package com.example.service
 
-import com.example.model.Horario
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
 import java.sql.Time
 
-class HorariosDAO(private val connection: Connection) {
+data class Horario(
+    val lugar: String?,
+    val dia: String,
+    val horaInicio: String,
+    val horaFin: String,
+    val estado: Boolean
+)
+
+class HorariosService(private val connection: Connection) {
     companion object {
         private const val INSERT_HORARIO = "INSERT INTO horarios (lugar, dia, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?, ?)"
         private const val SELECT_HORARIO_BY_ID = "SELECT * FROM horarios WHERE horario_id = ?"
@@ -39,7 +46,6 @@ class HorariosDAO(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext Horario(
-                horarioId = resultSet.getInt("horario_id"),
                 lugar = resultSet.getString("lugar"),
                 dia = resultSet.getString("dia"),
                 horaInicio = resultSet.getTime("hora_inicio").toLocalTime().toString(),

@@ -1,11 +1,26 @@
-package com.example.DAO
+package com.example.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
+@Serializable
+data class Usuarios(
 
-class UsuariosDAO(private val connection: Connection) {
+    val dniUsuario: String,
+    val nombreUsuario: String,
+    val apellidoUsuario: String,
+    val celularUsuario: String,
+    val passwordHash: String,
+    val escuelaId: Int,
+    val semestre: String?,
+    val email: String,
+    val tipoUsuario: String,
+    val creadoEn: String
+)
+
+class UsuariosService(private val connection: Connection) {
     companion object {
         private const val INSERT_USUARIO = "INSERT INTO usuarios (dni_usuario, nombre_usuario, apellido_usuario, celular_usuario, password_hash, escuela_id, semestre, email, tipo_usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         private const val SELECT_USUARIO_BY_ID = "SELECT * FROM usuarios WHERE user_id = ?"
@@ -41,7 +56,6 @@ class UsuariosDAO(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext Usuarios(
-                userId = resultSet.getInt("user_id"),
                 dniUsuario = resultSet.getString("dni_usuario"),
                 nombreUsuario = resultSet.getString("nombre_usuario"),
                 apellidoUsuario = resultSet.getString("apellido_usuario"),

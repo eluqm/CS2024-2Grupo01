@@ -41,11 +41,13 @@
         android:layout_marginTop="24dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:prompt="@string/select_cargo_prompt"
         app:layout_constraintTop_toBottomOf="@id/tv_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Spinner Carrera -->
+
+    <!-- Spinner Carrera
     <Spinner
         android:id="@+id/spinner_carrera"
         android:layout_width="0dp"
@@ -57,7 +59,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Spinner Semestre -->
+     Spinner Semestre
     <Spinner
         android:id="@+id/spinner_semestre"
         android:layout_width="0dp"
@@ -69,6 +71,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    -->
     <!-- Icono de carga -->
     <ImageView
         android:id="@+id/upload_icon"
@@ -76,7 +79,7 @@
         android:layout_height="48dp"
         android:src="@drawable/baseline_file_upload_24"
         android:contentDescription="@string/upload_icon"
-        app:layout_constraintTop_toBottomOf="@id/spinner_semestre"
+        app:layout_constraintTop_toBottomOf="@id/spinner_cargo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="48dp"/>

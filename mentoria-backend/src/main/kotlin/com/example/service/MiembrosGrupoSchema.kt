@@ -1,12 +1,15 @@
-package com.example.DAO
+package com.example.service
 
-import com.example.model.MiembroGrupo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
 
-class MiembrosGrupoDAO(private val connection: Connection) {
+data class MiembroGrupo(
+    val grupoId: Int,
+    val userId: Int
+)
+class MiembrosGrupoService(private val connection: Connection) {
     companion object {
         private const val INSERT_MIEMBRO_GRUPO = "INSERT INTO miembros_grupo (grupo_id, user_id) VALUES (?, ?)"
         private const val SELECT_MIEMBRO_GRUPO_BY_ID = "SELECT * FROM miembros_grupo WHERE miembro_grupo_id = ?"

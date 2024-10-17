@@ -1,12 +1,14 @@
-package com.example.DAO
+package com.example.service
 
-import com.example.model.Mentor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
 
-class MentoresDAO(private val connection: Connection) {
+data class Mentor(
+    val userId: Int
+)
+class MentoresService(private val connection: Connection) {
     companion object {
         private const val INSERT_MENTOR = "INSERT INTO mentores (user_id) VALUES (?)"
         private const val SELECT_MENTOR_BY_ID = "SELECT * FROM mentores WHERE mentor_id = ?"
@@ -34,7 +36,6 @@ class MentoresDAO(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext Mentor(
-                mentorId = resultSet.getInt("mentor_id"),
                 userId = resultSet.getInt("user_id")
             )
         } else {

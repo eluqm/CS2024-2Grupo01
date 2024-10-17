@@ -16,13 +16,18 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import edu.cram.mentoriapp.DAO.CommonDAO
 import edu.cram.mentoriapp.Model.Usuario
 import edu.cram.mentoriapp.R
+import kotlinx.coroutines.launch
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
     private val PICK_EXCEL_REQUEST_CODE = 1
+    private val usuarios = mutableListOf<Usuario>()
+    private val commonDAO = CommonDAO(requireContext())
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,7 +70,7 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openFilePicker() // Abre el selector de archivos si el permiso fue concedido
             } else {
-                // Maneja la negación del permiso (puedes mostrar un mensaje al usuario)
+                // Maneja la negación del permiso
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     // Si el usuario ha elegido "No preguntar de nuevo", redirigir a la configuración
                     Toast.makeText(requireContext(), "Permiso denegado. Ve a la configuración para habilitarlo.", Toast.LENGTH_LONG).show()
@@ -84,10 +89,51 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_EXCEL_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             data?.data?.let { uri ->
-                // Aquí puedes procesar el archivo Excel usando el URI
+                // Procesar el archivo Excel usando el URI
                 readExcelFile(uri)
             }
         }
+    }
+
+    // Diccionario para las escuelas
+    private val escuelaMap = mapOf(
+        "derecho" to 1,
+        "software" to 2,
+        "psicología" to 3,
+        "administración" to 4,
+        "comunicación" to 5,
+        "comercial" to 6,
+        "arquitectura" to 7,
+        "industrial" to 8
+    )
+
+    // Función para convertir números a romanos
+    private fun convertirARomano(numero: Int): String? {
+        val romanos = listOf(
+            Pair(12, "XII"),
+            Pair(11, "XI"),
+            Pair(10, "X"),
+            Pair(9, "IX"),
+            Pair(8, "VIII"),
+            Pair(7, "VII"),
+            Pair(6, "VI"),
+            Pair(5, "V"),
+            Pair(4, "IV"),
+            Pair(3, "III"),
+            Pair(2, "II"),
+            Pair(1, "I")
+        )
+        var num = numero
+        val result = StringBuilder()
+
+        for (par in romanos) {
+            while (num >= par.first) {
+                result.append(par.second)
+                num -= par.first
+            }
+        }
+
+        return if (result.isEmpty()) null else result.toString()
     }
 
     private fun readExcelFile(uri: Uri) {
@@ -96,14 +142,15 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
                 val workbook = XSSFWorkbook(inputStream)
                 val sheet = workbook.getSheetAt(0)
 
+                var escuelaActual: Int? = null
+                var semestreActual: String? = null
+
+                // Palabras clave para detectar filas de cabeceras
+                val palabrasClaveCabecera = listOf("DNI", "NOMBRES", "APELLIDOS", "CELULAR", "CORREO")
+
                 for (row in sheet) {
-                    // Saltar la primera fila si contiene encabezados
-                    if (row.rowNum == 0) continue
-
-                    // Crea un arreglo para almacenar los datos de la fila
+                    // Extraer los valores de la fila actual
                     val filaDatos = mutableListOf<String>()
-
-                    // Itera a través de las celdas de la fila
                     for (cell in row) {
                         val cellValue = when (cell.cellType) {
                             CellType.STRING -> cell.stringCellValue
@@ -114,9 +161,56 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
                         filaDatos.add(cellValue)
                     }
 
-                    // Imprime los datos de la fila en el log
-                    Log.d("ExcelData", "Fila ${row.rowNum}: ${filaDatos.joinToString(" | ")}")
+                    // Comprobar si la fila contiene palabras clave de cabecera
+                    if (filaDatos.any { it.uppercase() in palabrasClaveCabecera }) {
+                        Log.d("ExcelData", "Fila de cabecera ignorada: ${filaDatos.joinToString(" | ")}")
+                        continue // Saltar esta fila porque es una cabecera
+                    }
+
+                    val datosFila = filaDatos.joinToString(" | ")
+                    Log.d("ExcelData", "Fila ${row.rowNum}: $datosFila")
+
+                    // Identificar la carrera
+                    if (escuelaMap.containsKey(filaDatos[0].lowercase())) {
+                        escuelaActual = escuelaMap[filaDatos[0].lowercase()]
+                        Log.d("ExcelData", "Escuela actual: ${filaDatos[0]}")
+                        continue
+                    }
+
+                    // Identificar el semestre
+                    if (filaDatos[0].startsWith("SEMESTRE", true)) {
+                        val numeroSemestre = filaDatos[0].split(" ")[1].toIntOrNull()
+                        semestreActual = numeroSemestre?.let { convertirARomano(it) }
+                        Log.d("ExcelData", "Semestre actual: $semestreActual")
+                        continue
+                    }
+
+                    // Si es una fila de datos de estudiante
+                    if (filaDatos.size >= 6 && escuelaActual != null && semestreActual != null) {
+                        val usuario = Usuario(
+                            dniUsuario = filaDatos[1],
+                            nombreUsuario = filaDatos[3],
+                            apellidoUsuario = filaDatos[2],
+                            celularUsuario = filaDatos[5],
+                            escuelaId = escuelaActual!!,
+                            semestre = semestreActual,
+                            email = filaDatos[4]
+                        )
+                        usuarios.add(usuario)
+                        Log.d("ExcelData", "Usuario añadido: $usuario")
+                    }
                 }
+
+                // Imprimir usuarios procesados
+                usuarios.forEach { usuario -> Log.d("UsuarioProcesado", usuario.toString()) }
+
+                // Insertar datos leídos en la base de datos
+                lifecycleScope.launch {
+                    usuarios.forEach { usuario ->
+                        commonDAO.createUser(usuario) // Llamada a la función suspend
+                    }
+                }
+
                 workbook.close()
             }
         } catch (e: Exception) {
@@ -124,5 +218,4 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
             Toast.makeText(requireContext(), "Error al leer el archivo. Intenta nuevamente.", Toast.LENGTH_SHORT).show()
         }
     }
-
 }

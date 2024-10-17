@@ -16,7 +16,7 @@ import edu.cram.mentoriapp.Model.Notificacion
 import edu.cram.mentoriapp.Model.Psicologia
 import edu.cram.mentoriapp.Model.SesionMentoria
 import edu.cram.mentoriapp.Model.SolicitudMentoria
-import edu.cram.mentoriapp.Model.Usuarios
+import edu.cram.mentoriapp.Model.Usuario
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -50,13 +50,13 @@ interface ApiRest {
     suspend fun deleteEscuela(@Path("id") id: Int): retrofit2.Response<Unit>
 //Usuarios
     @GET("/usuarios/{id}")
-    suspend fun getUsuario(@Path("id") id: Int): retrofit2.Response<Usuarios>
+    suspend fun getUsuario(@Path("id") id: Int): retrofit2.Response<Usuario>
 
     @POST("/usuarios")
-    suspend fun createUsuario(@Body usuario: Usuarios): retrofit2.Response<Int>
+    suspend fun createUsuario(@Body usuario: Usuario): retrofit2.Response<Int>
 
     @PUT("/usuarios/{id}")
-    suspend fun updateUsuario(@Path("id") id: Int, @Body usuario: Usuarios): retrofit2.Response<Unit>
+    suspend fun updateUsuario(@Path("id") id: Int, @Body usuario: Usuario): retrofit2.Response<Unit>
 
     @DELETE("/usuarios/{id}")
     suspend fun deleteUsuario(@Path("id") id: Int): retrofit2.Response<Unit>

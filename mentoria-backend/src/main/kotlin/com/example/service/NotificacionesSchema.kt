@@ -64,8 +64,8 @@ class NotificacionesService(private val connection: Connection) {
         statement.setString(2, notificacion.textoNotificacion)
         statement.setString(3, notificacion.tipoNotificacion)
         statement.setBoolean(4,notificacion.leido)
-        statement.setInt(6, notificacion.eventoId)
-        statement.setInt(7, notificacionId)
+        statement.setInt(5, notificacion.eventoId)
+        statement.setInt(6, notificacionId)
         statement.executeUpdate()
     }
 

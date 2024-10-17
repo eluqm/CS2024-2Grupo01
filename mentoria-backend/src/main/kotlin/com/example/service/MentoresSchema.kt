@@ -47,7 +47,7 @@ class MentoresService(private val connection: Connection) {
     suspend fun update(mentorId: Int, mentor: Mentor) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_MENTOR)
         statement.setInt(1, mentor.userId)
-        statement.setInt(3, mentorId)
+        statement.setInt(2, mentorId)
         statement.executeUpdate()
     }
 

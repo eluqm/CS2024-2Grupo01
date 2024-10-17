@@ -1,7 +1,7 @@
 package edu.cram.mentoriapp.Model
 
 data class Evento(
-    val eventoId: Int,
+    val eventoId: Int? = null,
     val nombre: String,
     val horarioId: Int,
     val descripcion: String?,

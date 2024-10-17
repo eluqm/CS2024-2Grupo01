@@ -3,7 +3,7 @@ package edu.cram.mentoriapp.Model
 import java.time.LocalDateTime
 
 data class SolicitudMentoria(
-    val solicitudId: Int,
+    val solicitudId: Int? = null,
     val coordinadorId: Int,
     val mentorId: Int,
     val fechaSolicitud: LocalDateTime,

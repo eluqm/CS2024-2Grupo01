@@ -2,9 +2,10 @@ package com.example.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
-
+@Serializable
 data class Evento(
     val nombre: String,
     val horarioId: Int,

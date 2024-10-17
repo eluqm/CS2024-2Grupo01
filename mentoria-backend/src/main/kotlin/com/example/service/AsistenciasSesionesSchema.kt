@@ -2,16 +2,19 @@ package com.example.service
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 
 import java.sql.Connection
 import java.sql.Statement
 import java.time.LocalDateTime
 
-
+@Serializable
 data class AsistenciaSesion(
     val sesionId: Int,
     val mentoriadoId: Int,
     val asistio: Boolean,
+    @Contextual
     val horaFechaRegistrada: LocalDateTime?
 )
 

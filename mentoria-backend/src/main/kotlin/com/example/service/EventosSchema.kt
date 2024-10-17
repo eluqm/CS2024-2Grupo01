@@ -1,12 +1,19 @@
-package com.example.DAO
+package com.example.service
 
-import com.example.model.Evento
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
 
-class EventosDAO(private val connection: Connection) {
+data class Evento(
+    val nombre: String,
+    val horarioId: Int,
+    val descripcion: String?,
+    val poster: ByteArray,
+    val url: String?
+)
+
+class EventosService(private val connection: Connection) {
     companion object {
         private const val INSERT_EVENTO = "INSERT INTO eventos (nombre, horario_id, descripcion, poster, url) VALUES (?, ?, ?, ?, ?)"
         private const val SELECT_EVENTO_BY_ID = "SELECT * FROM eventos WHERE evento_id = ?"
@@ -38,7 +45,6 @@ class EventosDAO(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext Evento(
-                eventoId = resultSet.getInt("evento_id"),
                 nombre = resultSet.getString("nombre"),
                 horarioId = resultSet.getInt("horario_id"),
                 descripcion = resultSet.getString("descripcion"),

@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.retrofit)
     // gson
     implementation(libs.converter.gson)
+
+    implementation(libs.poi.ooxml)
+
     implementation(libs.androidx.fragment)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

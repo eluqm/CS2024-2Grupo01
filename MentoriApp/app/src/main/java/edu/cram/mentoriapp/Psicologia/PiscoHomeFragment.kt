@@ -28,17 +28,15 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
 
 
         // Llama a las funciones para interactuar con el API
-        lifecycleScope.launch {
+        /*lifecycleScope.launch {
             // Ejemplo: Obtener una ciudad con ID 1 y mostrar los datos
             psicoDao.fetchCity(1, textView)
 
             // Ejemplo: Crear una nueva ciudad
             val newCity = Cities(name = "Puno", population = 123)
             psicoDao.createCity(newCity)
-        }
+        }*/
     }
-
-
 
 
 }

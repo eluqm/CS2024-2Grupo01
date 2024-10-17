@@ -1,10 +1,16 @@
 package edu.cram.mentoriapp.Model
 
+import java.io.Serializable
+
 data class Usuario(
-    val nro: Int,
-    val dni: String,
-    val apellidos: String,
-    val nombres: String,
-    val correo: String,
-    val celular: String
-)
+    val dniUsuario: String,
+    val nombreUsuario: String,
+    val apellidoUsuario: String,
+    val celularUsuario: String,
+    val passwordHash: String = "123456789",
+    val escuelaId: Int,
+    val semestre: String?,
+    val email: String,
+    val tipoUsuario: String = "mentoriado",
+    val creadoEn: String? = null
+): Serializable

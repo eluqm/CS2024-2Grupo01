@@ -1,12 +1,14 @@
-package com.example.DAO
+package com.example.service
 
-import com.example.model.Mentoriado
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
 
-class MentoriadosDAO(private val connection: Connection) {
+data class Mentoriado(
+    val userId: Int
+)
+class MentoriadosService(private val connection: Connection) {
     companion object {
         private const val INSERT_MENTORIADO = "INSERT INTO mentoriados (user_id) VALUES (?)"
         private const val SELECT_MENTORIADO_BY_ID = "SELECT * FROM mentoriados WHERE mentoriado_id = ?"
@@ -34,7 +36,6 @@ class MentoriadosDAO(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext Mentoriado(
-                mentoriadoId = resultSet.getInt("mentoriado_id"),
                 userId = resultSet.getInt("user_id")
             )
         } else {
@@ -42,7 +43,7 @@ class MentoriadosDAO(private val connection: Connection) {
         }
     }
     suspend fun update(mentoriadoId: Int, mentoriado: Mentoriado) = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(MentoriadosDAO.UPDATE_MENTORIADO)
+        val statement = connection.prepareStatement(UPDATE_MENTORIADO)
         statement.setInt(1, mentoriado.userId)
         statement.setInt(3, mentoriadoId)
         statement.executeUpdate()

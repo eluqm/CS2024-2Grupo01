@@ -1,12 +1,16 @@
-package com.example.DAO
+package com.example.service
 
-import edu.cram.mentoriapp.Model.Psicologia
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
 
-class PsicologiaDAO(private val connection: Connection) {
+data class Psicologia(
+    val userId: Int
+)
+
+
+class PsicologiaService(private val connection: Connection) {
     companion object {
         private const val INSERT_PSICOLOGIA = "INSERT INTO psicologia (user_id) VALUES (?)"
         private const val SELECT_PSICOLOGIA_BY_ID = "SELECT * FROM psicologia WHERE psicologia_id = ?"
@@ -34,7 +38,6 @@ class PsicologiaDAO(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext Psicologia(
-                psicologiaId = resultSet.getInt("psicologia_id"),
                 userId = resultSet.getInt("user_id")
             )
         } else {

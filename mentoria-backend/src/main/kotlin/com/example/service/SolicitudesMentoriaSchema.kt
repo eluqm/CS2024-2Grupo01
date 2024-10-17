@@ -1,12 +1,19 @@
-package com.example.DAO
+package com.example.service
 
-import com.example.model.SolicitudMentoria
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
+import java.time.LocalDateTime
 
-class SolicitudesMentoriaDAO(private val connection: Connection) {
+data class SolicitudMentoria(
+    val coordinadorId: Int,
+    val mentorId: Int,
+    val fechaSolicitud: LocalDateTime,
+    val estado: String,
+    val mensaje: String
+)
+class SolicitudesMentoriaService(private val connection: Connection) {
     companion object {
         private const val INSERT_SOLICITUD = "INSERT INTO solicitudes_mentoria (coordinador_id, mentor_id, estado, mensaje) VALUES (?, ?, ?, ?)"
         private const val SELECT_SOLICITUD_BY_ID = "SELECT * FROM solicitudes_mentoria WHERE solicitud_id = ?"
@@ -37,7 +44,6 @@ class SolicitudesMentoriaDAO(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext SolicitudMentoria(
-                solicitudId = resultSet.getInt("solicitud_id"),
                 coordinadorId = resultSet.getInt("coordinador_id"),
                 mentorId = resultSet.getInt("mentor_id"),
                 estado = resultSet.getString("estado"),

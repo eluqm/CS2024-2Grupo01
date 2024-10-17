@@ -1,12 +1,18 @@
-package com.example.DAO
+package com.example.service
 
-import com.example.model.SesionMentoria
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
-
-class SesionesDAO(private val connection: Connection) {
+data class SesionMentoria(
+    val grupoId: Int,
+    val horaProgramada: String,
+    val estado: String,
+    val temaSesion: String,
+    val notas: String?,
+    val fotografia: ByteArray
+)
+class SesionesMentoriaService(private val connection: Connection) {
     companion object {
         private const val INSERT_SESION = "INSERT INTO sesiones (grupo_id, hora_programada, estado, tema_sesion , notas, fotografia) VALUES (?, ?, ?, ?, ?, ?)"
         private const val SELECT_SESION_BY_ID = "SELECT * FROM sesiones WHERE sesion_id = ?"
@@ -39,7 +45,6 @@ class SesionesDAO(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext SesionMentoria(
-                sesionId = resultSet.getInt("sesion_id"),
                 grupoId = resultSet.getInt("grupo_id"),
                 horaProgramada = resultSet.getString("hora_programada"),
                 estado = resultSet.getString("estado"),
@@ -53,7 +58,7 @@ class SesionesDAO(private val connection: Connection) {
     }
 
     suspend fun update(sesionId: Int, sesion: SesionMentoria) = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(SesionesDAO.UPDATE_SESION)
+        val statement = connection.prepareStatement(UPDATE_SESION)
         statement.setInt(1, sesion.grupoId)
         statement.setString(2, sesion.horaProgramada)
         statement.setString(3,sesion.estado)

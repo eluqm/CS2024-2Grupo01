@@ -1,12 +1,20 @@
-package com.example.DAO
+package com.example.service
 
-import com.example.model.Notificacion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
 
-class NotificacionesDAO(private val connection: Connection) {
+data class Notificacion(
+    val userId: Int,
+    val textoNotificacion: String,
+    val tipoNotificacion: String,
+    val creadoEn: String,
+    val leido: Boolean,
+    val eventoId: Int
+)
+
+class NotificacionesService(private val connection: Connection) {
     companion object {
         private const val INSERT_NOTIFICACION = "INSERT INTO notificaciones (user_id, texto_notificacion, tipo_notificacion, evento_id) VALUES (?, ?, ?, ?)"
         private const val SELECT_NOTIFICACION_BY_ID = "SELECT * FROM notificaciones WHERE notificacion_id = ?"
@@ -37,7 +45,6 @@ class NotificacionesDAO(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext Notificacion(
-                notificacionId = resultSet.getInt("notificacion_id"),
                 userId = resultSet.getInt("user_id"),
                 textoNotificacion = resultSet.getString("texto_notificacion"),
                 tipoNotificacion = resultSet.getString("tipo_notificacion"),

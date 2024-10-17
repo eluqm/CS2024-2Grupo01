@@ -3,6 +3,7 @@ package edu.cram.mentoriapp.Model
 import java.io.Serializable
 
 data class Usuario(
+    val userId: Int? = null,
     val dniUsuario: String,
     val nombreUsuario: String,
     val apellidoUsuario: String,

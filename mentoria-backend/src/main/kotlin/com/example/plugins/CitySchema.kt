@@ -20,12 +20,12 @@ class CityService(private val connection: Connection) {
 
     init {
         val statement = connection.createStatement()
-        statement.executeUpdate(CREATE_TABLE_CITIES)
+        //statement.executeUpdate(CREATE_TABLE_CITIES)
     }
 
     private var newCityId = 0
 
-    // Create new city
+    // Create new citya
     suspend fun create(city: City): Int = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_CITY, Statement.RETURN_GENERATED_KEYS)
         statement.setString(1, city.name)

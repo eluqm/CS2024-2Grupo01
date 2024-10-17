@@ -8,15 +8,16 @@ import java.time.LocalDateTime
 
 @Serializable
 data class Usuarios(
-    val user_id: Int,
-    val dni_usuario: String,
-    val nombre_usuario: String,
-    val apellido_usuario: String,
-    val celular_usuario: String,
-    val password_hash: String,
+    val userId: Int,
+    val dniUsuario: String,
+    val nombreUsuario: String,
+    val apellidoUsuario: String,
+    val celularUsuario: String,
+    val passwordHash: String,
     val escuelaId: Int,
     val semestre: String?,
     val email: String,
-    val tipo_usuario: String,
-    @Contextual val creado_en: LocalDateTime?
+    val tipoUsuario: String,
+    val creadoEn: String
 )
+

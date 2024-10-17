@@ -4,7 +4,7 @@ import com.example.DAO.UsuariosDAO
 import com.example.model.Usuarios
 import java.sql.Connection
 
-class UsuariosService(private val connection: Connection) {
+class UsuariosService(connection: Connection) {
     private val usuarioDAO = UsuariosDAO(connection)
 
     suspend fun create(user: Usuarios): Int {

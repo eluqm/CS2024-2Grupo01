@@ -1,5 +1,6 @@
 package edu.cram.mentoriapp.Psicologia
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -33,6 +34,7 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
 
 
         cerrar_sesion.setOnClickListener(){
+            cerrarSesion()
             view.findNavController().navigate(R.id.action_piscoHomeFragment_to_mainActivity)
         }
         // Llama a las funciones para interactuar con el API
@@ -58,7 +60,18 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
             )
             psicoDao.createUser(user)
         }
+
     }
+
+    private fun cerrarSesion() {
+        val sharedPreferences = requireContext().getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear() // Limpiar todos los datos guardados
+        editor.apply() // Aplicar los cambios
+
+        Toast.makeText(context, "Sesión cerrada", Toast.LENGTH_SHORT).show()
+    }
+
 
 
 }

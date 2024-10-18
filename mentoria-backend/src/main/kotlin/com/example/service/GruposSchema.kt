@@ -11,12 +11,12 @@ data class Grupo(
     val nombre: String,
     val horarioId: Int,
     val descripcion: String?,
-    val creadoEn: String
+    val creadoEn: String? = null
 )
 
 class GruposService(private val connection: Connection) {
     companion object {
-        private const val INSERT_GRUPO = "INSERT INTO grupos (jefe_id, nombre, horario_id, descripcion, creado_en) VALUES (?, ?, ?, ?, ?)"
+        private const val INSERT_GRUPO = "INSERT INTO grupos (jefe_id, nombre, horario_id, descripcion) VALUES (?, ?, ?, ?)"
         private const val SELECT_GRUPO_BY_ID = "SELECT * FROM grupos WHERE grupo_id = ?"
         private const val UPDATE_GRUPO = "UPDATE grupos SET jefe_id = ?, nombre = ?, horario_id = ?, descripcion = ? WHERE grupo_id = ?"
         private const val DELETE_GRUPO = "DELETE FROM grupos WHERE grupo_id = ?"
@@ -28,7 +28,6 @@ class GruposService(private val connection: Connection) {
         statement.setString(2, grupo.nombre)
         statement.setInt(3, grupo.horarioId)
         statement.setString(4, grupo.descripcion)
-        statement.setString(5, grupo.creadoEn)
         statement.executeUpdate()
 
         val generatedKeys = statement.generatedKeys

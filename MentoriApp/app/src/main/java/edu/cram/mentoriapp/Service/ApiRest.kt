@@ -48,7 +48,11 @@ interface ApiRest {
 
     @DELETE("/escuelas/{id}")
     suspend fun deleteEscuela(@Path("id") id: Int): retrofit2.Response<Unit>
-//Usuarios
+
+    @GET("/escuelas")
+    suspend fun getEscuelas(): retrofit2.Response<List<Escuela>>
+
+    //Usuarios
     @GET("/usuarios/dni/{dni}")
     suspend fun getUsuarioByDni(@Path("dni") dni: String): retrofit2.Response<Usuario>
 
@@ -63,7 +67,18 @@ interface ApiRest {
 
     @DELETE("/usuarios/{id}")
     suspend fun deleteUsuario(@Path("id") id: Int): retrofit2.Response<Unit>
-//Psicologia
+
+    @GET("/usuarios/tipo/{tipo}")
+    suspend fun getUsuariosByType(@Path("tipo") tipo: String): retrofit2.Response<List<Usuario>>
+
+
+    @GET("/usuarios/tipo/{tipo}/escuela/{escuelaId}")
+    suspend fun findUsuariosByTypeAndSchool(
+        @Path("tipo") tipo: String,
+        @Path("escuelaId") escuelaId: Int
+    ): retrofit2.Response<List<Usuario>>
+
+    //Psicologia
     @GET("/psicologia/{id}")
     suspend fun getPsicologia(@Path("id") id: Int): retrofit2.Response<Psicologia>
 

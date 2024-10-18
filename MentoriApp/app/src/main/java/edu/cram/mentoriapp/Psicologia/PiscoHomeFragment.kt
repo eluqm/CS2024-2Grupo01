@@ -35,8 +35,9 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
 
         cerrar_sesion.setOnClickListener(){
             cerrarSesion()
-            view.findNavController().navigate(R.id.action_piscoHomeFragment_to_mainActivity)
+            view.findNavController().navigate(R.id.loginFragment, null)
         }
+
         // Llama a las funciones para interactuar con el API
         lifecycleScope.launch {
             // Ejemplo: Obtener una ciudad con ID 1 y mostrar los datos
@@ -45,9 +46,10 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
             // Ejemplo: Crear una nueva ciudad
             //val newCity = Cities(name = "Puno", population = 123)
             //psicoDao.createUser(newCity)
+
             val user = Usuario(
                 userId = 123,
-                dniUsuario = "3323222",
+                dniUsuario = "12345678",
                 nombreUsuario = "Juan",
                 apellidoUsuario = "Pérez",
                 celularUsuario = "987654321",
@@ -57,8 +59,8 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
                 email = "juan.perez@example.com",
                 tipoUsuario = "mentor",
                 creadoEn = "23123"// Puedes cambiar esto si el tipo de usuario es diferente.
-            )
-            psicoDao.createUser(user)
+                )
+            psicoDao.createUser(user);
         }
 
     }

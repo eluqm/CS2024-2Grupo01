@@ -6,16 +6,18 @@ import java.sql.Connection
 import java.sql.Statement
 
 @Serializable
-data class Escuela(val nombre: String)
+data class Escuela(val escuelaId: Int?, val nombre: String)
 
 class EscuelasService(private val connection: Connection) {
     companion object {
         private const val CREATE_TABLE_ESCUELAS =
             "CREATE TABLE ESCUELAS (ESCUELA_ID SERIAL PRIMARY KEY, NOMBRE VARCHAR(255));"
-        private const val SELECT_ESCUELA_BY_ID = "SELECT nombre FROM escuelas WHERE escuela_id = ?"
+        private const val SELECT_ESCUELA_BY_ID = "SELECT * FROM escuelas WHERE escuela_id = ?"
         private const val INSERT_ESCUELA = "INSERT INTO escuelas (nombre) VALUES (?)"
         private const val UPDATE_ESCUELA = "UPDATE escuelas SET nombre = ? WHERE escuela_id = ?"
         private const val DELETE_ESCUELA = "DELETE FROM escuelas WHERE escuela_id = ?"
+        private const val SELECT_ALL_ESCUELAS = "SELECT * FROM escuelas"
+
     }
 
     init {
@@ -45,12 +47,30 @@ class EscuelasService(private val connection: Connection) {
         val resultSet = statement.executeQuery()
 
         if (resultSet.next()) {
+            val idSchool = resultSet.getInt("escuela_id")
             val nombre = resultSet.getString("nombre")
-            return@withContext Escuela(nombre)
+            return@withContext Escuela(idSchool, nombre)
         } else {
             throw Exception("Record not found")
         }
     }
+
+    //Leer todas la escuelas
+    suspend fun readAll(): List<Escuela> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_ALL_ESCUELAS)
+        val resultSet = statement.executeQuery()
+
+        val escuelas = mutableListOf<Escuela>()
+
+        while (resultSet.next()) {
+            val id = resultSet.getInt("escuela_id")
+            val nombre = resultSet.getString("nombre")
+            escuelas.add(Escuela(id, nombre))
+        }
+
+        return@withContext escuelas
+    }
+
 
     // Actualizar una escuela
     suspend fun update(id: Int, escuela: Escuela) = withContext(Dispatchers.IO) {

@@ -11,6 +11,7 @@ import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import edu.cram.mentoriapp.DAO.PsicologiaDAO
 import edu.cram.mentoriapp.Model.Cities
+import edu.cram.mentoriapp.Model.Usuario
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
 import edu.cram.mentoriapp.Service.RetrofitClient
@@ -28,14 +29,27 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
 
 
         // Llama a las funciones para interactuar con el API
-        /*lifecycleScope.launch {
+        lifecycleScope.launch {
             // Ejemplo: Obtener una ciudad con ID 1 y mostrar los datos
-            psicoDao.fetchCity(1, textView)
+            //psicoDao.fetchCity(1, textView)
 
             // Ejemplo: Crear una nueva ciudad
-            val newCity = Cities(name = "Puno", population = 123)
-            psicoDao.createCity(newCity)
-        }*/
+            //val newCity = Cities(name = "Puno", population = 123)
+            //psicoDao.createUser(newCity)
+            val user = Usuario(
+                dniUsuario = "64324343",
+                nombreUsuario = "Juan",
+                apellidoUsuario = "Pérez",
+                celularUsuario = "987654321",
+                passwordHash = "98765abcde",  // Aquí puedes usar el hash real si lo tienes.
+                escuelaId = 1,
+                semestre = "III",
+                email = "juan.perez@example.com",
+                tipoUsuario = "mentor",
+                creadoEn = "23123"// Puedes cambiar esto si el tipo de usuario es diferente.
+            )
+            psicoDao.createUser(user)
+        }
     }
 
 

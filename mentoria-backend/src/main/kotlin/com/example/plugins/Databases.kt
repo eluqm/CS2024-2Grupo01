@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.*
 
 fun Application.configureDatabases() {
     val database = Database.connect(
-        url = "jdbc:postgresql://localhost:5432/test_mentoria",
+        url = "jdbc:postgresql://localhost:8081/test_mentoria",
         user = "user_ment",
         driver = "org.postgresql.Driver",
         password = "12345678",
@@ -68,6 +68,15 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.Created, id)
         }
 
+        get("/usuarios/dni/{dni}") {
+            val dni = call.parameters["dni"] ?: throw IllegalArgumentException("Invalid DNI")
+            try {
+                val usuarios = usuariosService.readByDni(dni)
+                call.respond(HttpStatusCode.OK, usuarios)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.NotFound, "User not found")
+            }
+        }
         // Read user
         get("/usuarios/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
@@ -653,7 +662,7 @@ fun Application.configureDatabases() {
 fun Application.connectToPostgres(embedded: Boolean): Connection {
     Class.forName("org.postgresql.Driver")
     if (embedded) {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/test_mentoria", "user_ment", "12345678")
+        return DriverManager.getConnection("jdbc:postgresql://localhost:8081/test_mentoria", "user_ment", "12345678")
     } else {
         val url = environment.config.property("postgres.url").getString()
         val user = environment.config.property("postgres.user").getString()

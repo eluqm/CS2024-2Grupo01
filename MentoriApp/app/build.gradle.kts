@@ -51,6 +51,12 @@ dependencies {
 
     implementation(libs.poi.ooxml)
 
+    // java security
+    implementation(libs.androidx.navigation.fragment.ktx.v253)
+    implementation(libs.androidx.navigation.ui.ktx.v253)
+    implementation(libs.kotlinx.coroutines.core)
+
+
     implementation(libs.androidx.fragment)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

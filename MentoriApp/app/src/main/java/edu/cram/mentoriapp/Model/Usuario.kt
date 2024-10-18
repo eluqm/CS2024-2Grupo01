@@ -8,7 +8,7 @@ data class Usuario(
     val nombreUsuario: String,
     val apellidoUsuario: String,
     val celularUsuario: String,
-    val passwordHash: String = "123456789",
+    var passwordHash: String = "123456789",
     val escuelaId: Int,
     val semestre: String?,
     val email: String,

@@ -49,6 +49,9 @@ interface ApiRest {
     @DELETE("/escuelas/{id}")
     suspend fun deleteEscuela(@Path("id") id: Int): retrofit2.Response<Unit>
 //Usuarios
+    @GET("/usuarios/dni/{dni}")
+    suspend fun getUsuarioByDni(@Path("dni") dni: String): retrofit2.Response<Usuario>
+
     @GET("/usuarios/{id}")
     suspend fun getUsuario(@Path("id") id: Int): retrofit2.Response<Usuario>
 

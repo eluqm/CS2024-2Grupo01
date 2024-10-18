@@ -11,4 +11,5 @@
     <string name="btn_cargar_datos">Cargar</string>
     <string name="login_background">imagen de fondo del login</string>
     <string name="select_cargo_prompt">Seleccione por cargo</string>
+    <string name="change_password_background" />
 </resources>

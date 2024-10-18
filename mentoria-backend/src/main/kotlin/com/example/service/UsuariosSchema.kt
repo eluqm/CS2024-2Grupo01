@@ -7,6 +7,7 @@ import java.sql.Connection
 import java.sql.Statement
 @Serializable
 data class Usuarios(
+    val userId: Int?,
     val dniUsuario: String,
     val nombreUsuario: String,
     val apellidoUsuario: String,
@@ -48,6 +49,32 @@ class UsuariosService(private val connection: Connection) {
         }
     }
 
+    suspend fun readByDni(dniUsuario: String): Usuarios = withContext(Dispatchers.IO) {
+        val query = "SELECT * FROM usuarios WHERE dni_usuario = ?"
+        val statement = connection.prepareStatement(query)
+        statement.setString(1, dniUsuario)
+        val resultSet = statement.executeQuery()
+
+        if (resultSet.next()) {
+            return@withContext Usuarios(
+                userId = resultSet.getInt("user_id"),
+                dniUsuario = resultSet.getString("dni_usuario"),
+                nombreUsuario = resultSet.getString("nombre_usuario"),
+                apellidoUsuario = resultSet.getString("apellido_usuario"),
+                celularUsuario = resultSet.getString("celular_usuario"),
+                passwordHash = resultSet.getString("password_hash"),
+                escuelaId = resultSet.getInt("escuela_id"),
+                semestre = resultSet.getString("semestre"),
+                email = resultSet.getString("email"),
+                tipoUsuario = resultSet.getString("tipo_usuario"),
+                creadoEn = resultSet.getString("creado_en")
+            )
+        } else {
+            throw Exception("User not found")
+        }
+    }
+
+
     suspend fun read(userId: Int): Usuarios = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_USUARIO_BY_ID)
         statement.setInt(1, userId)
@@ -55,6 +82,7 @@ class UsuariosService(private val connection: Connection) {
 
         if (resultSet.next()) {
             return@withContext Usuarios(
+                userId = resultSet.getInt("user_id"),
                 dniUsuario = resultSet.getString("dni_usuario"),
                 nombreUsuario = resultSet.getString("nombre_usuario"),
                 apellidoUsuario = resultSet.getString("apellido_usuario"),

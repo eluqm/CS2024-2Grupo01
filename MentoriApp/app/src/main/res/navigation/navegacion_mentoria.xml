@@ -15,6 +15,12 @@
         <action
             android:id="@+id/action_loginFragment_to_coorActivity"
             app:destination="@id/coorActivity" />
+        <action
+            android:id="@+id/action_loginFragment_to_mentoriadoActivity"
+            app:destination="@id/mentoriadoActivity" />
+        <action
+            android:id="@+id/action_loginFragment_to_mentorActivity"
+            app:destination="@id/mentorActivity" />
     </fragment>
     <activity
         android:id="@+id/psicoActivity"
@@ -26,4 +32,14 @@
         android:name="edu.cram.mentoriapp.Coordinacion.CoorActivity"
         android:label="activity_coor"
         tools:layout="@layout/activity_coor" />
+    <activity
+        android:id="@+id/mentorActivity"
+        android:name="edu.cram.mentoriapp.Mentor.MentorActivity"
+        android:label="activity_mentor"
+        tools:layout="@layout/activity_mentor" />
+    <activity
+        android:id="@+id/mentoriadoActivity"
+        android:name="edu.cram.mentoriapp.Mentoriado.MentoriadoActivity"
+        android:label="activity_mentoriado"
+        tools:layout="@layout/activity_mentoriado" />
 </navigation>

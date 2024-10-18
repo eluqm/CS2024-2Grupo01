@@ -45,11 +45,7 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
             //psicoDao.createUser(newCity)
             val user = Usuario(
                 userId = 123,
-<<<<<<< Updated upstream
-                dniUsuario = "323232",
-=======
                 dniUsuario = "3323222",
->>>>>>> Stashed changes
                 nombreUsuario = "Juan",
                 apellidoUsuario = "Pérez",
                 celularUsuario = "987654321",

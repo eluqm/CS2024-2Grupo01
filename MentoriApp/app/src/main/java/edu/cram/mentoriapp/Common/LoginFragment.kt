@@ -124,6 +124,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun guardarUsuarioEnSesion(usuario: Usuario) {
         val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
+        editor.putInt("userId", usuario.userId!!)
         editor.putString("dniUsuario", usuario.dniUsuario)
         editor.putString("nombreUsuario", usuario.nombreUsuario)
         editor.putString("apellidoUsuario", usuario.apellidoUsuario)

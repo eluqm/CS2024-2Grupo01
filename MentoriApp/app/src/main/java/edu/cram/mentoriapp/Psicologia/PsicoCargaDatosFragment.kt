@@ -27,10 +27,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
     private val PICK_EXCEL_REQUEST_CODE = 1
     private val usuarios = mutableListOf<Usuario>()
-    private val commonDAO = CommonDAO(requireContext())
+    private lateinit var commonDAO: CommonDAO // Inicializar luego
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Ahora el contexto está disponible, podemos inicializar CommonDAO aquí
+        commonDAO = CommonDAO(requireContext())
 
         initSpinnerCargo(view)
         setupButton(view)
@@ -192,9 +195,12 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
                             nombreUsuario = filaDatos[3],
                             apellidoUsuario = filaDatos[2],
                             celularUsuario = filaDatos[5],
-                            escuelaId = escuelaActual!!,
+                            passwordHash = "12345",
+                            escuelaId = escuelaActual,
                             semestre = semestreActual,
-                            email = filaDatos[4]
+                            email = filaDatos[4],
+                            tipoUsuario = "mentor",
+                            creadoEn = "dada"
                         )
                         usuarios.add(usuario)
                         Log.d("ExcelData", "Usuario añadido: $usuario")

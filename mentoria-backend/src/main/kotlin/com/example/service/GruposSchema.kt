@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
+
 @Serializable
 data class Grupo(
     val jefeId: Int,
@@ -14,14 +15,33 @@ data class Grupo(
     val creadoEn: String? = null
 )
 
+@Serializable
+data class Usuario(
+    val id: Int,
+    val nombreUsuario: String,
+    val email: String,
+    val celularUsuario: String,
+    val dniUsuario: String
+)
+
 class GruposService(private val connection: Connection) {
     companion object {
         private const val INSERT_GRUPO = "INSERT INTO grupos (jefe_id, nombre, horario_id, descripcion) VALUES (?, ?, ?, ?)"
         private const val SELECT_GRUPO_BY_ID = "SELECT * FROM grupos WHERE grupo_id = ?"
         private const val UPDATE_GRUPO = "UPDATE grupos SET jefe_id = ?, nombre = ?, horario_id = ?, descripcion = ? WHERE grupo_id = ?"
         private const val DELETE_GRUPO = "DELETE FROM grupos WHERE grupo_id = ?"
+
+        // Nuevas consultas
+        private const val SELECT_GRUPOS_BY_MENTOR = "SELECT * FROM grupos WHERE jefe_id = ?"
+        private const val SELECT_MENTORIADOS_BY_GRUPO = """
+            SELECT u.usuario_id, u.nombre_usuario, u.email, u.celular_usuario, u.dni_usuario
+            FROM usuarios u
+            JOIN miembros_grupo mg ON u.usuario_id = mg.usuario_id
+            WHERE mg.grupo_id = ? AND u.tipo_usuario = 'mentoriado'
+        """
     }
 
+    // Crear un nuevo grupo
     suspend fun create(grupo: Grupo): Int = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_GRUPO, Statement.RETURN_GENERATED_KEYS)
         statement.setInt(1, grupo.jefeId)
@@ -38,6 +58,7 @@ class GruposService(private val connection: Connection) {
         }
     }
 
+    // Leer un grupo por su ID
     suspend fun read(grupoId: Int): Grupo = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_GRUPO_BY_ID)
         statement.setInt(1, grupoId)
@@ -56,6 +77,7 @@ class GruposService(private val connection: Connection) {
         }
     }
 
+    // Actualizar un grupo
     suspend fun update(grupoId: Int, grupo: Grupo) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_GRUPO)
         statement.setInt(1, grupo.jefeId)
@@ -66,9 +88,50 @@ class GruposService(private val connection: Connection) {
         statement.executeUpdate()
     }
 
+    // Eliminar un grupo
     suspend fun delete(grupoId: Int) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_GRUPO)
         statement.setInt(1, grupoId)
         statement.executeUpdate()
+    }
+
+    // Obtener los grupos de un mentor
+    suspend fun getGruposPorMentor(mentorId: Int): List<Grupo> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_GRUPOS_BY_MENTOR)
+        statement.setInt(1, mentorId)
+        val resultSet = statement.executeQuery()
+
+        val grupos = mutableListOf<Grupo>()
+        while (resultSet.next()) {
+            grupos.add(Grupo(
+                jefeId = resultSet.getInt("jefe_id"),
+                nombre = resultSet.getString("nombre"),
+                horarioId = resultSet.getInt("horario_id"),
+                descripcion = resultSet.getString("descripcion"),
+                creadoEn = resultSet.getString("creado_en")
+            ))
+        }
+        return@withContext grupos
+    }
+
+    // Obtener los usuarios mentoriados de un grupo específico
+    suspend fun getUsuariosMentoriadosPorGrupo(grupoId: Int): List<Usuario> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_MENTORIADOS_BY_GRUPO)
+        statement.setInt(1, grupoId)
+        val resultSet = statement.executeQuery()
+
+        val usuarios = mutableListOf<Usuario>()
+        while (resultSet.next()) {
+            usuarios.add(
+                Usuario(
+                    id = resultSet.getInt("usuario_id"),
+                    nombreUsuario = resultSet.getString("nombre_usuario"),
+                    email = resultSet.getString("email"),
+                    celularUsuario = resultSet.getString("celular_usuario"),
+                    dniUsuario = resultSet.getString("dni_usuario")
+                )
+            )
+        }
+        return@withContext usuarios
     }
 }

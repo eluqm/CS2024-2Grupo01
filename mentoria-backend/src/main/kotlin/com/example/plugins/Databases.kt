@@ -436,11 +436,7 @@ fun Application.configureDatabases() {
         get("/grupos/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
             val grupo = gruposService.read(id)
-            if (grupo != null) {
-                call.respond(HttpStatusCode.OK, grupo)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
+            call.respond(HttpStatusCode.OK, grupo)
         }
 
         // Update group
@@ -457,7 +453,22 @@ fun Application.configureDatabases() {
             gruposService.delete(id)
             call.respond(HttpStatusCode.OK)
         }
+
+        // Obtener grupos por mentor
+        get("/mentores/{mentorId}/grupos") {
+            val mentorId = call.parameters["mentorId"]?.toInt() ?: throw IllegalArgumentException("Invalid mentor ID")
+            val grupos = gruposService.getGruposPorMentor(mentorId)
+            call.respond(HttpStatusCode.OK, grupos)
+        }
+
+        // Obtener usuarios mentoriados por grupo
+        get("/grupos/{grupoId}/mentoriados") {
+            val grupoId = call.parameters["grupoId"]?.toInt() ?: throw IllegalArgumentException("Invalid grupo ID")
+            val mentoriados = gruposService.getUsuariosMentoriadosPorGrupo(grupoId)
+            call.respond(HttpStatusCode.OK, mentoriados)
+        }
     }
+
 
     val asistenciasSesionesService = AsistenciasSesionesService(dbConnection)
     routing {

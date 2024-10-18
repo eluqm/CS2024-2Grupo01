@@ -103,6 +103,8 @@ interface ApiRest {
     @DELETE("/coordinadores/{id}")
     suspend fun deleteCoordinador(@Path("id") id: Int): retrofit2.Response<Unit>
 //Mentores
+// Definir el endpoint que obtiene los usuarios de tipo mentoriado por grupo y mentor
+
     @GET("/mentores/{id}")
     suspend fun getMentor(@Path("id") id: Int): retrofit2.Response<Mentor>
 
@@ -139,6 +141,16 @@ interface ApiRest {
     @DELETE("/horarios/{id}")
     suspend fun deleteHorario(@Path("id") id: Int): retrofit2.Response<Unit>
 //grupos
+    @GET("/grupos/{grupoId}/mentoriados")
+    suspend fun getUsuariosMentoriadosPorGrupo(
+        @Path("mentorId") mentorId: String,
+        @Path("grupoId") grupoId: String
+    ): List<Usuario>
+
+        @GET("/mentores/{mentorId}/grupos")
+    suspend fun getGruposPorMentor(@Path("mentorId") mentorId: String): List<GrupoMentoria>
+
+
     @GET("/grupos/{id}")
     suspend fun getGrupo(@Path("id") id: Int): retrofit2.Response<GrupoMentoria>
 

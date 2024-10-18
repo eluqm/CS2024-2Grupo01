@@ -11,9 +11,6 @@
         android:label="fragment_mentor_home"
         tools:layout="@layout/fragment_mentor_home" >
         <action
-            android:id="@+id/action_mentorHomeFragment_to_mentorListadoMentoriadosFragment"
-            app:destination="@id/mentorListadoMentoriadosFragment" />
-        <action
             android:id="@+id/action_mentorHomeFragment_to_mentorGestionHorarioFragment"
             app:destination="@id/mentorGestionHorarioFragment" />
         <action
@@ -22,12 +19,10 @@
         <action
             android:id="@+id/action_mentorHomeFragment_to_mentorListadoSesionesFragment"
             app:destination="@id/mentorListadoSesionesFragment" />
+        <action
+            android:id="@+id/action_mentorHomeFragment_to_mentorListadoMentoriadosFragment"
+            app:destination="@id/mentorListadoMentoriadosFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/mentorListadoMentoriadosFragment"
-        android:name="edu.cram.mentoriapp.Mentor.MentorListadoMentoriadosFragment"
-        android:label="fragment_listado_mentoriados"
-        tools:layout="@layout/fragment_listado_mentoriados" />
     <fragment
         android:id="@+id/mentorGestionHorarioFragment"
         android:name="edu.cram.mentoriapp.Mentor.MentorGestionHorarioFragment"
@@ -43,4 +38,9 @@
         android:name="edu.cram.mentoriapp.Mentor.MentorListadoSesionesFragment"
         android:label="fragment_listado_sesiones"
         tools:layout="@layout/fragment_listado_sesiones" />
+    <fragment
+        android:id="@+id/mentorListadoMentoriadosFragment"
+        android:name="MentorListadoMentoriadosFragment"
+        android:label="MentorListadoMentoriadosFragment"
+        tools:layout="@layout/fragment_listado_mentoriados"/>
 </navigation>

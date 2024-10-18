@@ -27,7 +27,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
     private val PICK_EXCEL_REQUEST_CODE = 1
     private val usuarios = mutableListOf<Usuario>()
-    private lateinit var commonDAO: CommonDAO // Inicializar luego
+    private lateinit var commonDAO: CommonDAO
+    private lateinit var spinnerCargo: Spinner// Inicializar luego
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,8 +41,8 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
     }
 
     private fun initSpinnerCargo(view: View) {
-        val spinnerCargo: Spinner = view.findViewById(R.id.spinner_cargo)
-        val cargos = listOf("Coordinadores", "Mentores", "Mentoriados")
+        spinnerCargo = view.findViewById(R.id.spinner_cargo)
+        val cargos = listOf("coordinador", "mentor", "mentoriado")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, cargos)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCargo.adapter = adapter
@@ -187,6 +188,8 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
                         Log.d("ExcelData", "Semestre actual: $semestreActual")
                         continue
                     }
+                    // Identificar el tipo
+                    val tipoUsuarioSeleccionado = spinnerCargo.selectedItem.toString()
 
                     // Si es una fila de datos de estudiante
                     if (filaDatos.size >= 6 && escuelaActual != null && semestreActual != null) {
@@ -195,12 +198,12 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
                             nombreUsuario = filaDatos[3],
                             apellidoUsuario = filaDatos[2],
                             celularUsuario = filaDatos[5],
-                            passwordHash = "12345",
+                            passwordHash = "123456",
                             escuelaId = escuelaActual,
                             semestre = semestreActual,
                             email = filaDatos[4],
-                            tipoUsuario = "mentor",
-                            creadoEn = "dada"
+                            tipoUsuario = tipoUsuarioSeleccionado,
+                            creadoEn = "null"
                         )
                         usuarios.add(usuario)
                         Log.d("ExcelData", "Usuario añadido: $usuario")

@@ -27,12 +27,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
     private val PICK_EXCEL_REQUEST_CODE = 1
     private val usuarios = mutableListOf<Usuario>()
-<<<<<<< Updated upstream
+
     private lateinit var commonDAO: CommonDAO
     private lateinit var spinnerCargo: Spinner// Inicializar luego
-=======
-    private lateinit var commonDAO: CommonDAO // Inicializar luego
->>>>>>> Stashed changes
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -2,10 +2,13 @@ package edu.cram.mentoriapp.Psicologia
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -25,9 +28,13 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
         super.onViewCreated(view, savedInstanceState)
 
         val textView = view.findViewById<TextView>(R.id.tv_title)
+        val cerrar_sesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
         val psicoDao = PsicologiaDAO(requireContext())
 
 
+        cerrar_sesion.setOnClickListener(){
+            view.findNavController().navigate(R.id.action_piscoHomeFragment_to_mainActivity)
+        }
         // Llama a las funciones para interactuar con el API
         lifecycleScope.launch {
             // Ejemplo: Obtener una ciudad con ID 1 y mostrar los datos
@@ -38,7 +45,11 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
             //psicoDao.createUser(newCity)
             val user = Usuario(
                 userId = 123,
+<<<<<<< Updated upstream
                 dniUsuario = "323232",
+=======
+                dniUsuario = "3323222",
+>>>>>>> Stashed changes
                 nombreUsuario = "Juan",
                 apellidoUsuario = "Pérez",
                 celularUsuario = "987654321",

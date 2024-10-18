@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.*
 
 fun Application.configureDatabases() {
     val database = Database.connect(
-        url = "jdbc:postgresql://localhost:8081/test_mentoria",
+        url = "jdbc:postgresql://localhost:5432/test_mentoria",
         user = "user_ment",
         driver = "org.postgresql.Driver",
         password = "12345678",
@@ -710,7 +710,7 @@ fun Application.configureDatabases() {
 fun Application.connectToPostgres(embedded: Boolean): Connection {
     Class.forName("org.postgresql.Driver")
     if (embedded) {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:8081/test_mentoria", "user_ment", "12345678")
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/test_mentoria", "user_ment", "12345678")
     } else {
         val url = environment.config.property("postgres.url").getString()
         val user = environment.config.property("postgres.user").getString()

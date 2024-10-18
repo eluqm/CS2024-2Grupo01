@@ -8,5 +8,7 @@ import android.view.ViewGroup
 import edu.cram.mentoriapp.R
 
 class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asistencia) {
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
 }

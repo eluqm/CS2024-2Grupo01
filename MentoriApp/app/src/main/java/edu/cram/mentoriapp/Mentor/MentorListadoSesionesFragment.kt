@@ -8,5 +8,7 @@ import android.view.ViewGroup
 import edu.cram.mentoriapp.R
 
 class MentorListadoSesionesFragment : Fragment(R.layout.fragment_listado_sesiones) {
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
 }

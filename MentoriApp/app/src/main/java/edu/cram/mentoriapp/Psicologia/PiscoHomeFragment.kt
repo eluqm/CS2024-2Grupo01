@@ -37,11 +37,12 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
             //val newCity = Cities(name = "Puno", population = 123)
             //psicoDao.createUser(newCity)
             val user = Usuario(
+                userId = 123,
                 dniUsuario = "33232",
                 nombreUsuario = "Juan",
                 apellidoUsuario = "Pérez",
                 celularUsuario = "987654321",
-                passwordHash = "98765abcde",  // Aquí puedes usar el hash real si lo tienes.
+                passwordHash = "12345",  // Aquí puedes usar el hash real si lo tienes.
                 escuelaId = 1,
                 semestre = "III",
                 email = "juan.perez@example.com",

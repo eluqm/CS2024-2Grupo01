@@ -38,7 +38,7 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
             //psicoDao.createUser(newCity)
             val user = Usuario(
                 userId = 123,
-                dniUsuario = "33232",
+                dniUsuario = "323232",
                 nombreUsuario = "Juan",
                 apellidoUsuario = "Pérez",
                 celularUsuario = "987654321",

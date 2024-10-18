@@ -2,25 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/mentorHomeFragment"
-        android:icon="@android:drawable/btn_star_big_on"
+        android:icon="@drawable/baseline_add_home_work_24"
         android:title="Home" />
 
     <item
         android:id="@+id/mentorGestionHorarioFragment"
-        android:icon="@android:drawable/ic_dialog_alert"
+        android:icon="@drawable/baseline_calendar_month_24"
         android:title="Horario" />
 
     <item
-        android:id="@+id/mentorMentoriadosFragment"
-        android:icon="@android:drawable/ic_dialog_alert"
+        android:id="@+id/mentorListadoMentoriadosFragment"
+        android:icon="@drawable/baseline_list_24"
         android:title="Mentoriados" />
     <item
         android:id="@+id/mentorListadoSesionesFragment"
-        android:icon="@android:drawable/ic_dialog_alert"
+        android:icon="@drawable/baseline_list_alt_24"
         android:title="Sesiones" />
     <item
         android:id="@+id/mentorLlamadoAsistenciaFragment"
-        android:icon="@android:drawable/ic_dialog_alert"
+        android:icon="@drawable/baseline_checklist_24"
         android:title="Asistencia" />
 
 </menu>

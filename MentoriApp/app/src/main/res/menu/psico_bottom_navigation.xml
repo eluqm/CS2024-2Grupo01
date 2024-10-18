@@ -1,27 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/piscoHomeFragment"
+        android:id="@+id/mentoriadoHomeFragment"
         android:icon="@android:drawable/btn_star_big_on"
         android:title="Home" />
 
-    <item
-        android:id="@+id/psicoCargaDatosFragment"
-        android:icon="@android:drawable/ic_dialog_alert"
-        android:title="Carga" />
-
-    <item
-        android:id="@+id/psicoGestionarHorariosFragment"
-        android:icon="@android:drawable/ic_dialog_email"
-        android:title="Horario" />
-
-    <item
-        android:id="@+id/psicoEstadisticasFragment"
-        android:icon="@android:drawable/ic_dialog_email"
-            android:title="Estadisticas" />
-
-    <item
-        android:id="@+id/psicoCrearEventoFragment"
-        android:icon="@android:drawable/ic_dialog_email"
-        android:title="Eventos" />
 </menu>

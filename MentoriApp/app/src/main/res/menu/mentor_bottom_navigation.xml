@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mentorHomeFragment"
+        android:icon="@android:drawable/btn_star_big_on"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/mentorGestionHorarioFragment"
+        android:icon="@android:drawable/ic_dialog_alert"
+        android:title="Horario" />
+
+    <item
+        android:id="@+id/mentorListadoMentoriadosFragment"
+        android:icon="@android:drawable/ic_dialog_alert"
+        android:title="Mentoriados" />
+    <item
+        android:id="@+id/mentorListadoSesionesFragment"
+        android:icon="@android:drawable/ic_dialog_alert"
+        android:title="Sesiones" />
+    <item
+        android:id="@+id/mentorLlamadoAsistenciaFragment"
+        android:icon="@android:drawable/ic_dialog_alert"
+        android:title="Asistencia" />
+
+</menu>

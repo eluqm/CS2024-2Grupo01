@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navegacion_mentor"
+    app:startDestination="@id/mentorHomeFragment">
+
+    <fragment
+        android:id="@+id/mentorHomeFragment"
+        android:name="edu.cram.mentoriapp.Mentor.MentorHomeFragment"
+        android:label="fragment_mentor_home"
+        tools:layout="@layout/fragment_mentor_home" >
+        <action
+            android:id="@+id/action_mentorHomeFragment_to_mentorListadoMentoriadosFragment"
+            app:destination="@id/mentorListadoMentoriadosFragment" />
+        <action
+            android:id="@+id/action_mentorHomeFragment_to_mentorGestionHorarioFragment"
+            app:destination="@id/mentorGestionHorarioFragment" />
+        <action
+            android:id="@+id/action_mentorHomeFragment_to_mentorLlamadoAsistenciaFragment"
+            app:destination="@id/mentorLlamadoAsistenciaFragment" />
+        <action
+            android:id="@+id/action_mentorHomeFragment_to_mentorListadoSesionesFragment"
+            app:destination="@id/mentorListadoSesionesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mentorListadoMentoriadosFragment"
+        android:name="edu.cram.mentoriapp.Mentor.MentorListadoMentoriadosFragment"
+        android:label="fragment_listado_mentoriados"
+        tools:layout="@layout/fragment_listado_mentoriados" />
+    <fragment
+        android:id="@+id/mentorGestionHorarioFragment"
+        android:name="edu.cram.mentoriapp.Mentor.MentorGestionHorarioFragment"
+        android:label="fragment_gestion_horario"
+        tools:layout="@layout/fragment_gestion_horario" />
+    <fragment
+        android:id="@+id/mentorLlamadoAsistenciaFragment"
+        android:name="edu.cram.mentoriapp.Mentor.MentorLlamadoAsistenciaFragment"
+        android:label="fragment_llamado_asistencia"
+        tools:layout="@layout/fragment_llamado_asistencia" />
+    <fragment
+        android:id="@+id/mentorListadoSesionesFragment"
+        android:name="edu.cram.mentoriapp.Mentor.MentorListadoSesionesFragment"
+        android:label="fragment_listado_sesiones"
+        tools:layout="@layout/fragment_listado_sesiones" />
+</navigation>

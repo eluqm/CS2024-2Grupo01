@@ -102,6 +102,35 @@ fun Application.configureDatabases() {
             usuariosService.delete(id)
             call.respond(HttpStatusCode.OK)
         }
+
+        get("/usuarios/tipo/{tipo}") {
+            val tipo = call.parameters["tipo"] ?: throw IllegalArgumentException("Invalid user type")
+
+            // Llama al servicio para obtener los usuarios por tipo
+            val usuarios = usuariosService.readByType(tipo)
+
+            if (usuarios.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, usuarios) // Responde con la lista de usuarios
+            } else {
+                call.respond(HttpStatusCode.NotFound, "No users found for type: $tipo")
+            }
+        }
+
+        get("/usuarios/tipo/{tipo}/escuela/{escuelaId}") {
+            val tipo = call.parameters["tipo"] ?: throw IllegalArgumentException("Invalid user type")
+            val escuelaId = call.parameters["escuelaId"]?.toIntOrNull() ?: throw IllegalArgumentException("Invalid school ID")
+
+            // Llama al servicio para obtener los usuarios por tipo y escuela
+            val usuarios = usuariosService.findUsuariosByTypeAndSchool(tipo, escuelaId)
+
+            if (usuarios.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, usuarios) // Responde con la lista de usuarios
+            } else {
+                call.respond(HttpStatusCode.NotFound, "No users found for type: $tipo in school ID: $escuelaId")
+            }
+        }
+
+
     }
 
     val escuelasService = EscuelasService(dbConnection)
@@ -117,11 +146,7 @@ fun Application.configureDatabases() {
         get("/escuelas/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
             val escuela = escuelasService.read(id)
-            if (escuela != null) {
-                call.respond(HttpStatusCode.OK, escuela)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
-            }
+            call.respond(HttpStatusCode.OK, escuela)
         }
 
         // Update school
@@ -138,6 +163,18 @@ fun Application.configureDatabases() {
             escuelasService.delete(id)
             call.respond(HttpStatusCode.OK)
         }
+
+        // Read all schools
+        get("/escuelas") {
+            val escuelas = escuelasService.readAll() // Llama al método que obtiene todas las escuelas
+            if (escuelas.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, escuelas) // Responde con una lista de escuelas
+            } else {
+                call.respond(HttpStatusCode.NoContent) // Responde con No Content si no hay escuelas
+            }
+        }
+
+
     }
 
     val psicologiaService = PsicologiaService(dbConnection)

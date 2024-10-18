@@ -8,5 +8,5 @@ data class GrupoMentoria(
     val nombre: String,
     val horarioId: Int,
     val descripcion: String?,
-    val creadoEn: LocalDateTime
+    val creadoEn: String? = null
 )

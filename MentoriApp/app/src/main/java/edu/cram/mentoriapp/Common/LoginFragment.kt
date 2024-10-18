@@ -55,8 +55,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     if (esContrasenaPorDefecto) {
                         // Pedir al usuario que cambie la contraseña si es la por defecto
                         mostrarCambioContrasena(usuario)
+                        guardarUsuarioEnSesion(usuario)
                     } else {
                         // Continuar con la navegación según el tipo de usuario
+                        guardarUsuarioEnSesion(usuario)
                         redirigirSegunTipoUsuario(usuario, view)
                     }
                 } else {
@@ -118,4 +120,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             else -> Toast.makeText(context, "Tipo de usuario no reconocido", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun guardarUsuarioEnSesion(usuario: Usuario) {
+        val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("dniUsuario", usuario.dniUsuario)
+        editor.putString("nombreUsuario", usuario.nombreUsuario)
+        editor.putString("apellidoUsuario", usuario.apellidoUsuario)
+        editor.putString("tipoUsuario", usuario.tipoUsuario)
+        editor.putString("email", usuario.email)
+        editor.apply()
+    }
+
 }

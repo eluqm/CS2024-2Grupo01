@@ -26,10 +26,10 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
         val sharedPreferences = requireContext().getSharedPreferences("sessionPrefs", Context.MODE_PRIVATE)
         mentorId = sharedPreferences.getString("mentorId", "") ?: ""
 
-        initRecyclerView(view)
+        //initRecyclerView(view)
 
         // Primero, obtén el grupoId y luego carga los usuarios mentoriados
-        loadGrupoId()
+        //loadGrupoId()
     }
 
     private fun initRecyclerView(view: View) {

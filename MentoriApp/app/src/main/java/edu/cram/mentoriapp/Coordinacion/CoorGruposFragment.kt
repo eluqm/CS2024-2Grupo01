@@ -9,6 +9,10 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import edu.cram.mentoriapp.Adapter.GruposAdapter
 import edu.cram.mentoriapp.Model.GrupoMentoria
 import edu.cram.mentoriapp.Model.MiembroGrupo
 import edu.cram.mentoriapp.Model.Usuario
@@ -16,29 +20,142 @@ import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
 import edu.cram.mentoriapp.Service.RetrofitClient
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
 
+    private lateinit var gruposAdapter: GruposAdapter
     private lateinit var mentores: List<Usuario> // Lista de escuelas a mostrar
     private lateinit var apiRest: ApiRest
+    // Inicializa gruposMentoria como una lista vacía desde el principio
+    private var gruposMentoria: MutableList<GrupoMentoria> = mutableListOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         apiRest = RetrofitClient.makeRetrofitClient()
 
-
+        initRecycleView(view)
         view.findViewById<Button>(R.id.boton_crear_grupo).setOnClickListener {
             loadMentores()
         }
 
     }
 
+    private fun initRecycleView(view: View) {
+        //loadGruposManualmente()
+        loadGrupos()
+        val manager = LinearLayoutManager(context)
+        Toast.makeText(requireContext(), "Antes del recicler", Toast.LENGTH_SHORT).show()
+        gruposAdapter = GruposAdapter(gruposMentoria) { user -> onItemSelected(user) }
+        val decoration = DividerItemDecoration(context, manager.orientation)
+        val usersRecyler = view.findViewById<RecyclerView>(R.id.recycler_grupos)
+        usersRecyler.layoutManager = manager
+        usersRecyler.adapter = gruposAdapter
+        usersRecyler.addItemDecoration(decoration)
+        Toast.makeText(requireContext(), "Despues del recicler", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun loadGrupos() {
+        Log.d("loadGrupos", "loadGrupos() iniciado")
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // Obtener el valor de escuelaId desde SharedPreferences
+                val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+                val escuelaId = sharedPreferences.getInt("escuelaId", -1) // -1 por defecto si no se encuentra
+
+                // Verificar si el escuelaId es válido
+                if (escuelaId != -1) {
+                    // Llamar a la API para obtener los grupos por escuelaId
+                    val response = apiRest.getGrupoByEscuela(escuelaId)
+
+                    if (response.isSuccessful) {
+                        // Asignar los grupos obtenidos
+                        val grupos = response.body()
+
+                        // Comprobar si el cuerpo no es null y no está vacío
+                        if (grupos != null && grupos.isNotEmpty()) {
+                            gruposMentoria.clear() // Limpiar la lista antes de agregar nuevos elementos
+                            gruposMentoria.addAll(grupos) // Agregar los grupos obtenidos
+                            gruposAdapter.notifyDataSetChanged() // Notificar al adaptador sobre los cambios
+                            Toast.makeText(requireContext(), "Grupos obtenidos: ${gruposMentoria.toString()}", Toast.LENGTH_LONG).show()
+                            Log.d("loadGrupos", "Se obtuvieron grupos para la escuelaId $escuelaId: ${gruposMentoria.toString()}")
+
+                        } else {
+                            // Mensaje si no hay grupos disponibles
+                            Toast.makeText(requireContext(), "No hay grupos disponibles para esta escuela", Toast.LENGTH_SHORT).show()
+                            Log.d("loadGrupos", "No hay grupos disponibles para la escuelaId $escuelaId.")
+                        }
+                    } else {
+                        // Manejo de errores en caso de que la respuesta no sea exitosa
+                        val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
+                        Toast.makeText(requireContext(), "Error al cargar grupos: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                        Log.d("loadGrupos", "Error en la respuesta de la API: ${response.code()} - $errorBody")
+                    }
+                } else {
+                    // Si no se encuentra el escuelaId en SharedPreferences
+                    Toast.makeText(requireContext(), "Escuela ID no encontrado en SharedPreferences", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                // Manejo de excepciones (errores de red, etc.)
+                Toast.makeText(requireContext(), "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.d("loadGrupos", "Error de red: ${e.message}")
+            }
+        }
+    }
+
+
+    private fun loadGruposManualmente() {
+
+        // Datos ficticios para llenar el objeto gruposMentoria
+        val grupo1 = GrupoMentoria(
+            grupoId = 1,
+            jefeId = 101,
+            nombre = "Grupo de Matemáticas",
+            horarioId = 201,
+            descripcion = "Este grupo se enfoca en el estudio avanzado de matemáticas.",
+            creadoEn = "2024-01-15 08:30:00"
+        )
+
+        val grupo2 = GrupoMentoria(
+            grupoId = 2,
+            jefeId = 102,
+            nombre = "Grupo de Física",
+            horarioId = 202,
+            descripcion = "Grupo dedicado a la física teórica.",
+            creadoEn = "2024-02-10 10:00:00"
+        )
+
+        val grupo3 = GrupoMentoria(
+            grupoId = 3,
+            jefeId = 103,
+            nombre = "Grupo de Programación",
+            horarioId = 203,
+            descripcion = "Aprenderemos sobre programación en diferentes lenguajes.",
+            creadoEn = "2024-03-12 09:15:00"
+        )
+
+        // Agregar los grupos a la lista
+        gruposMentoria.addAll(listOf(grupo1, grupo2, grupo3))
+
+        // Verificar que se han agregado los grupos
+        Log.i("loadGruposManualmente", "Se agregaron ${gruposMentoria.size} grupos.")
+    }
+
+
+
+    private fun onItemSelected(user:GrupoMentoria) {
+        Toast.makeText(requireActivity(), user.nombre, Toast.LENGTH_SHORT).show()
+    }
+
     private fun loadMentores() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                // Llamar a la API para obtener mentores por tipo
-                val response = apiRest.getUsuariosByType("mentor")
+                // Obtener el valor de escuelaId desde SharedPreferences
+                val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+                val escuelaId = sharedPreferences.getInt("escuelaId", 1) // -1 es el valor por defecto si no existe
+
+                val response = apiRest.findUsuariosByTypeAndSchool("mentor", escuelaId)
 
                 if (response.isSuccessful) {
                     mentores = response.body() ?: emptyList()

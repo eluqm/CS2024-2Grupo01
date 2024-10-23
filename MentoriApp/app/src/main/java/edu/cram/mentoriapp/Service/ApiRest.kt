@@ -36,7 +36,7 @@ interface ApiRest {
 
     @DELETE("/cities/{id}") // Eliminar ciudad por ID
     suspend fun deleteCity(@Path("id") id: Int): retrofit2.Response<Unit>
-// Escuelas
+    // Escuelas
     @GET("/escuelas/{id}")
     suspend fun getEscuela(@Path("id") id: Int): retrofit2.Response<Escuela>
 
@@ -71,7 +71,6 @@ interface ApiRest {
     @GET("/usuarios/tipo/{tipo}")
     suspend fun getUsuariosByType(@Path("tipo") tipo: String): retrofit2.Response<List<Usuario>>
 
-
     @GET("/usuarios/tipo/{tipo}/escuela/{escuelaId}")
     suspend fun findUsuariosByTypeAndSchool(
         @Path("tipo") tipo: String,
@@ -90,7 +89,7 @@ interface ApiRest {
 
     @DELETE("/psicologia/{id}")
     suspend fun deletePsicologia(@Path("id") id: Int): retrofit2.Response<Unit>
-//Coordinadores
+    //Coordinadores
     @GET("/coordinadores/{id}")
     suspend fun getCoordinador(@Path("id") id: Int): retrofit2.Response<Coordinador>
 
@@ -102,9 +101,7 @@ interface ApiRest {
 
     @DELETE("/coordinadores/{id}")
     suspend fun deleteCoordinador(@Path("id") id: Int): retrofit2.Response<Unit>
-//Mentores
-// Definir el endpoint que obtiene los usuarios de tipo mentoriado por grupo y mentor
-
+    //Mentores
     @GET("/mentores/{id}")
     suspend fun getMentor(@Path("id") id: Int): retrofit2.Response<Mentor>
 
@@ -116,7 +113,7 @@ interface ApiRest {
 
     @DELETE("/mentores/{id}")
     suspend fun deleteMentor(@Path("id") id: Int): retrofit2.Response<Unit>
-//Mentoriados
+    //Mentoriados
     @GET("/mentoriados/{id}")
     suspend fun getMentoriado(@Path("id") id: Int): retrofit2.Response<Mentoriado>
 
@@ -128,7 +125,7 @@ interface ApiRest {
 
     @DELETE("/mentoriados/{id}")
     suspend fun deleteMentoriado(@Path("id") id: Int): retrofit2.Response<Unit>
-//horarios
+    //horarios
     @GET("/horarios/{id}")
     suspend fun getHorario(@Path("id") id: Int): retrofit2.Response<Horario>
 
@@ -162,7 +159,13 @@ interface ApiRest {
 
     @DELETE("/grupos/{id}")
     suspend fun deleteGrupo(@Path("id") id: Int): retrofit2.Response<Unit>
-//Mienbros_Grupo
+
+    @GET("/grupos/escuela/{escuelaId}")
+    suspend fun getGrupoByEscuela(@Path("escuelaId") escuelaId: Int): retrofit2.Response<List<GrupoMentoria>>
+
+
+
+    //Mienbros_Grupo
     @GET("/miembros_grupo/{id}")
     suspend fun getMiembroGrupo(@Path("id") id: Int): retrofit2.Response<MiembroGrupo>
 
@@ -174,7 +177,7 @@ interface ApiRest {
 
     @DELETE("/miembros_grupo/{id}")
     suspend fun deleteMiembroGrupo(@Path("id") id: Int): retrofit2.Response<Unit>
-//Sesiones_Mentoria
+    //Sesiones_Mentoria
     @GET("/sesiones_mentoria/{id}")
     suspend fun getSesionMentoria(@Path("id") id: Int): retrofit2.Response<SesionMentoria>
 
@@ -186,7 +189,7 @@ interface ApiRest {
 
     @DELETE("/sesiones_mentoria/{id}")
     suspend fun deleteSesionMentoria(@Path("id") id: Int): retrofit2.Response<Unit>
-//Asistemcias_Sesiones
+    //Asistemcias_Sesiones
     @GET("/asistencias_sesiones/{id}")
     suspend fun getAsistenciaSesion(@Path("id") id: Int): retrofit2.Response<AsistenciaSesion>
 
@@ -198,7 +201,7 @@ interface ApiRest {
 
     @DELETE("/asistencias_sesiones/{id}")
     suspend fun deleteAsistenciaSesion(@Path("id") id: Int): retrofit2.Response<Unit>
-//Solicitud_Mentoria
+    //Solicitud_Mentoria
     @GET("/solicitudes_mentoria/{id}")
     suspend fun getSolicitudMentoria(@Path("id") id: Int): retrofit2.Response<SolicitudMentoria>
 
@@ -210,7 +213,7 @@ interface ApiRest {
 
     @DELETE("/solicitudes_mentoria/{id}")
     suspend fun deleteSolicitudMentoria(@Path("id") id: Int): retrofit2.Response<Unit>
-//Evaluacion_Comentario
+    //Evaluacion_Comentario
     @GET("/evaluaciones_comentarios/{id}")
     suspend fun getEvaluacionComentario(@Path("id") id: Int): retrofit2.Response<EvaluacionComentario>
 
@@ -222,7 +225,7 @@ interface ApiRest {
 
     @DELETE("/evaluaciones_comentarios/{id}")
     suspend fun deleteEvaluacionComentario(@Path("id") id: Int): retrofit2.Response<Unit>
-//Mensajes_Grupo
+    //Mensajes_Grupo
     @GET("/mensajes_grupo/{id}")
     suspend fun getMensajeGrupo(@Path("id") id: Int): retrofit2.Response<MensajeGrupo>
 
@@ -234,7 +237,7 @@ interface ApiRest {
 
     @DELETE("/mensajes_grupo/{id}")
     suspend fun deleteMensajeGrupo(@Path("id") id: Int): retrofit2.Response<Unit>
-//Eventos
+    //Eventos
     @GET("/eventos/{id}")
     suspend fun getEvento(@Path("id") id: Int): retrofit2.Response<Evento>
 
@@ -246,7 +249,7 @@ interface ApiRest {
 
     @DELETE("/eventos/{id}")
     suspend fun deleteEvento(@Path("id") id: Int): retrofit2.Response<Unit>
-//Notificaciones
+    //Notificaciones
     @GET("/notificaciones/{id}")
     suspend fun getNotificacion(@Path("id") id: Int): retrofit2.Response<Notificacion>
 

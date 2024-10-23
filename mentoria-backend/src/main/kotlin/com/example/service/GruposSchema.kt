@@ -8,6 +8,7 @@ import java.sql.Statement
 
 @Serializable
 data class Grupo(
+    val grupoId: Int? = null,
     val jefeId: Int,
     val nombre: String,
     val horarioId: Int,
@@ -134,4 +135,40 @@ class GruposService(private val connection: Connection) {
         }
         return@withContext usuarios
     }
+
+    suspend fun readAllByEscuelaId(escuelaId: Int): List<Grupo> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(
+            """
+        SELECT *
+        FROM grupos g
+        JOIN usuarios u ON g.jefe_id = u.user_id
+        WHERE u.escuela_id = ?
+        """
+        )
+        statement.setInt(1, escuelaId)
+        val resultSet = statement.executeQuery()
+
+        val grupos = mutableListOf<Grupo>()
+
+        while (resultSet.next()) {
+            grupos.add(
+                Grupo(
+                    grupoId = resultSet.getInt("grupo_id"),
+                    jefeId = resultSet.getInt("jefe_id"),
+                    nombre = resultSet.getString("nombre"),
+                    horarioId = resultSet.getInt("horario_id"),
+                    descripcion = resultSet.getString("descripcion"),
+                    creadoEn = resultSet.getString("creado_en")
+                )
+            )
+        }
+
+        if (grupos.isEmpty()) {
+            throw Exception("No se encontraron grupos para el escuela_id proporcionado.")
+        }
+
+        return@withContext grupos
+    }
+
+
 }

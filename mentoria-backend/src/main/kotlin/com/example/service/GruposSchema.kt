@@ -19,7 +19,7 @@ data class Grupo(
 @Serializable
 data class Usuario(
     val id: Int,
-    val nombreUsuario: String,
+    val nombreCompletoUsuario: String,
     val email: String,
     val celularUsuario: String,
     val dniUsuario: String
@@ -32,12 +32,12 @@ class GruposService(private val connection: Connection) {
         private const val UPDATE_GRUPO = "UPDATE grupos SET jefe_id = ?, nombre = ?, horario_id = ?, descripcion = ? WHERE grupo_id = ?"
         private const val DELETE_GRUPO = "DELETE FROM grupos WHERE grupo_id = ?"
 
-        // Nuevas consultas
+        // Nuevas consultas, en teoria solo devuelve uno
         private const val SELECT_GRUPOS_BY_MENTOR = "SELECT * FROM grupos WHERE jefe_id = ?"
         private const val SELECT_MENTORIADOS_BY_GRUPO = """
-            SELECT u.usuario_id, u.nombre_usuario, u.email, u.celular_usuario, u.dni_usuario
+            SELECT u.user_id, concat(u.nombre_usuario, ' ',u.apellido_usuario) as nombre_completo, u.email, u.celular_usuario, u.dni_usuario
             FROM usuarios u
-            JOIN miembros_grupo mg ON u.usuario_id = mg.usuario_id
+            JOIN miembros_grupo mg ON u.user_id = mg.user_id
             WHERE mg.grupo_id = ? AND u.tipo_usuario = 'mentoriado'
         """
     }
@@ -96,45 +96,43 @@ class GruposService(private val connection: Connection) {
         statement.executeUpdate()
     }
 
-    // Obtener los grupos de un mentor
-    suspend fun getGruposPorMentor(mentorId: Int): List<Grupo> = withContext(Dispatchers.IO) {
+
+    // Obtener los usuarios mentoriados de un grupo específico
+    // Obtener los usuarios mentoriados de un grupo específico
+    suspend fun getUsuariosMentoriadosPorMentor(mentorId: Int): List<Usuario> = withContext(Dispatchers.IO) {
+
+        // Primera consulta: Obtener grupo asociado al mentor
         val statement = connection.prepareStatement(SELECT_GRUPOS_BY_MENTOR)
         statement.setInt(1, mentorId)
         val resultSet = statement.executeQuery()
 
-        val grupos = mutableListOf<Grupo>()
-        while (resultSet.next()) {
-            grupos.add(Grupo(
-                jefeId = resultSet.getInt("jefe_id"),
-                nombre = resultSet.getString("nombre"),
-                horarioId = resultSet.getInt("horario_id"),
-                descripcion = resultSet.getString("descripcion"),
-                creadoEn = resultSet.getString("creado_en")
-            ))
+        // Comprobar si hay resultados y obtener el grupo_id
+        if (!resultSet.next()) {
+            throw IllegalArgumentException("No se encontró un grupo para el mentor con ID $mentorId")
         }
-        return@withContext grupos
-    }
+        val grupoId = resultSet.getInt("grupo_id")
 
-    // Obtener los usuarios mentoriados de un grupo específico
-    suspend fun getUsuariosMentoriadosPorGrupo(grupoId: Int): List<Usuario> = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(SELECT_MENTORIADOS_BY_GRUPO)
-        statement.setInt(1, grupoId)
-        val resultSet = statement.executeQuery()
+        // Segunda consulta: Obtener usuarios mentoriados del grupo
+        val statement2 = connection.prepareStatement(SELECT_MENTORIADOS_BY_GRUPO)
+        statement2.setInt(1, grupoId)
+        val resultSet2 = statement2.executeQuery()
 
+        // Construcción de la lista de usuarios
         val usuarios = mutableListOf<Usuario>()
-        while (resultSet.next()) {
+        while (resultSet2.next()) {
             usuarios.add(
                 Usuario(
-                    id = resultSet.getInt("usuario_id"),
-                    nombreUsuario = resultSet.getString("nombre_usuario"),
-                    email = resultSet.getString("email"),
-                    celularUsuario = resultSet.getString("celular_usuario"),
-                    dniUsuario = resultSet.getString("dni_usuario")
+                    id = resultSet2.getInt("user_id"), // corregido: debe coincidir con el alias de la consulta
+                    nombreCompletoUsuario = resultSet2.getString("nombre_completo"),
+                    email = resultSet2.getString("email"),
+                    celularUsuario = resultSet2.getString("celular_usuario"),
+                    dniUsuario = resultSet2.getString("dni_usuario")
                 )
             )
         }
         return@withContext usuarios
     }
+
 
     suspend fun readAllByEscuelaId(escuelaId: Int): List<Grupo> = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(

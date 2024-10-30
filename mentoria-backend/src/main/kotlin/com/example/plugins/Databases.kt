@@ -14,12 +14,6 @@ import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
 
 fun Application.configureDatabases() {
-    val database = Database.connect(
-        url = "jdbc:postgresql://localhost:8081/test_mentoria",
-        user = "user_ment",
-        driver = "org.postgresql.Driver",
-        password = "12345678",
-    )
     val dbConnection: Connection = connectToPostgres(embedded = true)
     val cityService = CityService(dbConnection)
     
@@ -454,17 +448,10 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.OK)
         }
 
-        // Obtener grupos por mentor
-        get("/mentores/{mentorId}/grupos") {
-            val mentorId = call.parameters["mentorId"]?.toInt() ?: throw IllegalArgumentException("Invalid mentor ID")
-            val grupos = gruposService.getGruposPorMentor(mentorId)
-            call.respond(HttpStatusCode.OK, grupos)
-        }
-
-        // Obtener usuarios mentoriados por grupo
-        get("/grupos/{grupoId}/mentoriados") {
-            val grupoId = call.parameters["grupoId"]?.toInt() ?: throw IllegalArgumentException("Invalid grupo ID")
-            val mentoriados = gruposService.getUsuariosMentoriadosPorGrupo(grupoId)
+        // Obtener usuarios mentoriados por id Mentor
+        get("/grupo_mentoriados/{mentorId}") {
+            val mentorId = call.parameters["mentorId"]?.toInt() ?: throw IllegalArgumentException("Invalid grupo ID")
+            val mentoriados = gruposService.getUsuariosMentoriadosPorMentor(mentorId)
             call.respond(HttpStatusCode.OK, mentoriados)
         }
 
@@ -723,10 +710,11 @@ fun Application.configureDatabases() {
  * @return [Connection] that represent connection to the database. Please, don't forget to close this connection when
  * your application shuts down by calling [Connection.close]
  * */
+
 fun Application.connectToPostgres(embedded: Boolean): Connection {
     Class.forName("org.postgresql.Driver")
     if (embedded) {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:8081/test_mentoria", "user_ment", "12345678")
+        return DriverManager.getConnection("jdbc:postgresql://serverikus.postgres.database.azure.com:5432/mentoriapp", "foxi", "ola.cmma.bd1")
     } else {
         val url = environment.config.property("postgres.url").getString()
         val user = environment.config.property("postgres.user").getString()

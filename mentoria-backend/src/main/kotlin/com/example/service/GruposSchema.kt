@@ -96,7 +96,6 @@ class GruposService(private val connection: Connection) {
         statement.executeUpdate()
     }
 
-
     // Obtener los usuarios mentoriados de un grupo específico
     // Obtener los usuarios mentoriados de un grupo específico
     suspend fun getUsuariosMentoriadosPorMentor(mentorId: Int): List<Usuario> = withContext(Dispatchers.IO) {

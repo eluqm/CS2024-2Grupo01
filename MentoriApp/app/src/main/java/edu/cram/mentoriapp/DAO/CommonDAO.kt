@@ -12,6 +12,20 @@ class CommonDAO(val context: Context) {
 
     private var apiRest: ApiRest = RetrofitClient.makeRetrofitClient()
 
+
+    suspend fun createUserIfNotExists(user: Usuario) {
+        // Verificar si el usuario ya existe
+        val exists = userExists(user.dniUsuario)
+
+        if (exists) {
+            Toast.makeText(context, "El usuario con el DNI: ${user.dniUsuario} ya existe.", Toast.LENGTH_SHORT).show()
+        } else {
+            // Si el usuario no existe, proceder a crearlo
+            createUser(user)
+        }
+    }
+
+
     suspend fun createUser(user: Usuario) {
         try {
             val response = apiRest.createUsuario(user)
@@ -27,6 +41,25 @@ class CommonDAO(val context: Context) {
             Toast.makeText(context, "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
+
+    suspend fun userExists(dni: String): Boolean {
+        return try {
+            val response = apiRest.userExists(dni)
+            if (response.isSuccessful) {
+                // Acceder directamente al campo 'exists' en la respuesta
+                response.body()?.exists ?: false
+            } else {
+                // Manejar el error de respuesta de la API
+                val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
+                Toast.makeText(context, "Error al verificar usuario: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                false
+            }
+        } catch (e: Exception) {
+            Toast.makeText(context, "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
+            false
+        }
+    }
+
 
     suspend fun createEvent(event: Evento) {
         try {

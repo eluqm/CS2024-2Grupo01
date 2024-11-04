@@ -15,3 +15,6 @@ data class Usuario(
     val tipoUsuario: String = "mentoriado",
     val creadoEn: String? = null
 ): Serializable
+
+
+data class UserExistResponse(val exists: Boolean): Serializable

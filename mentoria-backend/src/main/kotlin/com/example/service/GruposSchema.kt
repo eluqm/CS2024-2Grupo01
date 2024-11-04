@@ -17,7 +17,7 @@ data class Grupo(
 )
 
 @Serializable
-data class Usuario(
+data class UsuarioLista(
     val id: Int,
     val nombreCompletoUsuario: String,
     val email: String,
@@ -98,7 +98,7 @@ class GruposService(private val connection: Connection) {
 
     // Obtener los usuarios mentoriados de un grupo específico
     // Obtener los usuarios mentoriados de un grupo específico
-    suspend fun getUsuariosMentoriadosPorMentor(mentorId: Int): List<Usuario> = withContext(Dispatchers.IO) {
+    suspend fun getUsuariosMentoriadosPorMentor(mentorId: Int): List<UsuarioLista> = withContext(Dispatchers.IO) {
 
         // Primera consulta: Obtener grupo asociado al mentor
         val statement = connection.prepareStatement(SELECT_GRUPOS_BY_MENTOR)
@@ -117,10 +117,10 @@ class GruposService(private val connection: Connection) {
         val resultSet2 = statement2.executeQuery()
 
         // Construcción de la lista de usuarios
-        val usuarios = mutableListOf<Usuario>()
+        val usuarios = mutableListOf<UsuarioLista>()
         while (resultSet2.next()) {
             usuarios.add(
-                Usuario(
+                UsuarioLista(
                     id = resultSet2.getInt("user_id"), // corregido: debe coincidir con el alias de la consulta
                     nombreCompletoUsuario = resultSet2.getString("nombre_completo"),
                     email = resultSet2.getString("email"),

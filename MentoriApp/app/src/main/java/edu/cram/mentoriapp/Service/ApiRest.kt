@@ -18,6 +18,7 @@ import edu.cram.mentoriapp.Model.SesionMentoria
 import edu.cram.mentoriapp.Model.SolicitudMentoria
 import edu.cram.mentoriapp.Model.UserExistResponse
 import edu.cram.mentoriapp.Model.Usuario
+import edu.cram.mentoriapp.Model.UsuarioLista
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -143,7 +144,7 @@ interface ApiRest {
     suspend fun deleteHorario(@Path("id") id: Int): retrofit2.Response<Unit>
 //grupos
     @GET("/grupo_mentoriados/{mentorId}")
-    suspend fun getUsuariosMentoriadosPorMentor(@Path("mentorId") mentorId: String): List<Usuario>
+    suspend fun getUsuariosMentoriadosPorMentor(@Path("mentorId") mentorId: String): List<UsuarioLista>
 
 
     @GET("/grupos/{id}")

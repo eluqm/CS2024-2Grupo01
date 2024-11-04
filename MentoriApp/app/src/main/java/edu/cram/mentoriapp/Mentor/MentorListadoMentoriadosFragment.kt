@@ -7,7 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import edu.cram.mentoriapp.Model.Usuario
+import edu.cram.mentoriapp.Model.UsuarioLista
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.RetrofitClient
 import kotlinx.coroutines.launch
@@ -21,8 +21,8 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
         super.onViewCreated(view, savedInstanceState)
 
         // Obtener el mentorId desde las SharedPreferences (sesión)
-        val sharedPreferences = requireContext().getSharedPreferences("sessionPrefs", Context.MODE_PRIVATE)
-        mentorId = sharedPreferences.getString("mentorId", "") ?: ""
+        val sharedPreferences = requireContext().getSharedPreferences("usuarioSesion", Context.MODE_PRIVATE)
+        mentorId = sharedPreferences.getString("userId", "") ?: ""
 
         initRecyclerView(view)
         loadUsuariosMentoriados()  // Carga los mentoriados directamente con mentorId
@@ -50,26 +50,27 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
                 val apiService = RetrofitClient.makeRetrofitClient()
 
                 // Llamada a la API para obtener los usuarios mentoriados usando solo el mentorId
-                val response: List<Usuario> = apiService.getUsuariosMentoriadosPorMentor(mentorId)
+                val response: List<UsuarioLista> = apiService.getUsuariosMentoriadosPorMentor(mentorId)
+                Toast.makeText(context, "Usuarios mentoriados cargados exitosamente ${mentorId}", Toast.LENGTH_SHORT).show()
 
                 // Actualizar el adapter con la lista de usuarios
                 mentoriadoAdapter.updateUsuarios(response.toMutableList())
             } catch (e: Exception) {
                 // Mostrar mensaje de error si la API falla
-                Toast.makeText(context, "Error al cargar usuarios: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Error al cargar usuarios: ${e.message}   ${mentorId}", Toast.LENGTH_LONG).show()
             }
         }
     }
 
 
 
-    private fun onItemSelected(usuario: Usuario) {
+    private fun onItemSelected(usuario: UsuarioLista) {
         // Aquí puedes manejar el evento de selección, como navegar a los detalles del usuario
-        Toast.makeText(context, "Seleccionaste: ${usuario.nombreUsuario}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Seleccionaste: ${usuario.nombreCompletoUsuario}", Toast.LENGTH_SHORT).show()
     }
 
 
-    private fun onDeleteUsuario(usuario: Usuario) {
+    private fun onDeleteUsuario(usuario: UsuarioLista) {
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Confirmación")
             .setMessage("¿Está seguro de que desea eliminar a este mentoriado?")
@@ -78,11 +79,11 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
             .show()
     }
 
-    private fun deleteUsuarioFromDatabase(usuario: Usuario) {
+    private fun deleteUsuarioFromDatabase(usuario: UsuarioLista) {
         lifecycleScope.launch {
             try {
                 val apiService = RetrofitClient.makeRetrofitClient()
-                val response = usuario.userId?.let { apiService.deleteMiembroGrupo(it) }
+                val response = usuario.id.let { apiService.deleteMiembroGrupo(it) }
 
                 if (response != null) {
                     if (response.isSuccessful) {

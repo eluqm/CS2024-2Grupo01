@@ -2,7 +2,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import edu.cram.mentoriapp.Model.Usuario
+import edu.cram.mentoriapp.Model.UsuarioLista
 import edu.cram.mentoriapp.R
 
 class MentoriadoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -14,12 +14,12 @@ class MentoriadoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val imgUsuario = itemView.findViewById<ImageButton>(R.id.img_usuario)
 
     fun render(
-        item: Usuario,
-        onClickListener: (Usuario) -> Unit,
-        onDeleteClickListener: (Usuario) -> Unit
+        item: UsuarioLista,
+        onClickListener: (UsuarioLista) -> Unit,
+        onDeleteClickListener: (UsuarioLista) -> Unit
     ) {
         viewCorreo.text = item.email
-        viewNombre.text = item.nombreUsuario
+        viewNombre.text = item.nombreCompletoUsuario
         viewNumero.text = item.celularUsuario
         viewDni.text = item.dniUsuario
 

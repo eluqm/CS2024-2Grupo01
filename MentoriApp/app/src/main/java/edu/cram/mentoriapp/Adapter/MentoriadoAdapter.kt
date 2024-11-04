@@ -4,8 +4,11 @@ import androidx.recyclerview.widget.RecyclerView
 import edu.cram.mentoriapp.Model.Usuario
 import edu.cram.mentoriapp.R
 
-class MentoriadoAdapter(private val items: MutableList<Usuario>, val onItemSelected: (Usuario) -> Unit) :
-    RecyclerView.Adapter<MentoriadoViewHolder>() {
+class MentoriadoAdapter(
+    private val items: MutableList<Usuario>,
+    val onItemSelected: (Usuario) -> Unit,
+    val onDeleteUsuario: (Usuario) -> Unit
+) : RecyclerView.Adapter<MentoriadoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentoriadoViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_mentoriado, parent, false)
@@ -16,12 +19,17 @@ class MentoriadoAdapter(private val items: MutableList<Usuario>, val onItemSelec
 
     override fun onBindViewHolder(holder: MentoriadoViewHolder, position: Int) {
         val item = items[position]
-        holder.render(item, onItemSelected)
+        holder.render(item, onItemSelected, onDeleteUsuario)
     }
 
     fun updateUsuarios(newUsuarios: MutableList<Usuario>) {
         items.clear()
         items.addAll(newUsuarios)
+        notifyDataSetChanged()
+    }
+
+    fun removeUsuario(usuario: Usuario) {
+        items.remove(usuario)
         notifyDataSetChanged()
     }
 }

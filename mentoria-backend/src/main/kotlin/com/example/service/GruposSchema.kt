@@ -167,6 +167,4 @@ class GruposService(private val connection: Connection) {
 
         return@withContext grupos
     }
-
-
 }

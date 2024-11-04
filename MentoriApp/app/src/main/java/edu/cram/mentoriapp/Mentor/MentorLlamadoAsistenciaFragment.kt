@@ -11,4 +11,5 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     }
+
 }

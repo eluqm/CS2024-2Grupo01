@@ -7,7 +7,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import edu.cram.mentoriapp.Model.GrupoMentoria
 import edu.cram.mentoriapp.Model.Usuario
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.RetrofitClient
@@ -17,7 +16,6 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
 
     private lateinit var mentoriadoAdapter: MentoriadoAdapter
     private lateinit var mentorId: String // ID del mentor logueado
-    private lateinit var grupoId: String  // ID del grupo asociado al mentor
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -26,15 +24,17 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
         val sharedPreferences = requireContext().getSharedPreferences("sessionPrefs", Context.MODE_PRIVATE)
         mentorId = sharedPreferences.getString("mentorId", "") ?: ""
 
-        //initRecyclerView(view)
-
-        // Primero, obtén el grupoId y luego carga los usuarios mentoriados
-        //loadGrupoId()
+        initRecyclerView(view)
+        loadUsuariosMentoriados()  // Carga los mentoriados directamente con mentorId
     }
 
     private fun initRecyclerView(view: View) {
         val manager = LinearLayoutManager(context)
-        mentoriadoAdapter = MentoriadoAdapter(mutableListOf()) { usuario -> onItemSelected(usuario) }
+        mentoriadoAdapter = MentoriadoAdapter(
+            mutableListOf(),
+            onItemSelected = { usuario -> onItemSelected(usuario) },
+            onDeleteUsuario = { usuario -> onDeleteUsuario(usuario) }
+        )
         val decoration = DividerItemDecoration(context, manager.orientation)
         val mentoriadoRecyclerView = view.findViewById<RecyclerView>(R.id.mentoriadoRecyclerView)
         mentoriadoRecyclerView.layoutManager = manager
@@ -42,38 +42,15 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
         mentoriadoRecyclerView.addItemDecoration(decoration)
     }
 
-    private fun loadGrupoId() {
-        lifecycleScope.launch {
-            try {
-                // Obtener la instancia del servicio API
-                val apiService = RetrofitClient.makeRetrofitClient()
-
-                // Llamada a la API para obtener los grupos del mentor
-                val grupos: List<GrupoMentoria> = apiService.getGruposPorMentor(mentorId)
-
-                // Asumimos que quieres el primer grupo (ajusta según tu lógica)
-                if (grupos.isNotEmpty()) {
-                    grupoId = grupos[0].toString()  // O el campo correcto según tu data class
-                    loadUsuariosMentoriados()  // Una vez que tienes el grupoId, carga los mentoriados
-                } else {
-                    Toast.makeText(context, "No se encontraron grupos para este mentor", Toast.LENGTH_LONG).show()
-                }
-            } catch (e: Exception) {
-                // Manejar el error
-                Toast.makeText(context, "Error al cargar grupos: ${e.message}", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
     private fun loadUsuariosMentoriados() {
-        // Hacer la llamada a la API en un hilo separado usando coroutines
+        // Llamada a la API en un hilo separado usando coroutines
         lifecycleScope.launch {
             try {
                 // Obtener la instancia del servicio API
                 val apiService = RetrofitClient.makeRetrofitClient()
 
-                // Llamada a la API para obtener los usuarios de tipo mentoriado del grupo del mentor logueado
-                val response: List<Usuario> = apiService.getUsuariosMentoriadosPorGrupo(mentorId, grupoId)
+                // Llamada a la API para obtener los usuarios mentoriados usando solo el mentorId
+                val response: List<Usuario> = apiService.getUsuariosMentoriadosPorMentor(mentorId)
 
                 // Actualizar el adapter con la lista de usuarios
                 mentoriadoAdapter.updateUsuarios(response.toMutableList())
@@ -84,8 +61,39 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
         }
     }
 
+
+
     private fun onItemSelected(usuario: Usuario) {
         // Aquí puedes manejar el evento de selección, como navegar a los detalles del usuario
         Toast.makeText(context, "Seleccionaste: ${usuario.nombreUsuario}", Toast.LENGTH_SHORT).show()
+    }
+
+
+    private fun onDeleteUsuario(usuario: Usuario) {
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Confirmación")
+            .setMessage("¿Está seguro de que desea eliminar a este mentoriado?")
+            .setPositiveButton("Sí") { _, _ -> deleteUsuarioFromDatabase(usuario) }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun deleteUsuarioFromDatabase(usuario: Usuario) {
+        lifecycleScope.launch {
+            try {
+                val apiService = RetrofitClient.makeRetrofitClient()
+                val response = usuario.userId?.let { apiService.deleteMiembroGrupo(it) }
+
+                if (response != null) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "Mentoriado eliminado exitosamente", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Error al eliminar mentoriado: ${response.message()}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "Error al eliminar mentoriado: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }

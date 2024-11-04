@@ -138,14 +138,8 @@ interface ApiRest {
     @DELETE("/horarios/{id}")
     suspend fun deleteHorario(@Path("id") id: Int): retrofit2.Response<Unit>
 //grupos
-    @GET("/grupos/{grupoId}/mentoriados")
-    suspend fun getUsuariosMentoriadosPorGrupo(
-        @Path("mentorId") mentorId: String,
-        @Path("grupoId") grupoId: String
-    ): List<Usuario>
-
-        @GET("/mentores/{mentorId}/grupos")
-    suspend fun getGruposPorMentor(@Path("mentorId") mentorId: String): List<GrupoMentoria>
+    @GET("/grupo_mentoriados/{mentorId}")
+    suspend fun getUsuariosMentoriadosPorMentor(@Path("mentorId") mentorId: String): List<Usuario>
 
 
     @GET("/grupos/{id}")

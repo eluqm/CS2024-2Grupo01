@@ -7,7 +7,7 @@ import java.sql.Connection
 import java.sql.Statement
 @Serializable
 data class Usuarios(
-    val userId: Int?,
+    val userId: Int? = null,
     val dniUsuario: String,
     val nombreUsuario: String,
     val apellidoUsuario: String,
@@ -17,8 +17,12 @@ data class Usuarios(
     val semestre: String?,
     val email: String,
     val tipoUsuario: String,
-    val creadoEn: String?
+    val creadoEn: String? = null
 )
+
+@Serializable
+data class UserExistResponse(val exists: Boolean)
+
 
 class UsuariosService(private val connection: Connection) {
     companion object {
@@ -75,6 +79,15 @@ class UsuariosService(private val connection: Connection) {
         } else {
             throw Exception("User not found")
         }
+    }
+
+    suspend fun userExistsByDni(dniUsuario: String): Boolean = withContext(Dispatchers.IO) {
+        val query = "SELECT COUNT(*) FROM usuarios WHERE dni_usuario = ?"
+        val statement = connection.prepareStatement(query)
+        statement.setString(1, dniUsuario)
+        val resultSet = statement.executeQuery()
+        resultSet.next()
+        return@withContext resultSet.getInt(1) > 0
     }
 
 

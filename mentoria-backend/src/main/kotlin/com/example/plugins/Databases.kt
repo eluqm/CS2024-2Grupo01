@@ -124,6 +124,17 @@ fun Application.configureDatabases() {
             }
         }
 
+        get("/usuarios/exist/{dni}") {
+            val dniUsuario = call.parameters["dni"] ?: throw IllegalArgumentException("DNI missing")
+            val exists = usuariosService.userExistsByDni(dniUsuario)
+            val response = UserExistResponse(exists)
+            // Siempre responde con HttpStatusCode.OK
+            call.respond(HttpStatusCode.OK, response)
+        }
+
+
+
+
 
     }
 
@@ -468,10 +479,7 @@ fun Application.configureDatabases() {
                 call.respond(HttpStatusCode.InternalServerError, e.localizedMessage)
             }
         }
-
-
     }
-
 
     val asistenciasSesionesService = AsistenciasSesionesService(dbConnection)
     routing {

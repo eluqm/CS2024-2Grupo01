@@ -13,6 +13,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import edu.cram.mentoriapp.DAO.CommonDAO
 import edu.cram.mentoriapp.DAO.PsicologiaDAO
 import edu.cram.mentoriapp.Model.Cities
 import edu.cram.mentoriapp.Model.Usuario
@@ -23,14 +24,12 @@ import kotlinx.coroutines.launch
 
 class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
 
-    private lateinit var apiRest: ApiRest
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val textView = view.findViewById<TextView>(R.id.tv_title)
         val cerrar_sesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
-        val psicoDao = PsicologiaDAO(requireContext())
+        val psicoDao = CommonDAO(requireContext())
 
 
         cerrar_sesion.setOnClickListener(){
@@ -48,9 +47,8 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
             //psicoDao.createUser(newCity)
 
             val user = Usuario(
-                userId = 123,
-                dniUsuario = "12345678",
-                nombreUsuario = "Juan",
+                dniUsuario = "12121217999",
+                nombreUsuario = "Juanita",
                 apellidoUsuario = "Pérez",
                 celularUsuario = "987654321",
                 passwordHash = "12345",  // Aquí puedes usar el hash real si lo tienes.
@@ -58,9 +56,11 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
                 semestre = "III",
                 email = "juan.perez@example.com",
                 tipoUsuario = "mentor",
-                creadoEn = "23123"// Puedes cambiar esto si el tipo de usuario es diferente.
-                )
-            psicoDao.createUser(user);
+                creadoEn = "23123" // Puedes cambiar esto si el tipo de usuario es diferente.
+            )
+
+            // Llama a la función que verifica la existencia del usuario y crea el nuevo usuario si no existe
+            psicoDao.createUserIfNotExists(user)
         }
 
     }

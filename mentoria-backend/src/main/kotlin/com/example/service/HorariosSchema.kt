@@ -8,6 +8,7 @@ import java.sql.Statement
 import java.sql.Time
 @Serializable
 data class Horario(
+    val horarioId: Int? = null,
     val lugar: String?,
     val dia: String,
     val horaInicio: String,

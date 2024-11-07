@@ -26,14 +26,14 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/txt_name_user"
+                    android:id="@+id/temaSesion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nombre del Usuario"
                     android:textSize="18sp" />
 
                 <TextView
-                    android:id="@+id/correo"
+                    android:id="@+id/fechaRegistrada"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="correo"
@@ -49,14 +49,14 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/numero"
+                    android:id="@+id/lugar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="telefono"
                     android:textSize="18sp" />
 
                 <TextView
-                    android:id="@+id/dni"
+                    android:id="@+id/numeroParticipantes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="dni"

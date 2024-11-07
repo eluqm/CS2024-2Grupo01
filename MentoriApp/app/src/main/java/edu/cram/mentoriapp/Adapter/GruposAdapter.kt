@@ -6,7 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import edu.cram.mentoriapp.Model.GrupoMentoria
 import edu.cram.mentoriapp.R
 
-class GruposAdapter(val items: MutableList<GrupoMentoria>, val onItemSelected: (GrupoMentoria) -> Unit): RecyclerView.Adapter<GruposViewHolder>() {
+class GruposAdapter(val items: MutableList<GrupoMentoria>,
+                    val onItemSelected: (GrupoMentoria) -> Unit
+): RecyclerView.Adapter<GruposViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GruposViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_grupo,parent, false)
         return GruposViewHolder(itemView)

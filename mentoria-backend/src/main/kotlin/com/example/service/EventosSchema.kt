@@ -19,10 +19,11 @@ import java.util.Base64
 
 @Serializable
 data class Evento(
+    val eventoId: Int? = null,
     val nombre: String,
     val horarioId: Int,
     val descripcion: String?,
-    val poster: String,
+    val poster: String?,
     val url: String?,
     val fecha_evento: String
 )
@@ -72,6 +73,30 @@ class EventosService(private val connection: Connection) {
             throw Exception("Evento not found")
         }
     }
+
+    suspend fun readAll(): List<Evento> = withContext(Dispatchers.IO) {
+        val eventos = mutableListOf<Evento>()
+
+        // Preparamos la consulta para obtener todos los eventos
+        val statement = connection.prepareStatement("SELECT * FROM eventos")
+        val resultSet = statement.executeQuery()
+
+        // Iteramos sobre el ResultSet para agregar los eventos a la lista
+        while (resultSet.next()) {
+            val evento = Evento(
+                nombre = resultSet.getString("nombre"),
+                horarioId = resultSet.getInt("horario_id"),
+                descripcion = resultSet.getString("descripcion"),
+                poster = resultSet.getString("poster"),
+                url = resultSet.getString("url"),
+                fecha_evento = resultSet.getString("fecha_evento")
+            )
+            eventos.add(evento)
+        }
+
+        return@withContext eventos
+    }
+
 
     suspend fun update(eventoId: Int, evento: Evento) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_EVENTO)

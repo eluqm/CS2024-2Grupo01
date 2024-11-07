@@ -149,7 +149,7 @@ interface ApiRest {
     suspend fun getUsuariosMentoriadosPorMentor(@Path("mentorId") mentorId: Int): Response<List<UsuarioLista>>
 
     @GET("grupos/{jefeId}/sesiones")
-    suspend fun getSesionesPorJefe(@Path("mentorId") mentorId: Int): Response<List<SesionMentoriaLista>>
+    suspend fun getSesionesPorJefe(@Path("jefeId") jefeId: Int): Response<List<SesionMentoriaLista>>
 
     @GET("/grupos/{id}")
     suspend fun getGrupo(@Path("id") id: Int): retrofit2.Response<GrupoMentoria>

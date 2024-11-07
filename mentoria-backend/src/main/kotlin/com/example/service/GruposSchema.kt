@@ -52,7 +52,7 @@ class GruposService(private val connection: Connection) {
             SELECT 
                 s.tema_sesion,
                 h.lugar,
-                DATE(a.hora_fecha_registrada) AS fecha_registrada,
+                DATE(s.fecha) AS fecha_registrada,
                 CONCAT(COUNT(a.mentoriado_id), '/', (SELECT COUNT(*) FROM miembros_grupo mg WHERE mg.grupo_id = g.grupo_id)) AS participantes
             FROM 
                 sesiones_mentoria s
@@ -160,9 +160,9 @@ class GruposService(private val connection: Connection) {
     }
 
 
-    suspend fun getSesionesPorJefe(mentorId: Int): List<SesionInfo> = withContext(Dispatchers.IO) {
+    suspend fun getSesionesPorJefe(jefeId: Int): List<SesionInfo> = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_SESIONES_POR_JEFE)
-        statement.setInt(1, mentorId)
+        statement.setInt(1, jefeId)
         val resultSet = statement.executeQuery()
 
         val sesiones = mutableListOf<SesionInfo>()

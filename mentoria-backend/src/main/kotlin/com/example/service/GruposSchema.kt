@@ -17,6 +17,14 @@ data class Grupo(
 )
 
 @Serializable
+data class SesionInfo(
+    val temaSesion: String,
+    val lugar: String,
+    val fechaRegistrada: String,
+    val participantes: String
+)
+
+@Serializable
 data class UsuarioLista(
     val id: Int,
     val nombreCompletoUsuario: String,
@@ -39,6 +47,26 @@ class GruposService(private val connection: Connection) {
             FROM usuarios u
             JOIN miembros_grupo mg ON u.user_id = mg.user_id
             WHERE mg.grupo_id = ? AND u.tipo_usuario = 'mentoriado'
+        """
+        private const val SELECT_SESIONES_POR_JEFE = """
+            SELECT 
+                s.tema_sesion,
+                h.lugar,
+                DATE(a.hora_fecha_registrada) AS fecha_registrada,
+                CONCAT(COUNT(a.mentoriado_id), '/', (SELECT COUNT(*) FROM miembros_grupo mg WHERE mg.grupo_id = g.grupo_id)) AS participantes
+            FROM 
+                sesiones_mentoria s
+            JOIN 
+                grupos g ON s.grupo_id = g.grupo_id
+            JOIN 
+                horarios h ON g.horario_id = h.horario_id
+            JOIN 
+                asistencias_sesiones a ON s.sesion_id = a.sesion_id
+            WHERE 
+                g.jefe_id = ? 
+                AND a.asistio = true
+            GROUP BY 
+                s.tema_sesion, h.lugar, fecha_registrada, g.grupo_id
         """
     }
 
@@ -97,7 +125,6 @@ class GruposService(private val connection: Connection) {
     }
 
     // Obtener los usuarios mentoriados de un grupo específico
-    // Obtener los usuarios mentoriados de un grupo específico
     suspend fun getUsuariosMentoriadosPorMentor(mentorId: Int): List<UsuarioLista> = withContext(Dispatchers.IO) {
 
         // Primera consulta: Obtener grupo asociado al mentor
@@ -132,6 +159,26 @@ class GruposService(private val connection: Connection) {
         return@withContext usuarios
     }
 
+
+    suspend fun getSesionesPorJefe(mentorId: Int): List<SesionInfo> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_SESIONES_POR_JEFE)
+        statement.setInt(1, mentorId)
+        val resultSet = statement.executeQuery()
+
+        val sesiones = mutableListOf<SesionInfo>()
+        while (resultSet.next()) {
+            sesiones.add(
+                SesionInfo(
+                    temaSesion = resultSet.getString("tema_sesion"),
+                    lugar = resultSet.getString("lugar"),
+                    fechaRegistrada = resultSet.getString("fecha_registrada"),
+                    participantes = resultSet.getString("participantes")
+                )
+            )
+        }
+
+        return@withContext sesiones
+    }
 
     suspend fun readAllByEscuelaId(escuelaId: Int): List<Grupo> = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(

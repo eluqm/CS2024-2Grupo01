@@ -16,16 +16,16 @@ import org.jetbrains.exposed.sql.*
 fun Application.configureDatabases() {
     val dbConnection: Connection = connectToPostgres(embedded = true)
     val cityService = CityService(dbConnection)
-    
+
     routing {
-    
+
         // Create city
         post("/cities") {
             val city = call.receive<City>()
             val id = cityService.create(city)
             call.respond(HttpStatusCode.Created, id)
         }
-    
+
         // Read city
         get("/cities/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
@@ -36,7 +36,7 @@ fun Application.configureDatabases() {
                 call.respond(HttpStatusCode.NotFound)
             }
         }
-    
+
         // Update city
         put("/cities/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
@@ -44,7 +44,7 @@ fun Application.configureDatabases() {
             cityService.update(id, user)
             call.respond(HttpStatusCode.OK)
         }
-    
+
         // Delete city
         delete("/cities/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
@@ -465,6 +465,21 @@ fun Application.configureDatabases() {
             val mentoriados = gruposService.getUsuariosMentoriadosPorMentor(mentorId)
             call.respond(HttpStatusCode.OK, mentoriados)
         }
+
+        get("/grupos/{jefeId}/sesiones") {
+            val jefeId = call.parameters["mentorId"]?.toInt() ?: throw IllegalArgumentException("Invalid Jefe ID")
+            try {
+                val sesiones = gruposService.getSesionesPorJefe(jefeId)
+                if (sesiones.isNotEmpty()) {
+                    call.respond(HttpStatusCode.OK, sesiones)
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "No se encontraron sesiones para el jefe con ID proporcionado.")
+                }
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, e.localizedMessage)
+            }
+        }
+
 
         get("/grupos/escuela/{escuelaId}") {
             val escuelaId = call.parameters["escuelaId"]?.toInt() ?: throw IllegalArgumentException("Invalid Escuela ID")

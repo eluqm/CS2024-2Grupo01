@@ -1,3 +1,4 @@
+import android.annotation.SuppressLint
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -12,18 +13,16 @@ class MentoriadoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val viewNumero = itemView.findViewById<TextView>(R.id.numero)
     private val viewDni = itemView.findViewById<TextView>(R.id.dni)
     private val imgUsuario = itemView.findViewById<ImageButton>(R.id.img_usuario)
-
+    @SuppressLint("SetTextI18n")
     fun render(
         item: UsuarioLista,
-        onClickListener: (UsuarioLista) -> Unit,
-        onDeleteClickListener: (UsuarioLista) -> Unit
+        onClickListener: (UsuarioLista) -> Unit
     ) {
         viewCorreo.text = item.email
         viewNombre.text = item.nombreCompletoUsuario
         viewNumero.text = item.celularUsuario
         viewDni.text = item.dniUsuario
 
-        itemView.setOnClickListener { onClickListener(item) }
-        imgUsuario.setOnClickListener { onDeleteClickListener(item) } // Elimina cuando se hace clic
+        itemView.setOnClickListener() { onClickListener(item) }
     }
 }

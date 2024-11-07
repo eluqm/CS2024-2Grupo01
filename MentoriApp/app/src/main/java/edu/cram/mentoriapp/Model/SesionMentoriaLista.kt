@@ -6,5 +6,5 @@ data class SesionMentoriaLista(
     val temaSesion: String,
     val lugar: String,
     val fechaRegistrada: String,
-    val numeroParticipantes: String
+    val participantes: String
 ): Serializable

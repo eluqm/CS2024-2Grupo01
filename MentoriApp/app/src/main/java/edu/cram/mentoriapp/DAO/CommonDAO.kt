@@ -1,12 +1,15 @@
 package edu.cram.mentoriapp.DAO
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import edu.cram.mentoriapp.Model.Evento
 import edu.cram.mentoriapp.Model.Horario
 import edu.cram.mentoriapp.Model.Usuario
 import edu.cram.mentoriapp.Service.ApiRest
 import edu.cram.mentoriapp.Service.RetrofitClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class CommonDAO(val context: Context) {
 
@@ -63,38 +66,63 @@ class CommonDAO(val context: Context) {
 
     suspend fun createEvent(event: Evento) {
         try {
-            val response = apiRest.createEvento(event)
+            // Realizar la llamada a la API en el hilo de fondo
+            val response = withContext(Dispatchers.IO) {
+                apiRest.createEvento(event)
+            }
+
+            // Verificar si la respuesta fue exitosa
             if (response.isSuccessful) {
                 val newEventId = response.body()
-                Toast.makeText(context, "Evento creado con ID: $newEventId", Toast.LENGTH_SHORT).show()
+
+                // Ahora que la respuesta es exitosa, volvemos al hilo principal para mostrar el Toast
+                withContext(Dispatchers.Main) {
+                    Log.d("EventoCreado", "Evento creado con ID: $newEventId")
+                    Toast.makeText(context, "Evento creado con ID: $newEventId", Toast.LENGTH_SHORT).show()
+                }
             } else {
-                // Mostrar el código de error y el mensaje de la API
-                val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
-                Toast.makeText(context, "Error al crear el evento: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                // Si hubo un error, volvemos al hilo principal para mostrar el mensaje de error
+                withContext(Dispatchers.Main) {
+                    val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
+                    Log.e("APIError", "Error al crear el evento: ${response.code()} - $errorBody")
+                    Toast.makeText(context, "Error al crear el evento: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                }
             }
         } catch (e: Exception) {
-            Toast.makeText(context, "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
+            // En caso de una excepción, volvemos al hilo principal para manejarla
+            withContext(Dispatchers.Main) {
+                Log.e("NetworkError", "Error de red: ${e.message}")
+                Toast.makeText(context, "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    suspend fun createHorario(horario: Horario): Horario {
-        try {
+
+    suspend fun createHorario(horario: Horario): Int? {
+        return try {
             val response = apiRest.createHorario(horario)
+
             if (response.isSuccessful) {
-                val newhorarioId = response.body()
-                Toast.makeText(context, "horario creado con ID: $newhorarioId", Toast.LENGTH_SHORT).show()
-                return horario.copy(horarioId = newhorarioId)
+                val newHorarioId = response.body()
+                // Cambiar al hilo principal para mostrar el Toast
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Horario creado con ID: $newHorarioId", Toast.LENGTH_SHORT).show()
+                }
+                newHorarioId
             } else {
-                // Mostrar el código de error y el mensaje de la API
                 val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
-                Toast.makeText(context, "Error al crear el horario: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Error al crear el horario: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                }
+                null
             }
-
         } catch (e: Exception) {
-            Toast.makeText(context, "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+            null
         }
-
-        return horario.copy(horarioId = 1)
     }
+
 
 }

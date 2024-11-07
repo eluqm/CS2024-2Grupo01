@@ -128,7 +128,7 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
     private fun crearEventoYHorario() {
         // Obtener los datos de los EditText
         val lugar = editTextLugar.text.toString()
-        val dia = editTextDia.text.toString()
+        var dia = editTextDia.text.toString()
         val horaInicio = editTextHoraInicio.text.toString() + ":00"
         val horaFin = editTextHoraInicio.text.toString() + ":00"
         val nombre = editTextNombre.text.toString()
@@ -154,19 +154,39 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
             val horarioCreado = commonDAO.createHorario(nuevoHorario) // Debes crear este método en CommonDAO
             Log.d("AEA", "llegue")
             // Ahora crea el evento con el horarioId del nuevo horario
-            val nuevoEvento = Evento(
-                nombre = nombre,
-                horarioId = horarioCreado.horarioId ?: 0, // Usar el ID del horario creado
-                descripcion = if (descripcion.isNotEmpty()) descripcion else null,
-                poster = "Sin Imagen", // Coloca un ByteArray provisional
-                url = if (url.isNotEmpty()) url else null,
-                fecha_evento = dia
-            )
+            dia = dia.replace("/", "-")
+
+            val inputFormat = SimpleDateFormat("dd-MM-yyyy")
+            // Crear un formato de salida para "yyyy-MM-dd"
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd")
+
+            try {
+                // Parsear la fecha original
+                val date: Date = inputFormat.parse(dia)
+                // Formatear la fecha al nuevo formato
+                dia = outputFormat.format(date)
+            } catch (e: Exception) {
+                Log.e("AEA", "Error al formatear la fecha", e)
+                // Si hay un error, puedes optar por manejarlo, por ejemplo, asignar un valor por defecto.
+                dia = "0000-00-00" // O cualquier valor predeterminado que desees
+            }
+
+            val nuevoEvento = horarioCreado?.let {
+                Evento(
+                    nombre = nombre,
+                    horarioId = it, // Usar el ID del horario creado
+                    descripcion = if (descripcion.isNotEmpty()) descripcion else null,
+                    poster = "Sin Imagen", // Coloca un ByteArray provisional
+                    url = if (url.isNotEmpty()) url else null,
+                    fecha_evento = dia
+
+                )
+            }
 
             Log.d("AEA", nuevoEvento.toString())
 
             // Crear el evento
-            commonDAO.createEvent(nuevoEvento)
+            commonDAO.createEvent(nuevoEvento!!)
         }
 
         dismiss() // Cerrar el diálogo después de crear

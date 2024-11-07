@@ -24,7 +24,7 @@ class SesionListaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
         viewtemaSesion.text = item.temaSesion
         viewlugar.text = item.lugar
         viewfechaRegistrada.text = "Fecha: " + item.fechaRegistrada
-        viewnumeroParticipantes.text = item.numeroParticipantes
+        viewnumeroParticipantes.text = item.participantes
 
         itemView.setOnClickListener() { onClickListener(item) }
     }

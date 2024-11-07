@@ -467,7 +467,7 @@ fun Application.configureDatabases() {
         }
 
         get("/grupos/{jefeId}/sesiones") {
-            val jefeId = call.parameters["mentorId"]?.toInt() ?: throw IllegalArgumentException("Invalid Jefe ID")
+            val jefeId = call.parameters["jefeId"]?.toInt() ?: throw IllegalArgumentException("Invalid Jefe ID")
             try {
                 val sesiones = gruposService.getSesionesPorJefe(jefeId)
                 if (sesiones.isNotEmpty()) {
@@ -644,6 +644,18 @@ fun Application.configureDatabases() {
             val evento = call.receive<Evento>()
             val id = eventosService.create(evento)
             call.respond(HttpStatusCode.Created, id)
+        }
+
+        get("/eventos") {
+            try {
+                // Llamamos a la función readAll() para obtener todos los eventos
+                val eventos = eventosService.readAll()
+
+                // Respondemos con la lista de eventos en formato JSON
+                call.respond(eventos)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, "Error al obtener eventos")
+            }
         }
 
         // Read event

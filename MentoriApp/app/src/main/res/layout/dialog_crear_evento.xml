@@ -12,10 +12,10 @@
         android:hint="Lugar" />
 
     <EditText
-        android:id="@+id/editTextDia"
+        android:id="@+id/editTextFecha"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Día"
+        android:hint="Fecha"
         android:focusable="false" />
 
     <EditText

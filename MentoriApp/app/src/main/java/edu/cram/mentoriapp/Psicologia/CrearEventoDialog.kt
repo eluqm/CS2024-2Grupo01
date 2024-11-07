@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,8 @@ import edu.cram.mentoriapp.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.Normalizer
+import java.text.SimpleDateFormat
 import java.time.LocalTime
 import java.util.*
 
@@ -39,7 +42,7 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
         val view = inflater.inflate(R.layout.dialog_crear_evento, null)
 
         editTextLugar = view.findViewById(R.id.editTextLugar)
-        editTextDia = view.findViewById(R.id.editTextDia)
+        editTextDia = view.findViewById(R.id.editTextFecha)
         editTextHoraInicio = view.findViewById(R.id.editTextHoraInicio)
         editTextHoraFin = view.findViewById(R.id.editTextHoraFin)
         editTextNombre = view.findViewById(R.id.editTextNombre)
@@ -84,8 +87,30 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
         DatePickerDialog(context, { _, selectedYear, selectedMonth, selectedDay ->
             // Formato de fecha en formato "dd/MM/yyyy"
             editTextDia.setText(String.format("%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear))
+
         }, year, month, day).show()
     }
+    private fun obtenerDiaSemana(fecha: String): String {
+        // Define el formato de la fecha
+        val formatoFecha = SimpleDateFormat("dd/MM/yyyy", Locale("es", "ES"))
+        val date = formatoFecha.parse(fecha) // Convierte la fecha de texto a Date
+
+        // Configura el calendario con la fecha dada
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+
+        // Formato para obtener el día de la semana en español
+        val diaSemana = SimpleDateFormat("EEEE", Locale("es", "ES")).format(calendar.time)
+
+        // Convierte la primera letra a mayúscula y elimina tildes
+        return quitarTildes(diaSemana.replaceFirstChar { it.uppercaseChar() })
+    }
+
+    private fun quitarTildes(cadena: String): String {
+        // Normaliza la cadena y elimina las tildes
+        return Normalizer.normalize(cadena, Normalizer.Form.NFD).replace("[\\p{InCombiningDiacriticalMarks}]".toRegex(), "")
+    }
+
 
     private fun mostrarTimePicker(onTimeSelected: (String) -> Unit) {
         val calendar = Calendar.getInstance()
@@ -98,12 +123,14 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
         }, hour, minute, true).show()
     }
 
+
+
     private fun crearEventoYHorario() {
         // Obtener los datos de los EditText
         val lugar = editTextLugar.text.toString()
         val dia = editTextDia.text.toString()
-        val horaInicio = LocalTime.parse(editTextHoraInicio.text.toString())
-        val horaFin = LocalTime.parse(editTextHoraFin.text.toString())
+        val horaInicio = editTextHoraInicio.text.toString() + ":00"
+        val horaFin = editTextHoraInicio.text.toString() + ":00"
         val nombre = editTextNombre.text.toString()
         val descripcion = editTextDescripcion.text.toString()
         val url = editTextUrl.text.toString()
@@ -111,11 +138,13 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
         // Crear el horario primero
         val nuevoHorario = Horario(
             lugar = lugar,
-            dia = dia,
+            dia = obtenerDiaSemana(dia),
             horaInicio = horaInicio,
             horaFin = horaFin,
             estado = true // Estado por defecto en true
         )
+
+        Log.d("AEA", nuevoHorario.toString())
 
         // Llamar a la función para crear el horario en un hilo de fondo
         CoroutineScope(Dispatchers.IO).launch {
@@ -123,15 +152,18 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
             // Aquí deberías manejar la respuesta de la creación del horario
             // Simulamos que se obtiene un ID del nuevo horario
             val horarioCreado = commonDAO.createHorario(nuevoHorario) // Debes crear este método en CommonDAO
-
+            Log.d("AEA", "llegue")
             // Ahora crea el evento con el horarioId del nuevo horario
             val nuevoEvento = Evento(
                 nombre = nombre,
                 horarioId = horarioCreado.horarioId ?: 0, // Usar el ID del horario creado
                 descripcion = if (descripcion.isNotEmpty()) descripcion else null,
-                poster = ByteArray(0), // Coloca un ByteArray provisional
-                url = if (url.isNotEmpty()) url else null
+                poster = "Sin Imagen", // Coloca un ByteArray provisional
+                url = if (url.isNotEmpty()) url else null,
+                fecha_evento = dia
             )
+
+            Log.d("AEA", nuevoEvento.toString())
 
             // Crear el evento
             commonDAO.createEvent(nuevoEvento)

@@ -15,6 +15,7 @@ import edu.cram.mentoriapp.Model.MiembroGrupo
 import edu.cram.mentoriapp.Model.Notificacion
 import edu.cram.mentoriapp.Model.Psicologia
 import edu.cram.mentoriapp.Model.SesionMentoria
+import edu.cram.mentoriapp.Model.SesionMentoriaLista
 import edu.cram.mentoriapp.Model.SolicitudMentoria
 import edu.cram.mentoriapp.Model.UserExistResponse
 import edu.cram.mentoriapp.Model.Usuario
@@ -147,6 +148,8 @@ interface ApiRest {
     @GET("/grupo_mentoriados/{mentorId}")
     suspend fun getUsuariosMentoriadosPorMentor(@Path("mentorId") mentorId: Int): Response<List<UsuarioLista>>
 
+    @GET("grupos/{jefeId}/sesiones")
+    suspend fun getSesionesPorJefe(@Path("mentorId") mentorId: Int): Response<List<SesionMentoriaLista>>
 
     @GET("/grupos/{id}")
     suspend fun getGrupo(@Path("id") id: Int): retrofit2.Response<GrupoMentoria>

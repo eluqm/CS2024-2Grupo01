@@ -241,8 +241,8 @@ interface ApiRest {
     @GET("/mensajes_grupo/{id}")
     suspend fun getMensajeGrupo(@Path("id") id: Int): retrofit2.Response<MensajeGrupo>
 
-    @GET("/mensajes_grupo/{id}")
-    suspend fun getMensajesGrupo(@Path("id") id: Int): retrofit2.Response<List<Chat>>
+    @GET("/mensajes_usuario/{id}")
+    suspend fun getMensajesPorUsuario(@Path("id") id: Int): retrofit2.Response<List<Chat>>
 
     @POST("/mensajes_grupo")
     suspend fun createMensajeGrupo(@Body mensaje: MensajeGrupo): retrofit2.Response<Int>

@@ -104,10 +104,11 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
         val horario = Horario(
             lugar = lugar,
             dia = dia,
-            horaInicio = horaInicio.toString(),
-            horaFin = horaFin.toString(),
+            horaInicio = horaInicio.toString() + ":12",
+            horaFin = horaFin.toString() + ":12",
             estado = estado
         )
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = apiRest.createHorario2(horario, jefeId)

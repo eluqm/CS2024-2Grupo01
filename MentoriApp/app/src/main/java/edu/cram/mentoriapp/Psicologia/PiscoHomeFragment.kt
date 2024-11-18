@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 
 class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
 
-    private var chat: MutableList<Chat> = mutableListOf()
+    private var chats: MutableList<Chat> = mutableListOf()
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var apiRest: ApiRest
 
@@ -79,9 +79,9 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
     }
 
     private fun inicializarRecycle(view: View) {
-        loadSesionEventos()  // Carga los mentoriados directamente con mentorId
+        //loadSesionChats()  // Carga los mentoriados directamente con mentorId
         val manager = LinearLayoutManager(context)
-        chatAdapter = ChatAdapter(chat) { chat -> onItemSelected(chat) }
+        chatAdapter = ChatAdapter(chats) { chat -> onItemSelected(chat) }
         val decoration = DividerItemDecoration(context, manager.orientation)
         val sesionRecyclerView = view.findViewById<RecyclerView>(R.id.chat_grupal)
         sesionRecyclerView.layoutManager = manager
@@ -89,39 +89,42 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
         sesionRecyclerView.addItemDecoration(decoration)
     }
 
-    private fun loadSesionEventos() {
+
+    private fun loadSesionChats() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                // Obtener el mentorId desde las SharedPreferences (sesión)
+                // Obtener el userId desde las SharedPreferences (sesión)
                 val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
-                val psicoId = sharedPreferences.getInt("userId", -1)
+                val userId = sharedPreferences.getInt("userId", -1)
 
-                if (psicoId != -1) {
-                    val response = apiRest.getAllEventos()
+                if (userId != -1) {
+                    val response = apiRest.getMensajesPorUsuario(userId)  // Llamada a la nueva API
 
                     if (response.isSuccessful) {
-                        val sesiones = response.body()
-                        if (sesiones != null && sesiones.isNotEmpty()) {
-                            eventos.clear()
-                            eventos.addAll(sesiones)
-                            eventosAdapter.notifyDataSetChanged()
+                        val chatsLlegada = response.body()
+                        if (chatsLlegada != null && chatsLlegada.isNotEmpty()) {
+                            chats.clear()  // Asegúrate de que el adapter sea el correcto
+                            chats.addAll(chatsLlegada)
+                            chatAdapter.notifyDataSetChanged()  // Asegúrate de que el adapter sea el correcto
                         } else {
-                            Toast.makeText(requireContext(), "No hay mentoriados disponibles", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "No hay mensajes disponibles", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
-                        Toast.makeText(requireContext(), "Error al cargar mentoriados: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "Error al cargar mensajes: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Mentor ID no encontrado en SharedPreferences", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "User ID no encontrado en SharedPreferences", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 // Manejo de excepciones (errores de red, etc.)
                 Toast.makeText(requireContext(), "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
-                Log.d("loadMentoriados", "Error de red: ${e.message}")
+                Log.d("loadChats", "Error de red: ${e.message}")
             }
         }
     }
+
+
     private fun onItemSelected(chat: Chat) {
         chat.emisor.let { Toast.makeText(requireActivity(), it, Toast.LENGTH_SHORT).show() }
     }

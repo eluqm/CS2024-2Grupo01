@@ -483,6 +483,28 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.OK)
         }
 
+        get("/grupoId") {
+            try {
+                // Obtener el parámetro userId de la consulta
+                val userId = call.request.queryParameters["userId"]?.toIntOrNull()
+
+                // Validar que userId no sea nulo
+                if (userId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing or invalid userId")
+                    return@get
+                }
+
+                // Llamar a la función de GruposSchema para obtener el grupo_id
+                val grupoId = gruposService.hallarGrupoID(userId)
+
+                // Responder con el grupo_id
+                call.respond(HttpStatusCode.OK, mapOf("grupoId" to grupoId))
+            } catch (e: Exception) {
+                // Manejo de errores
+                call.respond(HttpStatusCode.InternalServerError, e.localizedMessage ?: "Unknown error")
+            }
+        }
+
         // Obtener usuarios mentoriados por id Mentor
         get("/grupo_mentoriados/{mentorId}") {
             val mentorId = call.parameters["mentorId"]?.toInt() ?: throw IllegalArgumentException("Invalid grupo ID")

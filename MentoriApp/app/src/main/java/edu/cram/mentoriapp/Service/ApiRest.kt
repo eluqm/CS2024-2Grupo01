@@ -157,6 +157,11 @@ interface ApiRest {
     @GET("/grupo_mentoriados/{mentorId}")
     suspend fun getUsuariosMentoriadosPorMentor(@Path("mentorId") mentorId: Int): Response<List<UsuarioLista>>
 
+    @GET("/grupoId")
+    suspend fun getGrupoId(
+        @Query("userId") userId: Int
+    ): Response<Map<String, Int>> // Esperamos un Map con el "grupoId" como respuesta
+
     @GET("grupos/{jefeId}/sesiones")
     suspend fun getSesionesPorJefe(@Path("jefeId") jefeId: Int): Response<List<SesionMentoriaLista>>
 

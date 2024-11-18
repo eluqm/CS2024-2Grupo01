@@ -5,9 +5,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
+import java.time.LocalDateTime
 
 @Serializable
 data class MensajeGrupo(
+    val mensajeId: Int? = null,
     val grupoId: Int,
     val remitenteId: Int,
     val textoMensaje: String,

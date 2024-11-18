@@ -5,6 +5,8 @@ import android.util.Log
 import android.widget.*
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.lifecycle.lifecycleScope
+import com.google.gson.Gson
 import edu.cram.mentoriapp.Model.Horario
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
@@ -98,14 +100,15 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
     ) {
         Log.d("dasdasd","Guardando en DB -> Lugar: $lugar, Día: $dia, Hora inicio: $horaInicio, Hora fin: $horaFin, Estado: $estado")
         val horario = Horario(
-            lugar = lugar,
+            lugar = "lugar",
             dia = dia,
             horaInicio = horaInicio,
             horaFin = horaFin,
             estado = estado
         )
+
         Log.d("dasdasd","$horario")
-        CoroutineScope(Dispatchers.IO).launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = apiRest.createHorario2(horario, jefeId)
                 withContext(Dispatchers.Main) {

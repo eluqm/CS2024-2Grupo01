@@ -635,6 +635,19 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.Created, id)
         }
 
+        get("/chats_grupo/{id}") {
+            try {
+                val grupoId = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid group ID")
+                val chats = mensajesGrupoService.readChatsByGrupo(grupoId)
+                call.respond(HttpStatusCode.OK, chats)
+            } catch (e: IllegalArgumentException) {
+                call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.NotFound, mapOf("error" to e.message))
+            }
+        }
+
+
         // Read group message
         get("/mensajes_grupo/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")

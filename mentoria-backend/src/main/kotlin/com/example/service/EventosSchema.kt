@@ -84,6 +84,7 @@ class EventosService(private val connection: Connection) {
         // Iteramos sobre el ResultSet para agregar los eventos a la lista
         while (resultSet.next()) {
             val evento = Evento(
+                eventoId = resultSet.getInt("evento_id"),
                 nombre = resultSet.getString("nombre"),
                 horarioId = resultSet.getInt("horario_id"),
                 descripcion = resultSet.getString("descripcion"),

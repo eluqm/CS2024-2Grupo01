@@ -79,7 +79,7 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
     }
 
     private fun inicializarRecycle(view: View) {
-        loadSesionEventos()  // Carga los mentoriados directamente con mentorId
+        //loadSesionEventos()  // Carga los mentoriados directamente con mentorId
         val manager = LinearLayoutManager(context)
         chatAdapter = ChatAdapter(chat) { chat -> onItemSelected(chat) }
         val decoration = DividerItemDecoration(context, manager.orientation)
@@ -88,7 +88,7 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
         sesionRecyclerView.adapter = chatAdapter
         sesionRecyclerView.addItemDecoration(decoration)
     }
-
+/*
     private fun loadSesionEventos() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -121,7 +121,7 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
                 Log.d("loadMentoriados", "Error de red: ${e.message}")
             }
         }
-    }
+    }*/
     private fun onItemSelected(chat: Chat) {
         chat.emisor.let { Toast.makeText(requireActivity(), it, Toast.LENGTH_SHORT).show() }
     }

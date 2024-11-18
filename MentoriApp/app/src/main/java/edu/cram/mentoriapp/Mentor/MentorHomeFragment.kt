@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import edu.cram.mentoriapp.Adapter.ChatAdapter
 import edu.cram.mentoriapp.Model.Chat
 import edu.cram.mentoriapp.Model.MensajeGrupo
@@ -27,6 +28,7 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
     private var chats: MutableList<Chat> = mutableListOf()
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var apiRest: ApiRest
+    private lateinit var sesionRecyclerView: RecyclerView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,14 +36,25 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
 
         pintarDatos(view)
 
+        inicializarRecycle(view)
+
         iniciar_eventos(view)
 
-        inicializarRecycle(view)
     }
 
     private fun iniciar_eventos(view: View) {
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
+
         val btnEnviar = view.findViewById<ImageButton>(R.id.btn_send_message)
         val txtMensaje = view.findViewById<EditText>(R.id.et_chat_message)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            // Simula la recarga de datos (consulta al servidor)
+            loadSesionChats()
+
+            // Detén la animación de recarga
+            swipeRefreshLayout.isRefreshing = false
+        }
 
         btnEnviar.setOnClickListener {
             val mensaje = txtMensaje.text.toString()
@@ -69,6 +82,8 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
                             if (response.isSuccessful) {
                                 // Manejo de éxito
                                 Toast.makeText(context, "Mensaje enviado", Toast.LENGTH_SHORT).show()
+                                loadSesionChats()
+                                txtMensaje.setText("")
                             } else {
                                 // Manejo de error
                                 Toast.makeText(context, "Error al enviar el mensaje", Toast.LENGTH_SHORT).show()
@@ -112,7 +127,7 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
         val manager = LinearLayoutManager(context)
         chatAdapter = ChatAdapter(chats) { chat -> onItemSelected(chat) }
         val decoration = DividerItemDecoration(context, manager.orientation)
-        val sesionRecyclerView = view.findViewById<RecyclerView>(R.id.chat_grupal)
+        sesionRecyclerView = view.findViewById<RecyclerView>(R.id.chat_grupal)
         sesionRecyclerView.layoutManager = manager
         sesionRecyclerView.adapter = chatAdapter
         sesionRecyclerView.addItemDecoration(decoration)
@@ -136,6 +151,7 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
                             chats.clear()  // Asegúrate de que el adapter sea el correcto
                             chats.addAll(chatsLlegada)
                             chatAdapter.notifyDataSetChanged()  // Asegúrate de que el adapter sea el correcto
+                            sesionRecyclerView.scrollToPosition(chatsLlegada.size - 1);
                         } else {
                             Toast.makeText(requireContext(), "No hay mensajes disponibles", Toast.LENGTH_SHORT).show()
                         }

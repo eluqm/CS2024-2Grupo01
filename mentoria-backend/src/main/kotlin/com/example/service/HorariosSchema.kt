@@ -18,10 +18,12 @@ data class Horario(
 
 class HorariosService(private val connection: Connection) {
     companion object {
+        private const val UPDATE_GRUPO_HORARIO = "UPDATE grupos SET horario_id = ? WHERE jefe_id = ? AND horario_id IS NULL"
         private const val INSERT_HORARIO = "INSERT INTO horarios (lugar, dia, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?, ?)"
         private const val SELECT_HORARIO_BY_ID = "SELECT * FROM horarios WHERE horario_id = ?"
         private const val UPDATE_HORARIO = "UPDATE horarios SET lugar = ?, dia = ?, hora_inicio = ?, hora_fin = ?, estado = ? WHERE horario_id = ?"
         private const val DELETE_HORARIO = "DELETE FROM horarios WHERE horario_id = ?"
+
     }
 
     suspend fun create(horario: Horario): Int = withContext(Dispatchers.IO) {
@@ -40,7 +42,37 @@ class HorariosService(private val connection: Connection) {
             throw Exception("Unable to retrieve the id of the newly inserted horario")
         }
     }
+    suspend fun create2(horario: Horario, jefeId: Int) = withContext(Dispatchers.IO) {
+        // Insert the new horario
+        val statement = connection.prepareStatement(INSERT_HORARIO, Statement.RETURN_GENERATED_KEYS)
+        statement.setString(1, horario.lugar)
+        statement.setString(2, horario.dia)
+        statement.setTime(3, Time.valueOf(horario.horaInicio))
+        statement.setTime(4, Time.valueOf(horario.horaFin))
+        statement.setBoolean(5, horario.estado)
+        statement.executeUpdate()
 
+        val generatedKeys = statement.generatedKeys
+        if (generatedKeys.next()) {
+            val horarioId = generatedKeys.getInt(1)
+
+            // Update the group to associate the new horario
+            updateGrupoHorario(horarioId, jefeId)
+
+            return@withContext horarioId
+        } else {
+            throw Exception("Unable to retrieve the id of the newly inserted horario")
+        }
+    }
+    private suspend fun updateGrupoHorario(horarioId: Int, jefeId: Int) = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(UPDATE_GRUPO_HORARIO)
+        statement.setInt(1, horarioId) // Set the horario_id
+        statement.setInt(2, jefeId)   // Find the group by jefe_id
+        val rowsUpdated = statement.executeUpdate()
+        if (rowsUpdated == 0) {
+            throw Exception("No group found with jefe_id = $jefeId and null horario_id")
+        }
+    }
     suspend fun read(horarioId: Int): Horario = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_HORARIO_BY_ID)
         statement.setInt(1, horarioId)

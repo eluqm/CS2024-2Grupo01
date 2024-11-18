@@ -28,6 +28,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiRest {
     @GET("/cities/{id}")
@@ -137,8 +138,15 @@ interface ApiRest {
     @GET("/horarios/{id}")
     suspend fun getHorario(@Path("id") id: Int): retrofit2.Response<Horario>
 
+
     @POST("/horarios")
     suspend fun createHorario(@Body horario: Horario): retrofit2.Response<Int>
+
+    @POST("/horarios2")
+    suspend fun createHorario2(
+        @Body horario: Horario,
+        @Query("jefeId") jefeId: Int
+    ): retrofit2.Response<Int>
 
     @PUT("/horarios/{id}")
     suspend fun updateHorario(@Path("id") id: Int, @Body horario: Horario): retrofit2.Response<Unit>

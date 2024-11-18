@@ -326,10 +326,34 @@ fun Application.configureDatabases() {
     val horariosService = HorariosService(dbConnection)
     routing {
         // Create schedule
+        // Create schedule
         post("/horarios") {
             val horario = call.receive<Horario>()
             val id = horariosService.create(horario)
             call.respond(HttpStatusCode.Created, id)
+        }
+
+        post("/horarios2") {
+            try {
+                // Recibir el cuerpo del horario y el jefeId desde la solicitud
+                val horario = call.receive<Horario>()
+                val jefeId = call.request.queryParameters["jefeId"]?.toIntOrNull()
+
+                // Validar que jefeId no sea nulo
+                if (jefeId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing or invalid jefeId")
+                    return@post
+                }
+
+                // Crear el horario y asociarlo al grupo correspondiente
+                val horarioId = horariosService.create2(horario, jefeId)
+
+                // Responder con el ID del horario creado
+                call.respond(HttpStatusCode.Created, mapOf("horarioId" to horarioId))
+            } catch (e: Exception) {
+                // Manejo de errores
+                call.respond(HttpStatusCode.InternalServerError, e.localizedMessage)
+            }
         }
 
         // Read schedule
@@ -762,7 +786,7 @@ fun Application.configureDatabases() {
 fun Application.connectToPostgres(embedded: Boolean): Connection {
     Class.forName("org.postgresql.Driver")
     if (embedded) {
-        return DriverManager.getConnection("jdbc:postgresql://serverikus.postgres.database.azure.com:5432/mentoriapp", "foxi", "ola.cmma.bd1")
+        return DriverManager.getConnection("jdbc:postgresql://localhost:8081/test_mentoria", "user_ment", "12345678")
     } else {
         val url = environment.config.property("postgres.url").getString()
         val user = environment.config.property("postgres.user").getString()

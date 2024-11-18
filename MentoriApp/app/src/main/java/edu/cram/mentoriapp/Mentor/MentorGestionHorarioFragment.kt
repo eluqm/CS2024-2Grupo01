@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 
 class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario) {
@@ -62,13 +63,14 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
             } else {
                 timePicker.currentMinute
             }
-
+            val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
             // Convierte a LocalTime
-            val horaInicio = LocalTime.of(hour, minute)
+            val horaInicio = LocalTime.of(hour, minute, 0)
 
             // Calcula la hora_fin sumando 45 minutos
             val horaFin = horaInicio.plusMinutes(45)
-
+            val horaInicioString = horaInicio.format(formatter)
+            val horaFinString = horaFin.format(formatter)
             // Asigna NULL a "aula" como se solicitó
             val aula = null
 
@@ -79,17 +81,10 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                 jefeId = mentorId,
                 lugar = aula,
                 dia = selectedDay,
-                horaInicio = horaInicio,
-                horaFin = horaFin,
+                horaInicio = horaInicioString,
+                horaFin = horaFinString,
                 estado = estado
             )
-
-            // Notifica al usuario
-            Toast.makeText(
-                requireContext(),
-                "Horario guardado: Día: $selectedDay, Hora inicio: $horaInicio, Hora fin: $horaFin",
-                Toast.LENGTH_SHORT
-            ).show()
         }
     }
 
@@ -97,18 +92,19 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
         jefeId: Int,
         lugar: String?,
         dia: String,
-        horaInicio: LocalTime,
-        horaFin: LocalTime,
+        horaInicio: String,
+        horaFin: String,
         estado: Boolean
     ) {
+        Log.d("dasdasd","Guardando en DB -> Lugar: $lugar, Día: $dia, Hora inicio: $horaInicio, Hora fin: $horaFin, Estado: $estado")
         val horario = Horario(
             lugar = lugar,
             dia = dia,
-            horaInicio = horaInicio.toString() + ":12",
-            horaFin = horaFin.toString() + ":12",
+            horaInicio = horaInicio,
+            horaFin = horaFin,
             estado = estado
         )
-
+        Log.d("dasdasd","$horario")
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = apiRest.createHorario2(horario, jefeId)
@@ -120,8 +116,8 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                             "Horario creado con éxito. ID: $horarioId",
                             Toast.LENGTH_SHORT
                         ).show()
-                        Log.d("pepepe","Guardando en DB -> Lugar: $lugar, Día: $dia, Hora inicio: $horaInicio, Hora fin: $horaFin, Estado: $estado")
                     } else {
+                        Log.d("dasdasd","Error al crear horario: ${response.errorBody()?.string()}")
                         Toast.makeText(
                             requireContext(),
                             "Error al crear horario: ${response.errorBody()?.string()}",

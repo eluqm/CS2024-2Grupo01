@@ -7,6 +7,7 @@
 
     <!-- Barra Superior -->
     <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#CBC3E3"
@@ -16,29 +17,29 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginTop="8dp"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
             <!-- Semestre de la mentoría -->
             <TextView
                 android:id="@+id/tv_semestre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                    android:text="MENTORIA - 2024-A"
-                android:textSize="16sp"
+                android:layout_marginBottom="4dp"
+                android:text="MENTORIA - 2024-A"
                 android:textColor="#fff"
-                android:layout_marginBottom="4dp" />
+                android:textSize="16sp" />
 
             <!-- Rol del usuario -->
             <TextView
                 android:id="@+id/tv_rol_usuario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
                 android:text="Rol: Mentor"
-                android:textSize="16sp"
                 android:textColor="#fff"
-                android:layout_marginBottom="4dp" />
+                android:textSize="16sp" />
 
             <!-- Nombre y Apellido del usuario -->
             <TextView
@@ -46,8 +47,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nombre Apellido"
-                android:textSize="16sp"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                android:textSize="16sp" />
         </LinearLayout>
 
         <!-- Botón de Notificaciones -->
@@ -56,8 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:src="@drawable/baseline_add_home_work_24"
             android:background="?attr/selectableItemBackground"
+            android:src="@drawable/baseline_add_home_work_24"
             app:tint="#fff" />
 
         <!-- Botón de Cerrar Sesión -->
@@ -66,10 +67,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/baseline_logout_24"
             android:background="?attr/selectableItemBackground"
+            android:src="@drawable/baseline_logout_24"
             app:tint="#fff" />
-
 
 
     </RelativeLayout>
@@ -77,20 +77,25 @@
     <!-- RecyclerView para el chat -->
 
     <!-- Contenedor para enviar mensajes -->
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chat_grupal"
-        android:layout_width="398dp"
-        android:layout_height="538dp"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
         android:layout_above="@+id/linearLayout"
-        android:layout_below="@+id/barra_superior"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="13dp"
-        android:layout_marginEnd="7dp"
-        android:layout_marginBottom="9dp"
-        android:padding="8dp" />
+        android:layout_below="@+id/relativeLayout"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chat_grupal"
+            android:layout_width="398dp"
+            android:layout_height="538dp"
+
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="7dp"
+            android:layout_marginBottom="9dp"
+            android:padding="8dp" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout"

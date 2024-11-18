@@ -66,8 +66,29 @@ class MensajesGrupoService(private val connection: Connection) {
         }
     }
 
-    suspend fun readChatsByGrupo(grupoId: Int): List<Chat> = withContext(Dispatchers.IO) {
+    suspend fun readChatsByUser(userId: Int): List<Chat> = withContext(Dispatchers.IO) {
         val chats = mutableListOf<Chat>()
+
+        // Obtener el grupo_id usando el user_id
+        val statementGrupo = connection.prepareStatement("SELECT grupo_id \n" +
+                "FROM miembros_grupo \n" +
+                "WHERE user_id = ? \n" +
+                "UNION\n" +
+                "SELECT grupo_id \n" +
+                "FROM grupos \n" +
+                "WHERE jefe_id = ?\n")
+
+        statementGrupo.setInt(1, userId)
+        statementGrupo.setInt(2, userId)
+        val resultSetGrupo = statementGrupo.executeQuery()
+
+        if (!resultSetGrupo.next()) {
+            throw Exception("User not found in any group")
+        }
+
+        val grupoId = resultSetGrupo.getInt("grupo_id")
+
+        // Ahora obtenemos los mensajes del grupo
         val statementMensajes = connection.prepareStatement(SELECT_LIST_MENSAJES_BY_GRUPO_ID)
         statementMensajes.setInt(1, grupoId)
         val resultSetMensajes = statementMensajes.executeQuery()
@@ -90,11 +111,12 @@ class MensajesGrupoService(private val connection: Connection) {
         }
 
         if (chats.isEmpty()) {
-            throw Exception("No chats found for group ID $grupoId")
+            throw Exception("No chats found for user ID $userId")
         }
 
         return@withContext chats
     }
+
 
     // Consulta auxiliar para obtener el nombre del usuario por ID
     private fun getUsuarioNombreById(usuarioId: Int): String {

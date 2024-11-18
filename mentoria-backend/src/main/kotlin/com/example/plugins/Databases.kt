@@ -483,6 +483,19 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.OK)
         }
 
+        get("/grupos/{jefeId}/miembros") {
+            val jefeId = call.parameters["jefeId"]?.toInt() ?: throw IllegalArgumentException("Invalid jefeId")
+            try {
+                val miembros = gruposService.getMiembrosPorJefe(jefeId)
+                call.respond(HttpStatusCode.OK, miembros)
+            } catch (e: IllegalArgumentException) {
+                call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to e.message))
+            }
+        }
+
+
         get("/grupoId") {
             try {
                 // Obtener el parámetro userId de la consulta

@@ -1,14 +1,102 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Mentor.MentorGestionHorarioFragment">
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:gravity="center"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".Mentor.MentorGestionHorarioFragment"
+    >
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:gravity="top"
+        android:orientation="horizontal">
 
-</FrameLayout>
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#FFFFFF"
+            android:layout_gravity="center"
+            android:src="@drawable/baseline_arrow_back_24" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingStart="60dp"
+            android:text="@string/gesti_n_de_horarios"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:ignore="RtlSymmetry" />
+    </LinearLayout>
+
+    <TimePicker
+        android:id="@+id/time_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:timePickerMode="spinner"
+        android:padding="30dp"
+        />
+
+    <!-- Selector de día -->
+    <TextView
+        android:id="@+id/tv_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Día"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp" />
+
+    <RadioGroup
+        android:id="@+id/radio_group_days"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_lu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lu" />
+
+        <RadioButton
+            android:id="@+id/rb_ma"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ma" />
+
+        <RadioButton
+            android:id="@+id/rb_mi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mi" />
+
+        <RadioButton
+            android:id="@+id/rb_ju"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ju" />
+
+        <RadioButton
+            android:id="@+id/rb_vi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vi" />
+    </RadioGroup>
+
+    <!-- Botón Proponer Horario -->
+    <Button
+        android:id="@+id/btn_proponer_horario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#c41ff9"
+        android:text="Proponer Horario"
+        android:textColor="@android:color/white" />
+</LinearLayout>

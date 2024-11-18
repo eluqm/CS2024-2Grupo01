@@ -47,7 +47,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
                 // Comprobar si la contraseña almacenada es la contraseña por defecto sin cifrar
                 val esContrasenaPorDefecto = usuario.passwordHash == "12345"
-                // Cifrar la contraseña ingresada para comparar con la almacenadaz
+                // Cifrar la contraseña ingresada para comparar con la almacenada
                 val contrasenaCifradaIngresada = cifrarContrasena(password)
 
                 // Verificar si coincide con la contraseña por defecto o la cifrada
@@ -55,11 +55,31 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     if (esContrasenaPorDefecto) {
                         // Pedir al usuario que cambie la contraseña si es la por defecto
                         mostrarCambioContrasena(usuario)
-                        guardarUsuarioEnSesion(usuario)
                     } else {
                         // Continuar con la navegación según el tipo de usuario
-                        guardarUsuarioEnSesion(usuario)
                         redirigirSegunTipoUsuario(usuario, view)
+                    }
+
+                    // Llamamos al endpoint para obtener el grupoId del usuario
+                    val grupoResponse = apiRest.getGrupoId(usuario.userId!!) // Asumimos que 'userId' es el identificador del usuario
+
+                    if (grupoResponse.isSuccessful && grupoResponse.body() != null) {
+                        val grupoId = grupoResponse.body()?.get("grupoId")
+
+                        if (grupoId != null) {
+                            // Usar el grupoId aquí
+                            println("El grupoId es: $grupoId")
+                        } else {
+                            // Manejar el caso donde el grupoId no se encuentra
+                            println("No se pudo obtener el grupoId")
+                        }
+
+
+                        // Guardamos el grupoId junto con la información del usuario en SharedPreferences
+                        guardarUsuarioEnSesion(usuario, grupoId)
+                    } else {
+                        // Manejo de error si no se pudo obtener el grupoId
+                        Toast.makeText(context, "Error al obtener el grupo", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(context, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
@@ -69,6 +89,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
         }
     }
+
 
 
     private fun mostrarCambioContrasena(usuario: Usuario) {
@@ -121,7 +142,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
-    private fun guardarUsuarioEnSesion(usuario: Usuario) {
+    private fun guardarUsuarioEnSesion(usuario: Usuario, grupoId: Int?) {
         val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putInt("userId", usuario.userId!!)
@@ -130,7 +151,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         editor.putString("apellidoUsuario", usuario.apellidoUsuario)
         editor.putString("tipoUsuario", usuario.tipoUsuario)
         editor.putString("email", usuario.email)
+
+        // Guardamos el grupoId si es disponible
+        grupoId?.let {
+            editor.putInt("grupoId", it)
+        }
+
         editor.apply()
     }
+
 
 }

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#EDEAF6"
-    tools:context=".Mentor.MentorHomeFragment">
+    android:background="#EDEAF6">
 
     <!-- Barra Superior -->
     <RelativeLayout
@@ -15,15 +12,45 @@
         android:background="#CBC3E3"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+        <!-- LinearLayout para la información apilada -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="MENTORIA 2024-A MENTOR"
-            android:textSize="18sp"
-            android:textColor="#fff"
-            android:layout_centerHorizontal="true" />
+            android:orientation="vertical"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal">
 
+            <!-- Semestre de la mentoría -->
+            <TextView
+                android:id="@+id/tv_semestre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                    android:text="MENTORIA - 2024-A"
+                android:textSize="16sp"
+                android:textColor="#fff"
+                android:layout_marginBottom="4dp" />
+
+            <!-- Rol del usuario -->
+            <TextView
+                android:id="@+id/tv_rol_usuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rol: Mentor"
+                android:textSize="16sp"
+                android:textColor="#fff"
+                android:layout_marginBottom="4dp" />
+
+            <!-- Nombre y Apellido del usuario -->
+            <TextView
+                android:id="@+id/tv_nombre_usuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre Apellido"
+                android:textSize="16sp"
+                android:textColor="#fff" />
+        </LinearLayout>
+
+        <!-- Botón de Notificaciones -->
         <ImageButton
             android:id="@+id/btn_notification"
             android:layout_width="wrap_content"
@@ -33,6 +60,7 @@
             android:background="?attr/selectableItemBackground"
             app:tint="#fff" />
 
+        <!-- Botón de Cerrar Sesión -->
         <ImageButton
             android:id="@+id/cerrar_sesion"
             android:layout_width="wrap_content"
@@ -41,38 +69,46 @@
             android:src="@drawable/baseline_logout_24"
             android:background="?attr/selectableItemBackground"
             app:tint="#fff" />
+
+
+
     </RelativeLayout>
 
+    <!-- RecyclerView para el chat -->
+
+    <!-- Contenedor para enviar mensajes -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_grupal"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="24dp"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchView" />
+        android:layout_width="398dp"
+        android:layout_height="538dp"
+        android:layout_above="@+id/linearLayout"
+        android:layout_below="@+id/barra_superior"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginBottom="9dp"
+        android:padding="8dp" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#F5F5F5"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:layout_gravity="bottom"
-        android:background="#F5F5F5">
+        android:padding="8dp">
 
         <EditText
             android:id="@+id/et_chat_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Escribe un mensaje"
             android:background="@drawable/rounded_edittext"
+            android:hint="Escribe un mensaje"
+            android:maxLength="500"
             android:padding="8dp"
             android:textColor="#000" />
 
@@ -80,11 +116,11 @@
             android:id="@+id/btn_send_message"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/baseline_arrow_right_24"
-            android:contentDescription="Send"
-            android:background="?attr/selectableItemBackground"
             android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="Send"
+            android:src="@drawable/baseline_arrow_right_24"
             app:tint="#000" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

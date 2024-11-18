@@ -20,7 +20,7 @@ class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         viewNombre.text = item.emisor
         viewMensaje.text = item.mensaje
         viewFecha.text = item.fecha
-        viewFecha.text = item.hora
+        viewHora.text = item.hora.substring(0, 5)
 
         itemView.setOnClickListener() {
             onClickListener(item)

@@ -7,5 +7,5 @@ data class MensajeGrupo(
     val grupoId: Int,
     val remitenteId: Int,
     val textoMensaje: String,
-    val enviadoEn: LocalDateTime
+    val enviadoEn: String? = null
 )

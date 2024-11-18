@@ -213,4 +213,30 @@ class GruposService(private val connection: Connection) {
 
         return@withContext grupos
     }
+
+    suspend fun hallarGrupoID(userId: Int): Int {
+        val query = """
+            SELECT grupo_id 
+            FROM miembros_grupo 
+            WHERE user_id = ? 
+            UNION 
+            SELECT grupo_id 
+            FROM grupos 
+            WHERE jefe_id = ?
+        """.trimIndent()
+
+        connection.prepareStatement(query).use { statement ->
+            statement.setInt(1, userId)
+            statement.setInt(2, userId)
+
+            val resultSet = statement.executeQuery()
+
+            if (!resultSet.next()) {
+                throw Exception("User not found in any group")
+            }
+
+            return resultSet.getInt("grupo_id")
+        }
+    }
+
 }

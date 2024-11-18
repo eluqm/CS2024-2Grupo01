@@ -635,17 +635,16 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.Created, id)
         }
 
-        get("/chats_grupo/{id}") {
-            try {
-                val grupoId = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid group ID")
-                val chats = mensajesGrupoService.readChatsByGrupo(grupoId)
+        get("/mensajes_usuario/{id}") {
+            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
+            val chats = mensajesGrupoService.readChatsByUser(id)
+            if (chats.isNotEmpty()) {
                 call.respond(HttpStatusCode.OK, chats)
-            } catch (e: IllegalArgumentException) {
-                call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.NotFound, mapOf("error" to e.message))
+            } else {
+                call.respond(HttpStatusCode.NotFound, "No chats found for user ID $id")
             }
         }
+
 
 
         // Read group message
@@ -786,7 +785,7 @@ fun Application.configureDatabases() {
 fun Application.connectToPostgres(embedded: Boolean): Connection {
     Class.forName("org.postgresql.Driver")
     if (embedded) {
-        return DriverManager.getConnection("jdbc:postgresql://localhost:8081/test_mentoria", "user_ment", "12345678")
+        return DriverManager.getConnection("jdbc:postgresql://serverikus.postgres.database.azure.com:5432/mentoriapp", "foxi", "ola.cmma.bd1")
     } else {
         val url = environment.config.property("postgres.url").getString()
         val user = environment.config.property("postgres.user").getString()

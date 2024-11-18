@@ -37,13 +37,14 @@ class PsicoCrearEventoFragment : Fragment(R.layout.fragment_psico_crear_evento) 
         view.findViewById<Button>(R.id.boton_crear_evento).setOnClickListener {
             // Mostrar el diálogo
             CrearEventoDialog(requireContext(), commonDAO).show(childFragmentManager, "CrearEventoDialog")
+            eventosAdapter.notifyDataSetChanged()
         }
         apiRest = RetrofitClient.makeRetrofitClient()
         initRecyclerView(view)
     }
 
     private fun initRecyclerView(view: View) {
-        loadSesionMentoriados()  // Carga los mentoriados directamente con mentorId
+        loadSesionEventos()  // Carga los mentoriados directamente con mentorId
         val manager = LinearLayoutManager(context)
         eventosAdapter = EventosAdapter(eventos) { evento -> onItemSelected(evento) }
         val decoration = DividerItemDecoration(context, manager.orientation)
@@ -53,7 +54,7 @@ class PsicoCrearEventoFragment : Fragment(R.layout.fragment_psico_crear_evento) 
         sesionRecyclerView.addItemDecoration(decoration)
     }
 
-    private fun loadSesionMentoriados() {
+    private fun loadSesionEventos() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 // Obtener el mentorId desde las SharedPreferences (sesión)

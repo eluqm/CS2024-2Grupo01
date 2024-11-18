@@ -1,6 +1,7 @@
 package edu.cram.mentoriapp.Service
 
 import edu.cram.mentoriapp.Model.AsistenciaSesion
+import edu.cram.mentoriapp.Model.Chat
 import edu.cram.mentoriapp.Model.Cities
 import edu.cram.mentoriapp.Model.Coordinador
 import edu.cram.mentoriapp.Model.Escuela
@@ -231,6 +232,9 @@ interface ApiRest {
     //Mensajes_Grupo
     @GET("/mensajes_grupo/{id}")
     suspend fun getMensajeGrupo(@Path("id") id: Int): retrofit2.Response<MensajeGrupo>
+
+    @GET("/mensajes_grupo/{id}")
+    suspend fun getMensajesGrupo(@Path("id") id: Int): retrofit2.Response<List<Chat>>
 
     @POST("/mensajes_grupo")
     suspend fun createMensajeGrupo(@Body mensaje: MensajeGrupo): retrofit2.Response<Int>

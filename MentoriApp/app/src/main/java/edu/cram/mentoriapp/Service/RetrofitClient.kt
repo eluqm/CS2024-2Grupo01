@@ -15,4 +15,3 @@ object RetrofitClient {
             .create(ApiRest::class.java)
     }
 }
-

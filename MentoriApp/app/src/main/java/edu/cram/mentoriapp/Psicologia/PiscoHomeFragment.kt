@@ -2,6 +2,7 @@ package edu.cram.mentoriapp.Psicologia
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -12,10 +13,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import edu.cram.mentoriapp.Adapter.ChatAdapter
+import edu.cram.mentoriapp.Adapter.EventosAdapter
 import edu.cram.mentoriapp.DAO.CommonDAO
 import edu.cram.mentoriapp.DAO.PsicologiaDAO
+import edu.cram.mentoriapp.Model.Chat
 import edu.cram.mentoriapp.Model.Cities
+import edu.cram.mentoriapp.Model.Evento
 import edu.cram.mentoriapp.Model.Usuario
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
@@ -24,6 +32,10 @@ import kotlinx.coroutines.launch
 
 class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
 
+    private var chat: MutableList<Chat> = mutableListOf()
+    private lateinit var chatAdapter: ChatAdapter
+    private lateinit var apiRest: ApiRest
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -31,6 +43,7 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
         val cerrar_sesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
         val psicoDao = CommonDAO(requireContext())
 
+        inicializarRecycle(view)
 
         cerrar_sesion.setOnClickListener(){
             cerrarSesion()
@@ -63,6 +76,54 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
             psicoDao.createUserIfNotExists(user)
         }
 
+    }
+
+    private fun inicializarRecycle(view: View) {
+        loadSesionEventos()  // Carga los mentoriados directamente con mentorId
+        val manager = LinearLayoutManager(context)
+        chatAdapter = ChatAdapter(chat) { chat -> onItemSelected(chat) }
+        val decoration = DividerItemDecoration(context, manager.orientation)
+        val sesionRecyclerView = view.findViewById<RecyclerView>(R.id.chat_grupal)
+        sesionRecyclerView.layoutManager = manager
+        sesionRecyclerView.adapter = chatAdapter
+        sesionRecyclerView.addItemDecoration(decoration)
+    }
+
+    private fun loadSesionEventos() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // Obtener el mentorId desde las SharedPreferences (sesión)
+                val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+                val psicoId = sharedPreferences.getInt("userId", -1)
+
+                if (psicoId != -1) {
+                    val response = apiRest.getAllEventos()
+
+                    if (response.isSuccessful) {
+                        val sesiones = response.body()
+                        if (sesiones != null && sesiones.isNotEmpty()) {
+                            eventos.clear()
+                            eventos.addAll(sesiones)
+                            eventosAdapter.notifyDataSetChanged()
+                        } else {
+                            Toast.makeText(requireContext(), "No hay mentoriados disponibles", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
+                        Toast.makeText(requireContext(), "Error al cargar mentoriados: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Mentor ID no encontrado en SharedPreferences", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                // Manejo de excepciones (errores de red, etc.)
+                Toast.makeText(requireContext(), "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.d("loadMentoriados", "Error de red: ${e.message}")
+            }
+        }
+    }
+    private fun onItemSelected(chat: Chat) {
+        chat.emisor.let { Toast.makeText(requireActivity(), it, Toast.LENGTH_SHORT).show() }
     }
 
     private fun cerrarSesion() {

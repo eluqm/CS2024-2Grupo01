@@ -2,7 +2,7 @@
     <string name="app_name">MentoriApp</string>
     <string name="name_app">Hello MentoriApp!</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="tablon_value">Value</string>
+    <string name="tablon_value">Buenos dias, como estamos... 123 . abcdefghijklmnopqr</string>
     <string name="tablon_mentor_coordinador">Mentor-Coordinador</string>
     <string name="back_button">icono de retroceder</string>
     <string name="tittle_estadisticas">Estadísticas</string>

@@ -168,6 +168,9 @@ interface ApiRest {
     @GET("/grupos/{id}")
     suspend fun getGrupo(@Path("id") id: Int): retrofit2.Response<GrupoMentoria>
 
+    @GET("grupos/{jefeId}/miembros")
+    suspend fun getMiembrosPorJefe(@Path("jefeId") jefeId: Int): Response<List<UsuarioLista>>
+
     @POST("/grupos")
     suspend fun createGrupo(@Body grupo: GrupoMentoria): retrofit2.Response<Int>
 
@@ -179,6 +182,16 @@ interface ApiRest {
 
     @GET("/grupos/escuela/{escuelaId}")
     suspend fun getGrupoByEscuela(@Path("escuelaId") escuelaId: Int): retrofit2.Response<List<GrupoMentoria>>
+
+
+
+    @POST("/sesiones")
+    suspend fun crearSesion(@Body sesionRequest: SesionMentoria): Response<Int>
+
+    // Registrar asistencias
+    @POST("/asistencias")
+    suspend fun registrarAsistencias(@Body asistencias: List<AsistenciaSesion>): Response<Unit>
+
 
 
 

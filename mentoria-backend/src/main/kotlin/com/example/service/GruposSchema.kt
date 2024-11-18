@@ -106,6 +106,43 @@ class GruposService(private val connection: Connection) {
         }
     }
 
+    // Obtener usuarios mentoriados por jefeId
+    suspend fun getMiembrosPorJefe(jefeId: Int): List<UsuarioLista> = withContext(Dispatchers.IO) {
+        // Prepara la consulta
+        val query = """
+        SELECT u.user_id, CONCAT(u.nombre_usuario, ' ', u.apellido_usuario) AS nombre_completo, 
+               u.email, u.celular_usuario, u.dni_usuario
+        FROM usuarios u
+        JOIN miembros_grupo mg ON u.user_id = mg.user_id
+        JOIN grupos g ON mg.grupo_id = g.grupo_id
+        WHERE g.jefe_id = ?
+    """.trimIndent()
+
+        val statement = connection.prepareStatement(query)
+        statement.setInt(1, jefeId)
+
+        // Ejecuta la consulta
+        val resultSet = statement.executeQuery()
+
+        // Construir la lista de usuarios
+        val usuarios = mutableListOf<UsuarioLista>()
+        while (resultSet.next()) {
+            usuarios.add(
+                UsuarioLista(
+                    id = resultSet.getInt("user_id"),
+                    nombreCompletoUsuario = resultSet.getString("nombre_completo"),
+                    email = resultSet.getString("email"),
+                    celularUsuario = resultSet.getString("celular_usuario"),
+                    dniUsuario = resultSet.getString("dni_usuario")
+                )
+            )
+        }
+
+        // Devuelve la lista
+        return@withContext usuarios
+    }
+
+
     // Actualizar un grupo
     suspend fun update(grupoId: Int, grupo: Grupo) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_GRUPO)

@@ -1,124 +1,39 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".Psicologia.PsicoGestionarHorariosFragment">
+    android:padding="8dp">
 
-    <TextView
-        android:id="@+id/tv_titulo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Solicitud de Horarios"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_gravity="center"/>
-
-    <ScrollView
+    <TableLayout
+        android:id="@+id/tableLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
+        android:stretchColumns="1,2,3,4,5,6"
+        tools:ignore="MissingConstraints">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        <!-- Primera fila: Nombres de los días -->
+        <TableRow>
+            <TextView android:text="Hors" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+            <TextView android:text="Lun" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+            <TextView android:text="Mar" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+            <TextView android:text="Miér" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+            <TextView android:text="Juev" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+            <TextView android:text="Vier" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+            <TextView android:text="Sáb" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+        </TableRow>
 
+        <!-- Filas dinámicas (se generan en tiempo de ejecución) -->
+    </TableLayout>
 
-            <!-- Lunes -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lunes"
-                    android:gravity="center"/>
-
-                <!-- Aquí va la tarjeta del horario -->
-                <include layout="@layout/item_horario_card"/>
-
-            </LinearLayout>
-
-            <!-- Lunes -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Martes"
-                    android:gravity="center"/>
-
-                <!-- Aquí va la tarjeta del horario -->
-                <include layout="@layout/item_horario_card"/>
-
-            </LinearLayout>
-
-            <!-- Lunes -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Miercoles"
-                    android:gravity="center"/>
-
-                <!-- Aquí va la tarjeta del horario -->
-                <include layout="@layout/item_horario_card"/>
-
-            </LinearLayout>
-
-            <!-- Lunes -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Jueves"
-                    android:gravity="center"/>
-
-                <!-- Aquí va la tarjeta del horario -->
-                <include layout="@layout/item_horario_card"/>
-
-            </LinearLayout>
-
-            <!-- Lunes -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Viernes"
-                    android:gravity="center"/>
-
-                <!-- Aquí va la tarjeta del horario -->
-                <include layout="@layout/item_horario_card"/>
-
-            </LinearLayout>
-
-
-        </LinearLayout>
-    </ScrollView>
-
-</LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewHorario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+</androidx.constraintlayout.widget.ConstraintLayout>

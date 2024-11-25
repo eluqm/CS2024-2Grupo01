@@ -14,6 +14,12 @@ data class AsistenciaSesion(
     val sesionId: Int,
     val mentoriadoId: Int,
     val asistio: Boolean,
+)
+
+data class AsistenciaSesionLectura(
+    val sesionId: Int,
+    val mentoriadoId: Int,
+    val asistio: Boolean,
     @Contextual
     val horaFechaRegistrada: LocalDateTime?
 )
@@ -51,13 +57,13 @@ class AsistenciasSesionesService(private val connection: Connection) {
     }
 
     // Leer una asistencia
-    suspend fun read(asistenciaId: Int): AsistenciaSesion = withContext(Dispatchers.IO) {
+    suspend fun read(asistenciaId: Int): AsistenciaSesionLectura = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_ASISTENCIA_BY_ID)
         statement.setInt(1, asistenciaId)
         val resultSet = statement.executeQuery()
 
         if (resultSet.next()) {
-            return@withContext AsistenciaSesion(
+            return@withContext AsistenciaSesionLectura(
                 sesionId = resultSet.getInt("sesion_id"),
                 mentoriadoId = resultSet.getInt("mentoriado_id"),
                 asistio = resultSet.getBoolean("asistio"),

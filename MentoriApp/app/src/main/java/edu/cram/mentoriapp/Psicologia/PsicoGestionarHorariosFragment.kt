@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import edu.cram.mentoriapp.Model.Horario
 import edu.cram.mentoriapp.Model.HorarioCell
+import edu.cram.mentoriapp.Model.SesionMentoriaLista
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
 import edu.cram.mentoriapp.Service.RetrofitClient
@@ -69,6 +70,11 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
         }
 
         // Asignar el adaptador al RecyclerView
-        recyclerView.adapter = HorarioAdapter(celdas)
+        recyclerView.adapter = HorarioAdapter(celdas) { horario -> onItemSelected(horario) }
     }
+
+    private fun onItemSelected(horario: HorarioCell) {
+        Toast.makeText(requireActivity(), horario.lugar + "hola", Toast.LENGTH_SHORT).show()
+    }
+
 }

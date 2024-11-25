@@ -138,6 +138,8 @@ interface ApiRest {
     @GET("/horarios/{id}")
     suspend fun getHorario(@Path("id") id: Int): retrofit2.Response<Horario>
 
+    @GET("/horarios")
+    suspend fun getHorarios(): retrofit2.Response<List<Horario>>
 
     @POST("/horarios")
     suspend fun createHorario(@Body horario: Horario): retrofit2.Response<Int>

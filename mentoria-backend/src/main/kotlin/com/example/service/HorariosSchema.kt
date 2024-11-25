@@ -21,6 +21,7 @@ class HorariosService(private val connection: Connection) {
         private const val UPDATE_GRUPO_HORARIO = "UPDATE grupos SET horario_id = ? WHERE jefe_id = ? AND horario_id IS NULL"
         private const val INSERT_HORARIO = "INSERT INTO horarios (lugar, dia, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?, ?)"
         private const val SELECT_HORARIO_BY_ID = "SELECT * FROM horarios WHERE horario_id = ?"
+        private const val SELECT_HORARIO_BY_ID2 = "SELECT * FROM horarios"
         private const val UPDATE_HORARIO = "UPDATE horarios SET lugar = ?, dia = ?, hora_inicio = ?, hora_fin = ?, estado = ? WHERE horario_id = ?"
         private const val DELETE_HORARIO = "DELETE FROM horarios WHERE horario_id = ?"
 
@@ -90,6 +91,27 @@ class HorariosService(private val connection: Connection) {
             throw Exception("Horario not found")
         }
     }
+
+    suspend fun readAll(): List<Horario> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_HORARIO_BY_ID2)
+        val resultSet = statement.executeQuery()
+
+        val horarios = mutableListOf<Horario>()
+        while (resultSet.next()) {
+            horarios.add(
+                Horario(
+                    horarioId = resultSet.getInt("horario_id"),
+                    lugar = resultSet.getString("lugar"),
+                    dia = resultSet.getString("dia"),
+                    horaInicio = resultSet.getTime("hora_inicio").toLocalTime().toString(),
+                    horaFin = resultSet.getTime("hora_fin").toLocalTime().toString(),
+                    estado = resultSet.getBoolean("estado")
+                )
+            )
+        }
+        return@withContext horarios
+    }
+
 
     suspend fun update(horarioId: Int, horario: Horario) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_HORARIO)

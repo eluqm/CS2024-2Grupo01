@@ -367,6 +367,16 @@ fun Application.configureDatabases() {
             }
         }
 
+        get("/horarios") {
+            val horarios = horariosService.readAll() // Llama al método que devuelve todos los horarios
+            if (horarios.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, horarios)
+            } else {
+                call.respond(HttpStatusCode.NoContent) // Responde con 204 si no hay horarios
+            }
+        }
+
+
         // Update schedule
         put("/horarios/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")

@@ -13,4 +13,5 @@
     <string name="select_cargo_prompt">Seleccione por cargo</string>
     <string name="change_password_background" />
     <string name="gesti_n_de_horarios">Gestión de Horarios</string>
+    <string name="lista_de_sesiones">Lista de Sesiones</string>
 </resources>

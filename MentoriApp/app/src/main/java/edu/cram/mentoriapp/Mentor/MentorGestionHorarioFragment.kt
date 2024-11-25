@@ -119,6 +119,7 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                             "Horario creado con éxito. ID: $horarioId",
                             Toast.LENGTH_SHORT
                         ).show()
+
                     } else {
                         Log.d("dasdasd","Error al crear horario: ${response.errorBody()?.string()}")
                         Toast.makeText(
@@ -130,7 +131,7 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Log.d("ERROR", "Error: ${e.message}")
                 }
             }
         }

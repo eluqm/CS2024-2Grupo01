@@ -185,11 +185,11 @@ interface ApiRest {
 
 
 
-    @POST("/sesiones")
+    @POST("/sesiones_mentoria")
     suspend fun crearSesion(@Body sesionRequest: SesionMentoria): Response<Int>
 
     // Registrar asistencias
-    @POST("/asistencias")
+    @POST("/asistencias_sesiones")
     suspend fun registrarAsistencias(@Body asistencias: List<AsistenciaSesion>): Response<Unit>
 
 

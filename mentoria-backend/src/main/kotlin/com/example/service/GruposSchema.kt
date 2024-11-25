@@ -52,7 +52,7 @@ class GruposService(private val connection: Connection) {
             SELECT 
                 s.tema_sesion,
                 h.lugar,
-                DATE(s.fecha) AS fecha_registrada,
+                DATE(s.fecha_hora) AS fecha_registrada,
                 CONCAT(COUNT(a.mentoriado_id), '/', (SELECT COUNT(*) FROM miembros_grupo mg WHERE mg.grupo_id = g.grupo_id)) AS participantes
             FROM 
                 sesiones_mentoria s

@@ -27,6 +27,9 @@ import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asistencia) {
     private lateinit var apiRest: ApiRest
@@ -47,16 +50,26 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
         val mentorId = sharedPreferences.getInt("userId", -1)
         val grupoId = sharedPreferences.getInt("grupoId", -1)
         val horaProgramadaStr = sharedPreferences.getString("horaProgramada", null)
+        val diaProgramadoStr = sharedPreferences.getString("diaProgramado", null)
+        if (mentorId != -1 && grupoId != -1 && horaProgramadaStr != null && diaProgramadoStr != null) {
 
-        if (mentorId != -1 && grupoId != -1 && horaProgramadaStr != null) {
-            val horaProgramada = LocalDateTime.parse(horaProgramadaStr)
             loadMentoriados(mentorId, checkBoxContainer)
+
+
 
             foto.setOnClickListener {
                 openCamera()
             }
 
             cerrarAsistencia.setOnClickListener {
+
+                val hoy = LocalDate.now()
+                val diaActual = hoy.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, Locale("es", "ES")).lowercase(Locale.getDefault())
+                val horaActual = LocalTime.now()
+
+                Log.d("hola21", "dia: $diaActual")
+                Log.d("hola21", "hora: $horaActual")
+
                 val temaa = tema.text.toString()
                 val descripcion = descriptionEditText.text.toString()
                 val seleccionados = getSelectedMentoriados(checkBoxContainer)
@@ -66,21 +79,32 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
                     return@setOnClickListener
                 }
 
-                val hoy = LocalDate.now()
-                if (hoy != horaProgramada.toLocalDate()) {
+                // Compara el día
+                if (diaProgramadoStr.lowercase(Locale.getDefault()) != diaActual) {
                     Toast.makeText(requireContext(), "La asistencia solo está disponible el día programado", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
-                val ahora = LocalDateTime.now()
-                val estadoSesion = when {
-                    ahora.isBefore(horaProgramada) -> "programada"
-                    ahora.isEqual(horaProgramada) || ahora.isAfter(horaProgramada) -> "realizada"
-                    else -> "cancelada"
+                // Parsear la hora programada
+                val horaProgramada = LocalTime.parse(horaProgramadaStr, DateTimeFormatter.ofPattern("HH:mm:ss"))
+
+                // Calcular el rango de 45 minutos
+                val inicioRango = horaProgramada
+                val finRango = horaProgramada.plusMinutes(45)
+
+                // Validar que la hora actual esté dentro del rango
+                if (horaActual.isBefore(inicioRango)) {
+                    Toast.makeText(requireContext(), "Aún no es hora de la asistencia", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                } else if (horaActual.isAfter(finRango)) {
+                    Toast.makeText(requireContext(), "Ya pasó la hora de la asistencia", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
                 }
 
+                val estadoSesion = "realizada"
+
                 photoByteArray?.let { it1 ->
-                    enviarSesion(grupoId, temaa, descripcion, estadoSesion, horaProgramada,
+                    enviarSesion(grupoId, temaa, descripcion, estadoSesion,
                         it1
                     ) { sesionId ->
                         enviarAsistencias(sesionId, seleccionados, checkBoxContainer)
@@ -103,7 +127,7 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
             val photo = data?.extras?.get("data") as? Bitmap
             if (photo != null) {
                 photoByteArray = bitmapToByteArray(photo)
-                Toast.makeText(requireContext(), "Foto capturada con éxito", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Foto capturada con éxito: \n ${photoByteArray.toString()}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -165,7 +189,6 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
         tema: String,
         descripcion: String,
         estado: String,
-        horaProgramada: LocalDateTime,
         foto: ByteArray,
         onSuccess: (Int) -> Unit
     ) {
@@ -173,7 +196,6 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
             try {
                 val sesionMentoria = SesionMentoria(
                     grupoId = grupoId,
-                    horaProgramada = horaProgramada,
                     temaSesion = tema,
                     notas = descripcion,
                     estado = estado,

@@ -378,12 +378,31 @@ fun Application.configureDatabases() {
 
 
         // Update schedule
-        put("/horarios/{id}") {
+        /*put("/horarios/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
             val horario = call.receive<Horario>()
             horariosService.update(id, horario)
             call.respond(HttpStatusCode.OK)
+        }*/
+        put("/horarios/{id}") {
+            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
+
+            // Recibir los datos parciales para la actualización
+            val horarioUpdate = call.receive<HorarioUpdate>()
+
+            // Validar que el ID del URL y el ID del cuerpo coincidan
+            if (id != horarioUpdate.horarioId) {
+                call.respond(HttpStatusCode.BadRequest, "ID mismatch between path and body")
+                return@put
+            }
+
+            // Llamar al servicio para actualizar los datos
+            horariosService.updatePartial(horarioUpdate)
+
+            // Responder con un OK si todo fue bien
+            call.respond(HttpStatusCode.OK)
         }
+
 
         // Delete schedule
         delete("/horarios/{id}") {

@@ -9,6 +9,7 @@ import edu.cram.mentoriapp.Model.EvaluacionComentario
 import edu.cram.mentoriapp.Model.Evento
 import edu.cram.mentoriapp.Model.GrupoMentoria
 import edu.cram.mentoriapp.Model.Horario
+import edu.cram.mentoriapp.Model.HorarioUpdate
 import edu.cram.mentoriapp.Model.MensajeGrupo
 import edu.cram.mentoriapp.Model.Mentor
 import edu.cram.mentoriapp.Model.Mentoriado
@@ -151,7 +152,10 @@ interface ApiRest {
     ): retrofit2.Response<Int>
 
     @PUT("/horarios/{id}")
-    suspend fun updateHorario(@Path("id") id: Int, @Body horario: Horario): retrofit2.Response<Unit>
+    suspend fun updateHorario(
+        @Path("id") id: Int,
+        @Body horario: HorarioUpdate
+    ): retrofit2.Response<Unit>
 
     @DELETE("/horarios/{id}")
     suspend fun deleteHorario(@Path("id") id: Int): retrofit2.Response<Unit>

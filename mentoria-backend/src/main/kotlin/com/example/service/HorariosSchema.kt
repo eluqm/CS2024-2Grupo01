@@ -16,12 +16,19 @@ data class Horario(
     val estado: Boolean
 )
 
+data class HorarioUpdate(
+    val horarioId: Int,
+    val lugar: String,
+    val estado: Boolean = true
+)
+
 class HorariosService(private val connection: Connection) {
     companion object {
         private const val UPDATE_GRUPO_HORARIO = "UPDATE grupos SET horario_id = ? WHERE jefe_id = ? AND horario_id IS NULL"
         private const val INSERT_HORARIO = "INSERT INTO horarios (lugar, dia, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?, ?)"
         private const val SELECT_HORARIO_BY_ID = "SELECT * FROM horarios WHERE horario_id = ?"
         private const val SELECT_HORARIO_BY_ID2 = "SELECT * FROM horarios"
+        private const val UPDATE_PARTIAL_HORARIO = "UPDATE horarios SET lugar = ?, estado = ? WHERE horario_id = ?"
         private const val UPDATE_HORARIO = "UPDATE horarios SET lugar = ?, dia = ?, hora_inicio = ?, hora_fin = ?, estado = ? WHERE horario_id = ?"
         private const val DELETE_HORARIO = "DELETE FROM horarios WHERE horario_id = ?"
 
@@ -121,6 +128,14 @@ class HorariosService(private val connection: Connection) {
         statement.setTime(4, Time.valueOf(horario.horaFin))
         statement.setBoolean(5, horario.estado)
         statement.setInt(6, horarioId)
+        statement.executeUpdate()
+    }
+
+    suspend fun updatePartial(horarioUpdate: HorarioUpdate) = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(UPDATE_PARTIAL_HORARIO)
+        statement.setString(1, horarioUpdate.lugar)
+        statement.setBoolean(2, horarioUpdate.estado)
+        statement.setInt(3, horarioUpdate.horarioId)
         statement.executeUpdate()
     }
 

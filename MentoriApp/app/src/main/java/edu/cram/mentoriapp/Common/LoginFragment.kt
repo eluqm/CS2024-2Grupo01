@@ -14,6 +14,7 @@ import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.RetrofitClient
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.io.IOException
 import java.security.MessageDigest
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
@@ -41,53 +42,50 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun iniciarSesion(dni: String, password: String, view: View) {
         lifecycleScope.launch {
-            val response: Response<Usuario> = apiRest.getUsuarioByDni(dni)
+            try {
+                val response = apiRest.getUsuarioByDni(dni)
 
-            if (response.isSuccessful && response.body() != null) {
-                val usuario = response.body()!!
+                if (response.isSuccessful && response.body() != null) {
+                    val usuario = response.body()!!
 
-                // Comprobar si la contraseña almacenada es la contraseña por defecto sin cifrar
-                val esContrasenaPorDefecto = usuario.passwordHash == "12345"
-                // Cifrar la contraseña ingresada para comparar con la almacenada
-                val contrasenaCifradaIngresada = cifrarContrasena(password)
+                    val esContrasenaPorDefecto = usuario.passwordHash == "12345"
+                    val contrasenaCifradaIngresada = cifrarContrasena(password)
 
-                // Verificar si coincide con la contraseña por defecto o la cifrada
-                if (true) {
-                    if (esContrasenaPorDefecto) {
-                        // Pedir al usuario que cambie la contraseña si es la por defecto
-                        mostrarCambioContrasena(usuario)
-                    } else {
-                        // Continuar con la navegación según el tipo de usuario
-                        redirigirSegunTipoUsuario(usuario, view)
-                    }
-                    var grupoId: Int? = null;
-                    // Llamamos al endpoint para obtener el grupoId del usuario
-                    val grupoResponse = apiRest.getGrupoId(usuario.userId!!) // Asumimos que 'userId' es el identificador del usuario
-
-                    if (grupoResponse.isSuccessful && grupoResponse.body() != null) {
-                        grupoId = grupoResponse.body()?.get("grupoId")
-
-                        if (grupoId != null) {
-                            // Usar el grupoId aquí
-                            println("El grupoId es: $grupoId")
+                    // Verificar si la contraseña coincide
+                    if (usuario.passwordHash == contrasenaCifradaIngresada || esContrasenaPorDefecto) {
+                        if (esContrasenaPorDefecto) {
+                            mostrarCambioContrasena(usuario)
                         } else {
-                            // Manejar el caso donde el grupoId no se encuentra
-                            println("No se pudo obtener el grupoId")
+                            redirigirSegunTipoUsuario(usuario, view)
                         }
 
+                        // Obtener grupoId del usuario
+                        val grupoResponse = apiRest.getGrupoId(usuario.userId!!)
+                        if (grupoResponse.isSuccessful && grupoResponse.body() != null) {
+                            val grupoId = grupoResponse.body()?.get("grupoId") as? Int
+                            if (grupoId != null) {
+                                println("El grupoId es: $grupoId")
+                                guardarUsuarioEnSesion(usuario, grupoId)
+                            } else {
+                                Toast.makeText(context, "No se pudo obtener el grupoId", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "Error al obtener el grupo", Toast.LENGTH_SHORT).show()
+                        }
                     } else {
-                        // Manejo de error si no se pudo obtener el grupoId
-                        Toast.makeText(context, "Error al obtener el grupo", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
                     }
-                    guardarUsuarioEnSesion(usuario, grupoId)
                 } else {
-                    Toast.makeText(context, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Usuario no encontrado", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(context, "Usuario no encontrado", Toast.LENGTH_SHORT).show()
+            } catch (e: IOException) {
+                Toast.makeText(context, "Error de red. Verifica tu conexión.", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(context, "Error inesperado: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
 
 

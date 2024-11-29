@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/</item>
+        <item>@font/advent_pro_thin</item>
+        <item>@font/anonymous_pro</item>
+        <item>@font/baloo_bhaina</item>
+        <item>@font/lato_thin</item>
+        <item>@font/merriweather_light</item>
+        <item>@font/roboto_slab_thin</item>
+    </array>
+</resources>

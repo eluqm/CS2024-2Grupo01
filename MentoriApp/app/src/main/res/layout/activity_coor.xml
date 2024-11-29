@@ -21,6 +21,7 @@
         app:navGraph="@navigation/navegacion_coor"/>
 
     <!-- BottomNavigationView pegado al fondo -->
+    <!-- BottomNavigationView pegado al fondo -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationViewCoor"
         android:layout_width="match_parent"
@@ -28,6 +29,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/coor_bottom_navigation"/>
+        app:menu="@menu/coor_bottom_navigation"
+        app:backgroundTint="#0A3D6F" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

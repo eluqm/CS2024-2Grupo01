@@ -10,10 +10,9 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#CBC3E3"
+        android:background="@drawable/gradient_background"
         android:padding="16dp">
 
-        <!-- LinearLayout para la información apilada -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,47 +20,46 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <!-- Semestre de la mentoría -->
             <TextView
                 android:id="@+id/tv_semestre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:text="MENTORIA - 2024-A"
-                android:textColor="#fff"
-                android:textSize="16sp" />
+                android:fontFamily="@font/merriweather_light"
+                android:text="MENTORÍA - 2024-A"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-            <!-- Rol del usuario -->
             <TextView
                 android:id="@+id/tv_rol_usuario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:text="Rol: Mentor"
-                android:textColor="#fff"
-                android:textSize="16sp" />
+                android:fontFamily="@font/merriweather_light"
+                android:text="Mentor"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
 
-            <!-- Nombre y Apellido del usuario -->
             <TextView
                 android:id="@+id/tv_nombre_usuario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nombre Apellido"
-                android:textColor="#fff"
+                android:fontFamily="@font/merriweather_light"
+                android:text="Carlos Mijail Mamani Anccasi"
+                android:textColor="#FFFFFF"
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Botón de Notificaciones -->
         <ImageButton
             android:id="@+id/btn_notification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:background="?attr/selectableItemBackground"
-            android:src="@drawable/baseline_add_home_work_24"
-            app:tint="#fff" />
+            android:src="@drawable/baseline_campaign_24"
+            app:tint="#FFFFFF" />
 
-        <!-- Botón de Cerrar Sesión -->
         <ImageButton
             android:id="@+id/cerrar_sesion"
             android:layout_width="wrap_content"
@@ -69,42 +67,41 @@
             android:layout_alignParentEnd="true"
             android:background="?attr/selectableItemBackground"
             android:src="@drawable/baseline_logout_24"
-            app:tint="#fff" />
-
-
+            app:tint="#FFFFFF" />
     </RelativeLayout>
 
-    <!-- RecyclerView para el chat -->
-
-    <!-- Contenedor para enviar mensajes -->
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
+    <!-- RecyclerView para mostrar los mensajes -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_grupal"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_above="@+id/linearLayout"
         android:layout_below="@+id/relativeLayout"
-        android:layout_height="match_parent">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/chat_grupal"
-                android:layout_width="398dp"
-                android:layout_height="538dp"
+        android:padding="8dp" />
 
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="6dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="7dp"
-                android:layout_marginBottom="9dp"
-                android:padding="8dp" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <!-- Botón flotante para actualizar el chat -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_update_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="100dp"
+        android:src="@drawable/baseline_refresh_24"
+        app:backgroundTint="#DC2FAE"
+        app:tint="#FFFFFF" />
 
+    <!-- Contenedor para enviar mensajes -->
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#F5F5F5"
+        android:background="#FFFFFF"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:elevation="4dp">
 
         <EditText
             android:id="@+id/et_chat_message"
@@ -113,19 +110,17 @@
             android:layout_weight="1"
             android:background="@drawable/rounded_edittext"
             android:hint="Escribe un mensaje"
-            android:maxLength="500"
             android:padding="8dp"
-            android:textColor="#000" />
+            android:textColor="#333333"
+            android:textColorHint="#757575" />
 
         <ImageButton
             android:id="@+id/btn_send_message"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackground"
-            android:contentDescription="Send"
             android:src="@drawable/baseline_arrow_right_24"
-            app:tint="#000" />
+            app:tint="#DC2FAE" />
     </LinearLayout>
-
 </RelativeLayout>

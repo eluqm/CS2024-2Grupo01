@@ -10,7 +10,9 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#CBC3E3"
+        android:background="@drawable/gradient_background"
+
+
         android:padding="16dp">
 
         <!-- LinearLayout para la información apilada -->
@@ -27,9 +29,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
+                android:fontFamily="@font/merriweather_light"
                 android:text="MENTORIA - 2024-A"
                 android:textColor="#fff"
-                android:textSize="16sp" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <!-- Rol del usuario -->
             <TextView
@@ -37,16 +41,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:text="Rol: Mentor"
+                android:fontFamily="@font/merriweather_light"
+                android:text="Mentor"
                 android:textColor="#fff"
-                android:textSize="16sp" />
+                android:textSize="17sp" />
 
             <!-- Nombre y Apellido del usuario -->
             <TextView
                 android:id="@+id/tv_nombre_usuario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nombre Apellido"
+                android:fontFamily="@font/merriweather_light"
+                android:text="Carlos Mijail Mamani Anccasi"
+                android:textAllCaps="false"
                 android:textColor="#fff"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -58,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:background="?attr/selectableItemBackground"
-            android:src="@drawable/baseline_add_home_work_24"
+            android:src="@drawable/baseline_campaign_24"
             app:tint="#fff" />
 
         <!-- Botón de Cerrar Sesión -->

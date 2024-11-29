@@ -16,6 +16,7 @@ data class Horario(
     val estado: Boolean
 )
 
+@Serializable
 data class HorarioUpdate(
     val horarioId: Int,
     val lugar: String,
@@ -136,6 +137,7 @@ class HorariosService(private val connection: Connection) {
         statement.setString(1, horarioUpdate.lugar)
         statement.setBoolean(2, horarioUpdate.estado)
         statement.setInt(3, horarioUpdate.horarioId)
+
         statement.executeUpdate()
     }
 

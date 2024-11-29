@@ -4,6 +4,7 @@ import HorarioAdapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -82,7 +83,13 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
                 try {
                     val response = apiRest.getHorario(horarioCell.horarioId)
                     if (response.isSuccessful) {
-                        val horario = response.body()
+                        var horario = response.body()
+
+                        if (horario != null) {
+                            horario.horarioId = horarioCell.horarioId
+                        }
+
+                            horarioCell.horarioId
                         if (horario != null) {
                             initDialogo(horario)
                         } else {
@@ -122,14 +129,18 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
             .setTitle("Detalles del Horario")
             .setView(dialogView)
             .setPositiveButton("Aceptar") { dialog, _ ->
+                Log.d("aea", "aceptar")
                 val lugarActualizado = editTextLugar.text.toString()
-
+                Log.d("aea", "aceptar2 ${horario.horarioId} $lugarActualizado")
                 // Crear el objeto de actualización
                 val horarioUpdate = HorarioUpdate(
                     horarioId = horario.horarioId!!,
                     lugar = lugarActualizado,
                     estado = true // Cambiar el estado a true
                 )
+                Log.d("aea", "aceptar3")
+
+                Log.d("aea", horarioUpdate.toString())
 
                 // TODO: Aquí puedes llamar a tu función para actualizar en la base de datos
                 updateHorario(horarioUpdate)
@@ -146,16 +157,20 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
     }
 
     private fun updateHorario(horarioUpdate: HorarioUpdate) {
+        Log.d("aea", "entre a el uopdate")
         lifecycleScope.launch {
             try {
                 val response = apiRest.updateHorario(horarioUpdate.horarioId, horarioUpdate)
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Horario actualizado correctamente", Toast.LENGTH_SHORT).show()
-                    fetchHorarios() // Recargar la lista de horarios
+                    fetchHorarios() // Recargar la lista de horarios}
+                    Log.d("aea2", "si")
                 } else {
                     Toast.makeText(requireContext(), "Error al actualizar: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Log.d("aea2", "no")
                 }
             } catch (e: Exception) {
+                Log.d("aea2", "red")
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }

@@ -151,7 +151,7 @@ interface ApiRest {
         @Query("jefeId") jefeId: Int
     ): retrofit2.Response<Int>
 
-    @PUT("/horarios/{id}")
+    @PUT("/horariosPut/{id}")
     suspend fun updateHorario(
         @Path("id") id: Int,
         @Body horario: HorarioUpdate
@@ -195,7 +195,7 @@ interface ApiRest {
     suspend fun crearSesion(@Body sesionRequest: SesionMentoria): Response<Int>
 
     // Registrar asistencias
-    @POST("/asistencias_sesiones")
+    @POST("/asistencias_sesiones_grupal")
     suspend fun registrarAsistencias(@Body asistencias: List<AsistenciaSesion>): Response<Unit>
 
 

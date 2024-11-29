@@ -4,7 +4,7 @@ import java.io.Serializable
 import java.time.LocalTime
 
 data class Horario(
-    val horarioId: Int? = null,
+    var horarioId: Int? = null,
     val lugar: String?,
     val dia: String,
     val horaInicio: String,

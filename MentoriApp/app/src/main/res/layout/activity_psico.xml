@@ -20,16 +20,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/navegacion_psico"/>
 
-    <!-- BottomNavigationView pegado al fondo -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationViewPsico"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/gradient_background_reverse"
+        app:itemTextColor="@color/bottom_nav_item_colors"
+        app:itemIconTint="@color/bottom_nav_item_colors"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/psico_bottom_navigation"
-        app:backgroundTint="#0A3D6F"
-        app:itemIconTint="#0A3D6F"/>
+        app:menu="@menu/psico_bottom_navigation" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

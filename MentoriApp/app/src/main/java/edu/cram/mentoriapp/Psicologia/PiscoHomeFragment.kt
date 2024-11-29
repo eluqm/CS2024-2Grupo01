@@ -55,25 +55,7 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
             // Ejemplo: Obtener una ciudad con ID 1 y mostrar los datos
             //psicoDao.fetchCity(1, textView)
 
-            // Ejemplo: Crear una nueva ciudad
-            //val newCity = Cities(name = "Puno", population = 123)
-            //psicoDao.createUser(newCity)
 
-            val user = Usuario(
-                dniUsuario = "12121217999",
-                nombreUsuario = "Juanita",
-                apellidoUsuario = "Pérez",
-                celularUsuario = "987654321",
-                passwordHash = "12345",  // Aquí puedes usar el hash real si lo tienes.
-                escuelaId = 1,
-                semestre = "III",
-                email = "juan.perez@example.com",
-                tipoUsuario = "mentor",
-                creadoEn = "23123" // Puedes cambiar esto si el tipo de usuario es diferente.
-            )
-
-            // Llama a la función que verifica la existencia del usuario y crea el nuevo usuario si no existe
-            psicoDao.createUserIfNotExists(user)
         }
 
     }

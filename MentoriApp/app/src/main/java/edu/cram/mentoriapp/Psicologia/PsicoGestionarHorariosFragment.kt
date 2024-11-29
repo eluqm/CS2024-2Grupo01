@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import edu.cram.mentoriapp.Model.Horario
@@ -31,11 +32,14 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView = view.findViewById(R.id.recyclerViewHorario)
+
         apiRest = RetrofitClient.makeRetrofitClient()
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 7)
-
-
+        recyclerView = view.findViewById(R.id.recyclerViewHorario)
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 6)
+        val decoration1 = DividerItemDecoration(requireContext(), GridLayoutManager.HORIZONTAL)
+        val decoration2 = DividerItemDecoration(requireContext(), GridLayoutManager.VERTICAL)
+        recyclerView.addItemDecoration(decoration1)
+        recyclerView.addItemDecoration(decoration2)
         fetchHorarios()
     }
 
@@ -57,13 +61,13 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
     }
 
     private fun setupRecyclerView(horarios: List<Horario>) {
-        val horas = listOf("08:00", "10:00", "12:00", "14:00", "16:00", "18:00")
-        val dias = listOf("Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado")
+        val horas = listOf("07:15", "08:00", "08:45", "09:30", "10:15", "11:00", "11:45", "12:30", "13:15", "14:00", "14:45", "15:30", "16:15", "17:00")
+        val dias = listOf("Lunes", "Martes", "Miercoles", "Jueves", "Viernes")
 
         val celdas = mutableListOf<HorarioCell>()
         for (hora in horas) {
             // Agregar primera columna con las horas
-            celdas.add(HorarioCell(hora, "Horas", lugar = null))
+            celdas.add(HorarioCell("hora", "Horas", lugar = hora))
 
             // Agregar las celdas para cada día
             for (dia in dias) {

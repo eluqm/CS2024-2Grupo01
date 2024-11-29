@@ -56,8 +56,8 @@ class HorariosService(private val connection: Connection) {
         val statement = connection.prepareStatement(INSERT_HORARIO, Statement.RETURN_GENERATED_KEYS)
         statement.setString(1, horario.lugar)
         statement.setString(2, horario.dia)
-        statement.setTime(3, Time.valueOf(horario.horaInicio))
-        statement.setTime(4, Time.valueOf(horario.horaFin))
+        statement.setString(3, horario.horaInicio)
+        statement.setString(4, horario.horaFin)
         statement.setBoolean(5, horario.estado)
         statement.executeUpdate()
 

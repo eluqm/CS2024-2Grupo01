@@ -14,6 +14,9 @@ class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: 
         val textView: TextView = itemView.findViewById(R.id.cellTextView)
 
         fun render(item: HorarioCell, onClickListener:(HorarioCell) -> Unit) {
+            if (item.horarioId == null) {
+                itemView.background = null
+            }
             itemView.setOnClickListener() {
                 onClickListener(item)
             }

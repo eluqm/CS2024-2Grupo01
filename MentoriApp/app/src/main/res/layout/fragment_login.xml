@@ -16,43 +16,55 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/img_login"
+            android:src="@drawable/lasalle1"
             android:contentDescription="@string/login_background"/>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#80000000"/> <!-- Color negro con transparencia para difuminar -->
+            android:background="#80000000" /> <!-- Color negro con transparencia para difuminar -->
     </FrameLayout>
 
     <ImageView
         android:id="@+id/login_logo"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:src="@drawable/uls"
+        android:src="@drawable/logoula"
         android:layout_marginTop="100dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:elevation="8dp"/>
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/adamina"
+        android:text="Mentoring"
+        android:textColor="@color/white"
+        android:textSize="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_logo" />
+
     <EditText
         android:id="@+id/et_codigo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Código"
-        android:padding="12dp"
-        android:inputType="number"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/rounded_edittext"
         android:drawableStart="@drawable/baseline_code_24"
         android:drawablePadding="15dp"
-        android:background="@drawable/rounded_edittext"
+        android:hint="Código"
+        android:inputType="number"
+        android:padding="12dp"
         android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/login_logo"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/login_logo" />
 
     <EditText
         android:id="@+id/et_contrasena"

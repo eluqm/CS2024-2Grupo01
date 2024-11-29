@@ -1,6 +1,7 @@
 package edu.cram.mentoriapp.Common
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -59,12 +60,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         // Continuar con la navegación según el tipo de usuario
                         redirigirSegunTipoUsuario(usuario, view)
                     }
-
+                    var grupoId: Int? = null;
                     // Llamamos al endpoint para obtener el grupoId del usuario
                     val grupoResponse = apiRest.getGrupoId(usuario.userId!!) // Asumimos que 'userId' es el identificador del usuario
 
                     if (grupoResponse.isSuccessful && grupoResponse.body() != null) {
-                        val grupoId = grupoResponse.body()?.get("grupoId")
+                        grupoId = grupoResponse.body()?.get("grupoId")
 
                         if (grupoId != null) {
                             // Usar el grupoId aquí
@@ -74,13 +75,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             println("No se pudo obtener el grupoId")
                         }
 
-
-                        // Guardamos el grupoId junto con la información del usuario en SharedPreferences
-                        guardarUsuarioEnSesion(usuario, grupoId)
                     } else {
                         // Manejo de error si no se pudo obtener el grupoId
                         Toast.makeText(context, "Error al obtener el grupo", Toast.LENGTH_SHORT).show()
                     }
+                    guardarUsuarioEnSesion(usuario, grupoId)
                 } else {
                     Toast.makeText(context, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
                 }
@@ -151,7 +150,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         editor.putString("apellidoUsuario", usuario.apellidoUsuario)
         editor.putString("tipoUsuario", usuario.tipoUsuario)
         editor.putString("email", usuario.email)
-
+        editor.putInt("escuelaId",usuario.escuelaId)
+        Log.d("escuela", usuario.escuelaId.toString())
         // solo para el mentor
         editor.putString("horaProgramada", "17:59:00")
         editor.putString("diaProgramado", "Lunes")

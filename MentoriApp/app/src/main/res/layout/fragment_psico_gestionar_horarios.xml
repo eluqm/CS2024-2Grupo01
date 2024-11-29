@@ -11,17 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="1,2,3,4,5,6"
+        android:layout_marginTop="10dp"
         tools:ignore="MissingConstraints">
 
         <!-- Primera fila: Nombres de los días -->
         <TableRow>
-            <TextView android:text="Hors" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
-            <TextView android:text="Lun" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
-            <TextView android:text="Mar" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
-            <TextView android:text="Miér" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
-            <TextView android:text="Juev" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
-            <TextView android:text="Vier" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
-            <TextView android:text="Sáb" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:gravity="center"/>
+            <TextView android:text="Horas" android:layout_width="wrap_content" android:layout_height="wrap_content"  android:padding="8dp" android:textStyle="bold" android:layout_gravity="center" android:layout_marginEnd="3dp" />
+            <TextView android:text="Lunes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:layout_gravity="center"/>
+            <TextView android:text="Martes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:layout_gravity="center"/>
+            <TextView android:text="Miércoles" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:layout_gravity="center"/>
+            <TextView android:text="Jueves" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:layout_gravity="center"/>
+            <TextView android:text="Viernes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:layout_gravity="center"/>
         </TableRow>
 
         <!-- Filas dinámicas (se generan en tiempo de ejecución) -->
@@ -32,6 +32,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="2dp"
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

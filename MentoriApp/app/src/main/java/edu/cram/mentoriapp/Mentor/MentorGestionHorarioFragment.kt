@@ -107,6 +107,8 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
             estado = estado
         )
 
+
+
         Log.d("dasdasd","$horario")
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -119,9 +121,11 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                             "Horario creado con éxito. ID: $horarioId",
                             Toast.LENGTH_SHORT
                         ).show()
+                        Log.d("ERROR","Error al crear horario: ${response.errorBody()?.string()}")
 
                     } else {
-                        Log.d("dasdasd","Error al crear horario: ${response.errorBody()?.string()}")
+                        Log.d("ERROR","Error al crear horario: ${response.errorBody()?.string()}")
+                        Log.d("ERROR","Hi: ${horario.toString()}")
                         Toast.makeText(
                             requireContext(),
                             "Error al crear horario: ${response.errorBody()?.string()}",
@@ -131,7 +135,7 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Log.d("ERROR", "Error: ${e.message}")
+                    Log.d("ERROR2", "Error: ${e.message}")
                 }
             }
         }

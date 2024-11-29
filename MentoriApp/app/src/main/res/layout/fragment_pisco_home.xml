@@ -89,8 +89,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
 
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="75dp"
         android:src="@drawable/baseline_refresh_24"
         app:backgroundTint="#0A3D6F"
         app:tint="#FFFFFF" />

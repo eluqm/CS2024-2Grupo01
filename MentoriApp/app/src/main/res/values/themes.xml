@@ -4,7 +4,8 @@
         <!-- Colores para el modo claro -->
         <item name="colorPrimary">#0A3D6F</item>
         <item name="colorPrimaryVariant">#072A4C</item>
-        <item name="android:colorBackground">#F0F4F8</item>
+        <item name="android:colorBackground">#FDFDFD</item>
+        <item name="colorOnPrimaryContainer">#FFFFFF</item>
         <item name="colorSecondary">#00BCD4</item>
         <item name="colorSecondaryVariant">#008C9E</item>
         <item name="colorSurface">#FFFFFF</item>
@@ -14,6 +15,7 @@
 
         <!-- Colores para el modo oscuro -->
         <item name="colorPrimaryDark">#0A3D6F</item> <!-- Color primario en modo oscuro -->
+        <item name="colorSecondaryContainer">#000000</item> <!-- Fondo del ítem seleccionado alternativo -->
 
     </style>
 

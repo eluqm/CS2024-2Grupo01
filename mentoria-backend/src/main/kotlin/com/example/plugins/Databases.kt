@@ -384,7 +384,7 @@ fun Application.configureDatabases() {
             horariosService.update(id, horario)
             call.respond(HttpStatusCode.OK)
         }*/
-        put("/horarios/{id}") {
+        put("/horariosPut/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
 
             // Recibir los datos parciales para la actualización
@@ -592,6 +592,20 @@ fun Application.configureDatabases() {
             val id = asistenciasSesionesService.create(asistencia)
             call.respond(HttpStatusCode.Created, id)
         }
+
+        post("/asistencias_sesiones_grupal") {
+            // Recibir una lista de asistencias
+            val asistencias = call.receive<List<AsistenciaSesion>>()
+
+            // Llamar al servicio para registrar todas las asistencias
+            asistencias.forEach { asistencia ->
+                asistenciasSesionesService.create(asistencia)
+            }
+
+            // Responder con un estado 201 Created
+            call.respond(HttpStatusCode.Created)
+        }
+
 
         // Read attendance
         get("/asistencias_sesiones/{id}") {

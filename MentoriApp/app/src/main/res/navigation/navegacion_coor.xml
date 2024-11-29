@@ -9,7 +9,11 @@
         android:id="@+id/coorGruposFragment"
         android:name="edu.cram.mentoriapp.Coordinacion.CoorGruposFragment"
         android:label="fragment_coor_grupos"
-        tools:layout="@layout/fragment_coor_grupos" />
+        tools:layout="@layout/fragment_coor_grupos" >
+        <action
+            android:id="@+id/action_coorGruposFragment_to_coorSesionesGruposFragment"
+            app:destination="@id/coorSesionesGruposFragment" />
+    </fragment>
     <fragment
         android:id="@+id/coorHomeFragment"
         android:name="edu.cram.mentoriapp.Coordinacion.CoorHomeFragment"

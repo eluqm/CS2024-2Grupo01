@@ -10,77 +10,81 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import edu.cram.mentoriapp.Adapter.SesionListaAdapter
 import edu.cram.mentoriapp.Model.GrupoMentoria
+import edu.cram.mentoriapp.Model.SesionMentoriaLista
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
 import edu.cram.mentoriapp.Service.RetrofitClient
 import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 class CoorSesionesGruposFragment : Fragment(R.layout.fragment_coor_sesiones_grupos) {
 
+    private var jefeActual by Delegates.notNull<Int>()
+    private lateinit var sesionListaAdapter: SesionListaAdapter
     private lateinit var apiRest: ApiRest
-    private lateinit var sesionesAdapter: SesionesAdapter
-    private var gruposMentoria: MutableList<GrupoMentoria> = mutableListOf()
+    private var sesesionxGrupo: MutableList<SesionMentoriaLista> = mutableListOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+
         super.onViewCreated(view, savedInstanceState)
+
+        arguments?.let {
+            jefeActual = it.getInt("JefeID")
+        }
+
         apiRest = RetrofitClient.makeRetrofitClient()
 
-        initRecycleView(view)
+        initRecyclerView(view)
     }
 
-    private fun initRecycleView(view: View) {
-        loadGrupos()
+    private fun initRecyclerView(view: View) {
+        loadSesionMentoriados()  // Carga los mentoriados directamente con mentorId
         val manager = LinearLayoutManager(context)
-        Toast.makeText(requireContext(), "Antes del recicler", Toast.LENGTH_SHORT).show()
-        sesionesAdapter = SesionesAdapter(gruposMentoria) { user -> onItemSelected(user) }
+        sesionListaAdapter = SesionListaAdapter(sesesionxGrupo) { sesion -> onItemSelected(sesion) }
         val decoration = DividerItemDecoration(context, manager.orientation)
-        val usersRecyler = view.findViewById<RecyclerView>(R.id.recycler_grupos)
-        usersRecyler.layoutManager = manager
-        usersRecyler.adapter = sesionesAdapter
-        usersRecyler.addItemDecoration(decoration)
-        Toast.makeText(requireContext(), "Despues del recicler", Toast.LENGTH_SHORT).show()
-
+        val sesionRecyclerView = view.findViewById<RecyclerView>(R.id.sesionesRecyclerView)
+        sesionRecyclerView.layoutManager = manager
+        sesionRecyclerView.adapter = sesionListaAdapter
+        sesionRecyclerView.addItemDecoration(decoration)
     }
 
-    private fun loadGrupos() {
-        Log.d("loadGrupos", "loadGrupos() iniciado")
+    private fun loadSesionMentoriados() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
-                val escuelaId = sharedPreferences.getInt("escuelaId", -1)
-                if (escuelaId != -1) {
-                    val response = apiRest.getGrupoByEscuela(escuelaId)
-                    if (response.isSuccessful) {
-                        val grupos = response.body()
-                        if (grupos != null && grupos.isNotEmpty()) {
-                            gruposMentoria.clear()
-                            gruposMentoria.addAll(grupos)
-                            sesionesAdapter.notifyDataSetChanged()
-                            Toast.makeText(requireContext(), "Grupos obtenidos: ${gruposMentoria.toString()}", Toast.LENGTH_LONG).show()
-                            Log.d("loadGrupos", "Se obtuvieron grupos para la escuelaId $escuelaId: ${gruposMentoria.toString()}")
 
+                val mentorId = jefeActual
+
+                if (mentorId != -1) {
+                    val response = apiRest.getSesionesPorJefe(mentorId)
+
+                    if (response.isSuccessful) {
+                        val sesiones = response.body()
+                        if (sesiones != null && sesiones.isNotEmpty()) {
+                            sesesionxGrupo.clear()
+                            sesesionxGrupo.addAll(sesiones)
+                            sesionListaAdapter.notifyDataSetChanged()
                         } else {
-                            Toast.makeText(requireContext(), "No hay grupos disponibles para esta escuela", Toast.LENGTH_SHORT).show()
-                            Log.d("loadGrupos", "No hay grupos disponibles para la escuelaId $escuelaId.")
+                            Toast.makeText(requireContext(), "No hay mentoriados disponibles", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
-                        Toast.makeText(requireContext(), "Error al cargar grupos: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
-                        Log.d("loadGrupos", "Error en la respuesta de la API: ${response.code()} - $errorBody")
+                        Toast.makeText(requireContext(), "Error al cargar mentoriados: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Escuela ID no encontrado en SharedPreferences", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Mentor ID no encontrado en SharedPreferences", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
+                // Manejo de excepciones (errores de red, etc.)
                 Toast.makeText(requireContext(), "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
-                Log.d("loadGrupos", "Error de red: ${e.message}")
+                Log.d("loadMentoriados", "Error de red: ${e.message}")
             }
         }
     }
-
-    private fun onItemSelected(user: GrupoMentoria) {
-        TODO("Not yet implemented")
+    private fun onItemSelected(sesion: SesionMentoriaLista) {
+        Toast.makeText(requireActivity(), sesion.temaSesion, Toast.LENGTH_SHORT).show()
     }
 
 }

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import edu.cram.mentoriapp.Adapter.ChatAdapter
 import edu.cram.mentoriapp.Model.Chat
 import edu.cram.mentoriapp.Model.MensajeGrupo
@@ -43,17 +44,14 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
     }
 
     private fun iniciar_eventos(view: View) {
-        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
+        val recargarFloating = view.findViewById<FloatingActionButton>(R.id.btn_update_chat)
 
         val btnEnviar = view.findViewById<ImageButton>(R.id.btn_send_message)
         val txtMensaje = view.findViewById<EditText>(R.id.et_chat_message)
 
-        swipeRefreshLayout.setOnRefreshListener {
+        recargarFloating.setOnClickListener {
             // Simula la recarga de datos (consulta al servidor)
             loadSesionChats()
-
-            // Detén la animación de recarga
-            swipeRefreshLayout.isRefreshing = false
         }
 
         btnEnviar.setOnClickListener {

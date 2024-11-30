@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import edu.cram.mentoriapp.Adapter.ChatAdapter
 import edu.cram.mentoriapp.Adapter.EventosAdapter
 import edu.cram.mentoriapp.DAO.CommonDAO
@@ -55,7 +56,12 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
 
         val btnEnviar = view.findViewById<ImageButton>(R.id.btn_send_message)
         val txtMensaje = view.findViewById<EditText>(R.id.et_chat_message)
+        val recargarFloating = view.findViewById<FloatingActionButton>(R.id.btn_update_chat)
 
+        recargarFloating.setOnClickListener {
+            // Simula la recarga de datos (consulta al servidor)
+            loadSesionChats()
+        }
 
         btnEnviar.setOnClickListener {
             val mensaje = txtMensaje.text.toString()

@@ -31,7 +31,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/mentoriado_bottom_navigation"
-        app:backgroundTint="#0A3D6F"/>
+        app:menu="@menu/mentoriado_bottom_navigation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

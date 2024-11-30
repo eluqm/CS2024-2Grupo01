@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_margin="16dp"
+    android:layout_margin="8dp"
     android:backgroundTint="@android:color/white"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
@@ -18,7 +18,7 @@
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/baseline_add_home_work_24"
+            android:src="@drawable/baseline_group_24"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="16dp"
             />
@@ -33,7 +33,7 @@
                 android:id="@+id/txt_nombre2"
                 android:textAlignment="center"
                 tools:text="Grupo A"
-                android:textSize="23sp"
+                android:textSize="20sp"
                 android:textColor="#000000"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

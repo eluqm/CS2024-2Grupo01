@@ -2,6 +2,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -22,7 +23,7 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val buscador = view.findViewById<SearchView>(R.id.searchView)
         apiRest = RetrofitClient.makeRetrofitClient()
 
         initRecyclerView(view)

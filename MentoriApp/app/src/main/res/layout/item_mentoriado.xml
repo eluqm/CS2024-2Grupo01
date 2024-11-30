@@ -25,10 +25,11 @@
                 <TextView
                     android:id="@+id/txt_name_user"
                     android:layout_width="wrap_content"
+                    android:fontFamily="@font/merriweather_light"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="Nombre del Usuario"
-                    android:textSize="18sp"
+                    android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +40,8 @@
                     android:layout_height="wrap_content"
                     android:text="correo"
                     android:textColor="#757575"
-                    android:textSize="14sp"
+                    android:fontFamily="@font/merriweather_light"
+                    android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>
 
@@ -52,7 +54,7 @@
             android:paddingEnd="10dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/img_usuario"
+            app:layout_constraintEnd_toStartOf="@+id/borrar"
             app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
@@ -60,8 +62,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
+                    android:fontFamily="@font/merriweather_light"
                     android:text="telefono"
-                    android:textSize="18sp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/dni"
@@ -69,14 +72,16 @@
                     android:layout_height="wrap_content"
                     android:text="dni"
                     android:textColor="#757575"
-                    android:textSize="14sp" />
+                    android:fontFamily="@font/merriweather_light"
+                    android:textSize="12sp" />
             </LinearLayout>
 
         <ImageButton
-            android:id="@+id/img_usuario"
+            android:id="@+id/borrar"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/user"
+            android:src="@drawable/borraricon"
+            android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

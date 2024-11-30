@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -27,11 +29,37 @@ class   MentorListadoSesionesFragment : Fragment(R.layout.fragment_listado_sesio
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val buscador = view.findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView)
         apiRest = RetrofitClient.makeRetrofitClient()
 
         initRecyclerView(view)
+
+        // Configurar el SearchView
+        /*buscador.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // No necesitamos manejar la acción de enviar
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Filtrar la lista del adaptador
+                filterList(newText)
+                return true
+            }
+        })*/
     }
+
+    /*private fun filterList(query: String?) {
+        if (query.isNullOrBlank()) {
+            // Si no hay texto, mostrar todos los elementos
+            sesionListaAdapter.updateList(sesesionxGrupo)
+        } else {
+            val filteredList = sesesionxGrupo.filter {
+                it.temaSesion.contains(query, ignoreCase = true)
+            }
+            sesionListaAdapter.updateList(filteredList)
+        }
+    }*/
 
     private fun initRecyclerView(view: View) {
         loadSesionMentoriados()  // Carga los mentoriados directamente con mentorId

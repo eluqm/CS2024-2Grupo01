@@ -23,6 +23,12 @@ class SesionListaAdapter(
         val item = items[position]
         holder.render(item, onItemSelected)
     }
+    // Método para actualizar la lista
+    fun updateList(newItems: List<SesionMentoriaLista>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
 
     fun addUser(item: SesionMentoriaLista) {
         items.add(0, item)

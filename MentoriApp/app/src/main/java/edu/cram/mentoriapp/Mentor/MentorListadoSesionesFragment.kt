@@ -37,11 +37,9 @@ class   MentorListadoSesionesFragment : Fragment(R.layout.fragment_listado_sesio
         loadSesionMentoriados()  // Carga los mentoriados directamente con mentorId
         val manager = LinearLayoutManager(context)
         sesionListaAdapter = SesionListaAdapter(sesesionxGrupo) { sesion -> onItemSelected(sesion) }
-        val decoration = DividerItemDecoration(context, manager.orientation)
         val sesionRecyclerView = view.findViewById<RecyclerView>(R.id.sesionesRecyclerView)
         sesionRecyclerView.layoutManager = manager
         sesionRecyclerView.adapter = sesionListaAdapter
-        sesionRecyclerView.addItemDecoration(decoration)
     }
 
     private fun loadSesionMentoriados() {

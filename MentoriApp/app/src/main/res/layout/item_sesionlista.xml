@@ -26,9 +26,10 @@
                 android:id="@+id/temaSesion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/merriweather_light"
                 android:layout_marginBottom="10dp"
                 android:text="Nombre del Usuario"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -38,8 +39,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="correo"
+                android:fontFamily="@font/merriweather_light"
                 android:textColor="#757575"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -59,9 +61,10 @@
                 android:id="@+id/lugar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/merriweather_light"
                 android:layout_marginBottom="10dp"
                 android:text="telefono"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/numeroParticipantes"
@@ -69,7 +72,8 @@
                 android:layout_height="wrap_content"
                 android:text="dni"
                 android:textColor="#757575"
-                android:textSize="14sp" />
+                android:fontFamily="@font/merriweather_light"
+                android:textSize="12sp" />
         </LinearLayout>
 
 

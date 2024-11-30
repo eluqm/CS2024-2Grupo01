@@ -7,9 +7,15 @@ import edu.cram.mentoriapp.Model.SesionMentoriaLista
 import edu.cram.mentoriapp.R
 
 class SesionListaAdapter(
-    private val items: MutableList<SesionMentoriaLista>,
+    private val allItems: MutableList<SesionMentoriaLista>, // Lista original
     val onItemSelected: (SesionMentoriaLista) -> Unit
 ) : RecyclerView.Adapter<SesionListaViewHolder>() {
+
+    private val currentItems = mutableListOf<SesionMentoriaLista>() // Lista visible
+
+    init {
+        currentItems.addAll(allItems)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SesionListaViewHolder {
         val itemView =
@@ -17,33 +23,22 @@ class SesionListaAdapter(
         return SesionListaViewHolder(itemView)
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = currentItems.size
 
     override fun onBindViewHolder(holder: SesionListaViewHolder, position: Int) {
-        val item = items[position]
+        val item = currentItems[position]
         holder.render(item, onItemSelected)
     }
-    // Método para actualizar la lista
+
     fun updateList(newItems: List<SesionMentoriaLista>) {
-        items.clear()
-        items.addAll(newItems)
+        currentItems.clear()
+        currentItems.addAll(newItems)
         notifyDataSetChanged()
     }
 
-    fun addUser(item: SesionMentoriaLista) {
-        items.add(0, item)
-        notifyItemInserted(0)
-    }
-
-    private fun deleteUser(index: Int) {
-        items.removeAt(index)
-        notifyItemRemoved(index)
-        notifyItemRangeChanged(index, items.size)
-    }
-
-    fun editUser(index: Int, item: SesionMentoriaLista) {
-        items.removeAt(index)
-        items[index] = item
-        notifyItemChanged(index)
+    fun resetList() {
+        currentItems.clear()
+        currentItems.addAll(allItems)
+        notifyDataSetChanged()
     }
 }

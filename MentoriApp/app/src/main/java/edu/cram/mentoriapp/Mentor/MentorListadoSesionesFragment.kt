@@ -51,8 +51,7 @@ class   MentorListadoSesionesFragment : Fragment(R.layout.fragment_listado_sesio
 
     private fun filterList(query: String?) {
         if (query.isNullOrBlank()) {
-            // Si no hay texto, mostrar todos los elementos
-            sesionListaAdapter.updateList(sesesionxGrupo)
+            sesionListaAdapter.resetList() // Restablecer la lista completa
         } else {
             val filteredList = sesesionxGrupo.filter {
                 it.temaSesion.contains(query, ignoreCase = true)
@@ -60,6 +59,7 @@ class   MentorListadoSesionesFragment : Fragment(R.layout.fragment_listado_sesio
             sesionListaAdapter.updateList(filteredList)
         }
     }
+
 
     private fun initRecyclerView(view: View) {
         loadSesionMentoriados()  // Carga los mentoriados directamente con mentorId
@@ -85,7 +85,7 @@ class   MentorListadoSesionesFragment : Fragment(R.layout.fragment_listado_sesio
                         if (sesiones != null && sesiones.isNotEmpty()) {
                             sesesionxGrupo.clear()
                             sesesionxGrupo.addAll(sesiones)
-                            sesionListaAdapter.notifyDataSetChanged()
+                            sesionListaAdapter.resetList()
                         } else {
                             Toast.makeText(requireContext(), "No hay mentoriados disponibles", Toast.LENGTH_SHORT).show()
                         }

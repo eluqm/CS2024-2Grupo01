@@ -45,7 +45,7 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
     private fun filterList(query: String?) {
         if (query.isNullOrBlank()) {
             // Si no hay texto, mostrar todos los elementos
-            mentoriadoAdapter.updateList(mentoreadosxGrupo)
+            mentoriadoAdapter.resetList()
         } else {
             val filteredList = mentoreadosxGrupo.filter {
                 it.nombreCompletoUsuario.contains(query, ignoreCase = true)
@@ -78,7 +78,7 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
                         if (mentoriados != null && mentoriados.isNotEmpty()) {
                             mentoreadosxGrupo.clear()
                             mentoreadosxGrupo.addAll(mentoriados)
-                            mentoriadoAdapter.notifyDataSetChanged()
+                            mentoriadoAdapter.resetList()
                         } else {
                             Toast.makeText(requireContext(), "No hay mentoriados disponibles", Toast.LENGTH_SHORT).show()
                         }

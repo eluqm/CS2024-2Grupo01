@@ -19,6 +19,7 @@ import edu.cram.mentoriapp.Service.RetrofitClient
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 
 class CoorHomeFragment : Fragment(R.layout.fragment_coor_home) {
@@ -40,17 +41,14 @@ class CoorHomeFragment : Fragment(R.layout.fragment_coor_home) {
     }
 
     private fun iniciar_eventos(view: View) {
-        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
 
         val btnEnviar = view.findViewById<ImageButton>(R.id.btn_send_message)
         val txtMensaje = view.findViewById<EditText>(R.id.et_chat_message)
 
-        swipeRefreshLayout.setOnRefreshListener {
+        val recargarFloating = view.findViewById<FloatingActionButton>(R.id.btn_update_chat)
+        recargarFloating.setOnClickListener {
             // Simula la recarga de datos (consulta al servidor)
             loadSesionChats()
-
-            // Detén la animación de recarga
-            swipeRefreshLayout.isRefreshing = false
         }
 
         btnEnviar.setOnClickListener {

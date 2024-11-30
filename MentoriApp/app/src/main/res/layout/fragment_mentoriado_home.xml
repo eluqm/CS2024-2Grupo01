@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EDEAF6">
+    android:background="#FFFFFF">
 
     <!-- Barra Superior -->
     <RelativeLayout
@@ -80,19 +80,21 @@
         android:padding="8dp" />
 
     <!-- Botón flotante para actualizar el chat -->
+
+    <!-- Contenedor para enviar mensajes -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_update_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="100dp"
+
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="75dp"
         android:src="@drawable/baseline_refresh_24"
-        app:backgroundTint="#DC2FAE"
+        app:backgroundTint="#0A3D6F"
         app:tint="#FFFFFF" />
 
-    <!-- Contenedor para enviar mensajes -->
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -120,7 +122,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackground"
-            android:src="@drawable/baseline_arrow_right_24"
-            app:tint="#DC2FAE" />
+            android:src="@drawable/baseline_send_24"
+            app:tint="#1B4E80" />
     </LinearLayout>
 </RelativeLayout>

@@ -23,10 +23,35 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val buscador = view.findViewById<SearchView>(R.id.searchView)
+        val buscador = view.findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView)
         apiRest = RetrofitClient.makeRetrofitClient()
 
         initRecyclerView(view)
+
+        buscador.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // No necesitamos manejar la acción de enviar
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Filtrar la lista del adaptador
+                filterList(newText)
+                return true
+            }
+        })
+    }
+
+    private fun filterList(query: String?) {
+        if (query.isNullOrBlank()) {
+            // Si no hay texto, mostrar todos los elementos
+            mentoriadoAdapter.updateList(mentoreadosxGrupo)
+        } else {
+            val filteredList = mentoreadosxGrupo.filter {
+                it.nombreCompletoUsuario.contains(query, ignoreCase = true)
+            }
+            mentoriadoAdapter.updateList(filteredList)
+        }
     }
 
     private fun initRecyclerView(view: View) {

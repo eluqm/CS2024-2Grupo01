@@ -2,6 +2,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import edu.cram.mentoriapp.Model.GrupoMentoria
+import edu.cram.mentoriapp.Model.SesionMentoriaLista
 import edu.cram.mentoriapp.Model.UsuarioLista
 import edu.cram.mentoriapp.R
 
@@ -20,6 +21,11 @@ class MentoriadoAdapter(
     override fun onBindViewHolder(holder: MentoriadoViewHolder, position: Int) {
         val item = items[position]
         holder.render(item, onItemSelected)
+    }
+    fun updateList(newItems: List<UsuarioLista>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
     }
     fun addUser(item: UsuarioLista) {
         items.add(0, item)

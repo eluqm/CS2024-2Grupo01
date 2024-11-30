@@ -167,7 +167,7 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
             val checkBox = CheckBox(requireContext()).apply {
                 text = usuario.nombreCompletoUsuario
                 tag = usuario.id
-                isChecked = false
+                isChecked = true
             }
             checkBoxContainer.addView(checkBox)
         }

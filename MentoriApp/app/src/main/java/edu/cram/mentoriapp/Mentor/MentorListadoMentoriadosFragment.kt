@@ -32,11 +32,9 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
         loadUsuariosMentoriados()  // Carga los mentoriados directamente con mentorId
         val manager = LinearLayoutManager(context)
         mentoriadoAdapter = MentoriadoAdapter(mentoreadosxGrupo) { usuario -> onItemSelected(usuario) }
-        val decoration = DividerItemDecoration(context, manager.orientation)
         val mentoriadoRecyclerView = view.findViewById<RecyclerView>(R.id.mentoriadoRecyclerView)
         mentoriadoRecyclerView.layoutManager = manager
         mentoriadoRecyclerView.adapter = mentoriadoAdapter
-        mentoriadoRecyclerView.addItemDecoration(decoration)
     }
 
     private fun loadUsuariosMentoriados() {

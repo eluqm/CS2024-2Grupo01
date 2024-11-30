@@ -14,4 +14,12 @@
     <string name="change_password_background" />
     <string name="gesti_n_de_horarios">Gestión de Horarios</string>
     <string name="lista_de_sesiones">Lista de Sesiones</string>
+    <string name="d_a">Día</string>
+    <string name="proponer_horario">Proponer Horario</string>
+    <string name="escribe_una_descripci_n">Escribe una descripción...</string>
+    <string name="descripci_n">Descripción:</string>
+    <string name="lista_de_mentoriados">Lista de mentoriados</string>
+    <string name="tema">Tema...</string>
+    <string name="s">Tema:</string>
+    <string name="cerrar_asistencia">Cerrar Asistencia</string>
 </resources>

@@ -13,6 +13,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import edu.cram.mentoriapp.Adapter.GruposAdapter
 import edu.cram.mentoriapp.Model.GrupoMentoria
 import edu.cram.mentoriapp.Model.MiembroGrupo
@@ -37,7 +38,7 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
         apiRest = RetrofitClient.makeRetrofitClient()
 
         initRecycleView(view)
-        view.findViewById<Button>(R.id.boton_crear_grupo).setOnClickListener {
+        view.findViewById<FloatingActionButton>(R.id.boton_crear_grupo).setOnClickListener {
             loadMentores()
         }
 

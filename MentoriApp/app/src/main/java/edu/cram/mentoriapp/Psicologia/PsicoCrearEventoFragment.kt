@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import edu.cram.mentoriapp.Adapter.EventosAdapter
 import edu.cram.mentoriapp.Adapter.SesionListaAdapter
 import edu.cram.mentoriapp.DAO.CommonDAO
@@ -34,7 +35,7 @@ class PsicoCrearEventoFragment : Fragment(R.layout.fragment_psico_crear_evento) 
         commonDAO = CommonDAO(requireContext())
 
         // Encuentra el botón para crear evento
-        view.findViewById<Button>(R.id.boton_crear_evento).setOnClickListener {
+        view.findViewById<FloatingActionButton>(R.id.boton_crear_evento).setOnClickListener {
             // Mostrar el diálogo
             CrearEventoDialog(requireContext(), commonDAO).show(childFragmentManager, "CrearEventoDialog")
             eventosAdapter.notifyDataSetChanged()

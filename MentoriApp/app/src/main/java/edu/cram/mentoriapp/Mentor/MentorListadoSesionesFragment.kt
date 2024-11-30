@@ -35,7 +35,7 @@ class   MentorListadoSesionesFragment : Fragment(R.layout.fragment_listado_sesio
         initRecyclerView(view)
 
         // Configurar el SearchView
-        /*buscador.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+        buscador.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 // No necesitamos manejar la acción de enviar
                 return false
@@ -46,10 +46,10 @@ class   MentorListadoSesionesFragment : Fragment(R.layout.fragment_listado_sesio
                 filterList(newText)
                 return true
             }
-        })*/
+        })
     }
 
-    /*private fun filterList(query: String?) {
+    private fun filterList(query: String?) {
         if (query.isNullOrBlank()) {
             // Si no hay texto, mostrar todos los elementos
             sesionListaAdapter.updateList(sesesionxGrupo)
@@ -59,7 +59,7 @@ class   MentorListadoSesionesFragment : Fragment(R.layout.fragment_listado_sesio
             }
             sesionListaAdapter.updateList(filteredList)
         }
-    }*/
+    }
 
     private fun initRecyclerView(view: View) {
         loadSesionMentoriados()  // Carga los mentoriados directamente con mentorId

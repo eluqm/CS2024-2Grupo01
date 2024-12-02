@@ -3,12 +3,11 @@ package edu.cram.mentoriapp.Mentor
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -16,21 +15,25 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import edu.cram.mentoriapp.Adapter.ChatAdapter
 import edu.cram.mentoriapp.Model.Chat
+import edu.cram.mentoriapp.Model.Horario
 import edu.cram.mentoriapp.Model.MensajeGrupo
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
 import edu.cram.mentoriapp.Service.RetrofitClient
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
     private var chats: MutableList<Chat> = mutableListOf()
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var apiRest: ApiRest
     private lateinit var sesionRecyclerView: RecyclerView
+    private lateinit var horarioGrupo: Horario
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,6 +47,71 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
 
     }
 
+    private fun obtenerHorarioGrupo(view: View) {
+        val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+        val grupoId = sharedPreferences.getInt("grupoId", -1)
+
+        val Horario = view.findViewById<LinearLayout>(R.id.linearLayoutHorario)
+        val cardEstado = view.findViewById<androidx.cardview.widget.CardView>(R.id.estadoCard)
+        val btnProponerHorario = view.findViewById<Button>(R.id.proponerHorarioButton)
+
+        val txtLugar = view.findViewById<TextView>(R.id.tv_lugar)
+        val txtDiaHora = view.findViewById<TextView>(R.id.tv_dia_hora)
+
+        if (grupoId != -1) {
+            // Realizamos la llamada a la API de forma asincrónica usando lifecycleScope
+            lifecycleScope.launch {
+                try {
+                    val response = apiRest.getHorarioByGrupo(grupoId)
+
+                    if (response.isSuccessful) {
+                        // Asignamos el horario recibido a la variable
+                        horarioGrupo = response.body() ?: throw Exception("Horario no encontrado")
+
+                        // Manejo de éxito
+                        Toast.makeText(context, "Horario obtenido con éxito", Toast.LENGTH_SHORT).show()
+
+                        val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+
+                        editor.putString("horaProgramada", horarioGrupo.horaInicio + ":00")
+                        editor.putString("diaProgramado", horarioGrupo.dia)
+
+                        editor.apply()
+
+                        // Actualizar la UI si es necesario
+                        // Ejemplo: mostrar el lugar del horario en algún TextView
+                        // txtLugar.text = horarioGrupo.lugar
+                        if (horarioGrupo.estado == true) {
+                            txtLugar.text = "Lugar: " + horarioGrupo.lugar
+                            txtDiaHora.text = "Dia y Hora: " + horarioGrupo.dia + ", " + horarioGrupo.horaInicio
+                        } else {
+                            Horario.visibility = View.GONE
+                            cardEstado.visibility = View.VISIBLE
+                        }
+
+
+                    } else {
+                        // Manejo de error si la respuesta no es exitosa
+                        Toast.makeText(context, "Error al obtener el horario", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    // Manejo de excepciones
+                    Toast.makeText(context, "Ocurrió un error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            Horario.visibility = View.GONE
+            btnProponerHorario.visibility = View.VISIBLE
+            btnProponerHorario.setOnClickListener {
+                view.findNavController().navigate(R.id.action_mentorHomeFragment_to_mentorGestionHorarioFragment)
+            }
+            Toast.makeText(context, "No se pudo obtener el grupoId", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+
     private fun iniciar_eventos(view: View) {
         val recargarFloating = view.findViewById<FloatingActionButton>(R.id.btn_update_chat)
 
@@ -52,17 +120,44 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
 
         val btnLlamarAsistencia = view.findViewById<ImageButton>(R.id.irSesion)
 
-        val btnProponerHorario = view.findViewById<Button>(R.id.proponerHorarioButton)
-
-        btnProponerHorario.setOnClickListener {
-            // Aquí puedes implementar la lógica para proponer un horario
-            view.findNavController().navigate(R.id.action_mentorHomeFragment_to_mentorGestionHorarioFragment)
-        }
-
         btnLlamarAsistencia.setOnClickListener {
-            // Aquí puedes implementar la lógica para llamar a la asistencia
-            view.findNavController().navigate(R.id.action_mentorHomeFragment_to_mentorLlamadoAsistenciaFragment)
+            // Mapa para traducir días de inglés (LocalDateTime) a español
+            val diasMap = mapOf(
+                DayOfWeek.MONDAY to "Lunes",
+                DayOfWeek.TUESDAY to "Martes",
+                DayOfWeek.WEDNESDAY to "Miercoles",
+                DayOfWeek.THURSDAY to "Jueves",
+                DayOfWeek.FRIDAY to "Viernes",
+                DayOfWeek.SATURDAY to "Sábado",
+                DayOfWeek.SUNDAY to "Domingo"
+            )
+
+            // Obtener fecha y hora actuales
+            val now = LocalDateTime.now()
+            val currentDay = diasMap[now.dayOfWeek] // Traducción del día actual a español
+            val currentTime = now.toLocalTime() // Hora actual
+
+            // Validar si el día actual coincide con el día del horario
+            if (horarioGrupo.dia.equals(currentDay, ignoreCase = true)) {
+                // Obtener la hora de inicio del horario y calcular el rango válido
+                val horaInicio = LocalTime.parse(horarioGrupo.horaInicio) // Hora de inicio del horario
+                val rangoInicio = horaInicio.minusMinutes(5) // 5 minutos antes
+                val rangoFin = horaInicio.plusMinutes(55) // 55 minutos después
+
+                // Validar si la hora actual está dentro del rango
+                if (currentTime.isAfter(rangoInicio) && currentTime.isBefore(rangoFin)) {
+                    // Día y hora válidos, permitir navegación
+                    view.findNavController().navigate(R.id.action_mentorHomeFragment_to_mentorLlamadoAsistenciaFragment)
+                } else {
+                    // Hora inválida
+                    Toast.makeText(context, "No es la hora asignada para llamar a la asistencia", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                // Día inválido
+                Toast.makeText(context, "Hoy no es el día asignado para esta asistencia", Toast.LENGTH_SHORT).show()
+            }
         }
+
 
         recargarFloating.setOnClickListener {
             // Simula la recarga de datos (consulta al servidor)
@@ -125,6 +220,9 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
     }
 
     private fun pintarDatos(view: View){
+
+        obtenerHorarioGrupo(view)
+
         val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
 
         val tvRolUsuario = view.findViewById<TextView>(R.id.tv_rol_usuario)

@@ -53,11 +53,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
                     // Verificar si la contraseña coincide
                     if (usuario.passwordHash == contrasenaCifradaIngresada || esContrasenaPorDefecto) {
-                        if (esContrasenaPorDefecto) {
-                            mostrarCambioContrasena(usuario)
-                        } else {
-                            redirigirSegunTipoUsuario(usuario, view)
-                        }
 
                         // Obtener grupoId del usuario
                         val grupoResponse = apiRest.getGrupoId(usuario.userId!!)
@@ -72,6 +67,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         } else {
                             Toast.makeText(context, "Error al obtener el grupo", Toast.LENGTH_SHORT).show()
                         }
+
+
+                        if (esContrasenaPorDefecto) {
+                            mostrarCambioContrasena(usuario)
+                        } else {
+                            redirigirSegunTipoUsuario(usuario, view)
+                        }
+
+
                     } else {
                         Toast.makeText(context, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
                     }
@@ -135,10 +139,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         when (usuario.tipoUsuario) {
             "psicologia" -> view.findNavController().navigate(R.id.action_loginFragment_to_psicoActivity)
             "coordinador" -> view.findNavController().navigate(R.id.action_loginFragment_to_coorActivity)
-            "mentor" -> {
-
-                view.findNavController().navigate(R.id.action_loginFragment_to_mentorActivity)
-            }
+            "mentor" -> view.findNavController().navigate(R.id.action_loginFragment_to_mentorActivity)
             "mentoriado" -> view.findNavController().navigate(R.id.action_loginFragment_to_mentoriadoActivity)
             else -> Toast.makeText(context, "Tipo de usuario no reconocido", Toast.LENGTH_SHORT).show()
         }

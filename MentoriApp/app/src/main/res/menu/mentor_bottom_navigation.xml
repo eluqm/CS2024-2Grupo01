@@ -6,11 +6,6 @@
         android:title="Home" />
 
     <item
-        android:id="@+id/mentorGestionHorarioFragment"
-        android:icon="@drawable/baseline_calendar_month_24"
-        android:title="Horario" />
-
-    <item
         android:id="@+id/mentorListadoMentoriadosFragment"
         android:icon="@drawable/baseline_list_24"
         android:title="Mentoriados" />
@@ -18,9 +13,5 @@
         android:id="@+id/mentorListadoSesionesFragment"
         android:icon="@drawable/baseline_list_alt_24"
         android:title="Sesiones" />
-    <item
-        android:id="@+id/mentorLlamadoAsistenciaFragment"
-        android:icon="@drawable/baseline_checklist_24"
-        android:title="Asistencia" />
 
 </menu>

@@ -68,7 +68,7 @@ class GruposService(private val connection: Connection) {
                 g.jefe_id = ? 
                 AND a.asistio = true
             GROUP BY 
-                s.tema_sesion, h.lugar, fecha_registrada, g.grupo_id
+                s.tema_sesion, h.lugar, fecha_registrada, foto, g.grupo_id
         """
     }
 

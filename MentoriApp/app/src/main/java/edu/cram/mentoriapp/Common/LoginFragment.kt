@@ -130,10 +130,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun redirigirSegunTipoUsuario(usuario: Usuario, view: View) {
+
+
         when (usuario.tipoUsuario) {
             "psicologia" -> view.findNavController().navigate(R.id.action_loginFragment_to_psicoActivity)
             "coordinador" -> view.findNavController().navigate(R.id.action_loginFragment_to_coorActivity)
-            "mentor" -> view.findNavController().navigate(R.id.action_loginFragment_to_mentorActivity)
+            "mentor" -> {
+
+                view.findNavController().navigate(R.id.action_loginFragment_to_mentorActivity)
+            }
             "mentoriado" -> view.findNavController().navigate(R.id.action_loginFragment_to_mentoriadoActivity)
             else -> Toast.makeText(context, "Tipo de usuario no reconocido", Toast.LENGTH_SHORT).show()
         }

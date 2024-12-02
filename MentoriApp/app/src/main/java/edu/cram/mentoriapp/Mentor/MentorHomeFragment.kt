@@ -12,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +49,20 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
 
         val btnEnviar = view.findViewById<ImageButton>(R.id.btn_send_message)
         val txtMensaje = view.findViewById<EditText>(R.id.et_chat_message)
+
+        val btnLlamarAsistencia = view.findViewById<ImageButton>(R.id.irSesion)
+
+        val btnProponerHorario = view.findViewById<Button>(R.id.proponerHorarioButton)
+
+        btnProponerHorario.setOnClickListener {
+            // Aquí puedes implementar la lógica para proponer un horario
+            view.findNavController().navigate(R.id.action_mentorHomeFragment_to_mentorGestionHorarioFragment)
+        }
+
+        btnLlamarAsistencia.setOnClickListener {
+            // Aquí puedes implementar la lógica para llamar a la asistencia
+            view.findNavController().navigate(R.id.action_mentorHomeFragment_to_mentorLlamadoAsistenciaFragment)
+        }
 
         recargarFloating.setOnClickListener {
             // Simula la recarga de datos (consulta al servidor)
@@ -117,6 +132,9 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
 
         tvRolUsuario.text = sharedPreferences.getString("tipoUsuario", "Sin Tipo")
         tvNombreUsuario.text = "${sharedPreferences.getString("nombreUsuario", "Sin Nombre")} ${sharedPreferences.getString("apellidoUsuario", "Sin Apellido")}"
+
+
+
     }
 
 

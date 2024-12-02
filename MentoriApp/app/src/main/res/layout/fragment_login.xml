@@ -62,6 +62,7 @@
         android:inputType="number"
         android:padding="12dp"
         android:textSize="16sp"
+        android:autofillHints="codigo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/login_logo" />
@@ -78,6 +79,7 @@
         android:background="@drawable/rounded_edittext"
         android:textSize="16sp"
         android:layout_marginTop="16dp"
+        android:autofillHints="password"
         app:layout_constraintTop_toBottomOf="@id/et_codigo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

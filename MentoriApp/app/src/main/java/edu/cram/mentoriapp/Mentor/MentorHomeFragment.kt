@@ -120,6 +120,15 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
 
         val btnLlamarAsistencia = view.findViewById<ImageButton>(R.id.irSesion)
 
+        val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
+
+        btnCerrarsesion.setOnClickListener {
+            val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.clear()
+            editor.apply()
+        }
+
         btnLlamarAsistencia.setOnClickListener {
             // Mapa para traducir días de inglés (LocalDateTime) a español
             val diasMap = mapOf(

@@ -70,31 +70,134 @@
             app:tint="#FFFFFF" />
     </RelativeLayout>
 
+    <!-- CardView para mostrar el horario -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_horario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relativeLayout"
+        android:layout_margin="8dp"
+        android:elevation="4dp"
+        app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="#f5f5f5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_horario_titulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Horario"
+                android:textSize="18sp"
+                android:textColor="#333333"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="289dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <!-- Día y Hora -->
+                <TextView
+                    android:id="@+id/tv_dia_hora"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Día: Lunes, 12:00 PM"
+                    android:textColor="#333333"
+                    android:textSize="14sp" />
+
+                <!-- Lugar -->
+                <TextView
+                    android:id="@+id/tv_lugar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Lugar: Aula 5"
+                    android:textColor="#333333"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- CardView para el estado de la propuesta (Pendiente o en Revisión) -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/estadoCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/card_view_horario"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/estadoText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pendiente"
+                    android:textColor="#FF9800"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Botón para proponer un horario (solo si no hay horario aceptado) -->
+        <Button
+            android:id="@+id/proponerHorarioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/estadoCard"
+            android:text="Proponer Horario"
+            android:visibility="gone"
+            android:layout_marginTop="8dp" />
+
+        <!-- Botón para proponer un horario (solo si no hay horario aceptado) -->
+        <ImageButton
+            android:id="@+id/irSesion"
+            android:layout_width="85dp"
+            android:layout_height="70dp"
+            android:layout_below="@id/estadoCard"
+            android:layout_gravity="end"
+            android:layout_marginTop="2dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/vamos" />
+
+    </androidx.cardview.widget.CardView>
+
+
+
     <!-- RecyclerView para mostrar los mensajes -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_grupal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/linearLayout"
-        android:layout_below="@+id/relativeLayout"
+        android:layout_below="@+id/card_view_horario"
         android:padding="8dp" />
 
     <!-- Botón flotante para actualizar el chat -->
-
-    <!-- Contenedor para enviar mensajes -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_update_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="75dp"
         android:src="@drawable/baseline_refresh_24"
         app:backgroundTint="#0A3D6F"
         app:tint="#FFFFFF" />
 
+    <!-- Contenedor para enviar mensajes -->
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"

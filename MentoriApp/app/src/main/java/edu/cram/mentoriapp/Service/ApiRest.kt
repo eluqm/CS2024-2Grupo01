@@ -47,6 +47,9 @@ interface ApiRest {
     @GET("/escuelas/{id}")
     suspend fun getEscuela(@Path("id") id: Int): retrofit2.Response<Escuela>
 
+    @GET("/horarios/grupo/{grupoId}")
+    suspend fun getHorarioByGrupo(@Path("grupoId") grupoId: Int): retrofit2.Response<Horario>
+
     @POST("/escuelas")
     suspend fun createEscuela(@Body escuela: Escuela): retrofit2.Response<Int>
 

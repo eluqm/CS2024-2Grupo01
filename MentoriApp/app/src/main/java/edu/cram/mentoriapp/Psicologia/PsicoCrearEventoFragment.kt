@@ -89,7 +89,10 @@ class PsicoCrearEventoFragment : Fragment(R.layout.fragment_psico_crear_evento) 
         }
     }
     private fun onItemSelected(evento: Evento) {
-        evento.eventoId?.let { Toast.makeText(requireActivity(), it, Toast.LENGTH_SHORT).show() }
+        evento.eventoId?.let {
+            Toast.makeText(requireActivity(), it.toString(), Toast.LENGTH_SHORT).show()
+        }
     }
+
 
 }

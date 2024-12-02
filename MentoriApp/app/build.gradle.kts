@@ -56,6 +56,10 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx.v253)
     implementation(libs.kotlinx.coroutines.core)
 
+    //carga de imagenes
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+
+
 
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.swiperefreshlayout)

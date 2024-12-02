@@ -15,7 +15,7 @@ class MiembrosGrupoService(private val connection: Connection) {
         private const val INSERT_MIEMBRO_GRUPO = "INSERT INTO miembros_grupo (grupo_id, user_id) VALUES (?, ?)"
         private const val SELECT_MIEMBRO_GRUPO_BY_ID = "SELECT * FROM miembros_grupo WHERE miembro_grupo_id = ?"
         private const val UPDATE_MIEMBRO_GRUPO = "UPDATE miembros_grupo SET grupo_id = ?, user_id = ? WHERE miembro_grupo_id = ?"
-        private const val DELETE_MIEMBRO_GRUPO = "DELETE FROM miembros_grupo WHERE miembro_grupo_id = ?"
+        private const val DELETE_MIEMBRO_GRUPO = "DELETE FROM miembros_grupo WHERE user_id = ?"
     }
 
     suspend fun create(miembroGrupo: MiembroGrupo): Int = withContext(Dispatchers.IO) {

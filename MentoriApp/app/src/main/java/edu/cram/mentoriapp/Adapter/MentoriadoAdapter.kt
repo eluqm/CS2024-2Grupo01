@@ -8,7 +8,8 @@ import edu.cram.mentoriapp.R
 
 class MentoriadoAdapter(
     private val allItems: MutableList<UsuarioLista>,
-    val onItemSelected: (UsuarioLista) -> Unit
+    val onItemSelected: (UsuarioLista) -> Unit,
+    val onDeleteSelected: (UsuarioLista) -> Unit
 ) : RecyclerView.Adapter<MentoriadoViewHolder>() {
 
     private val currentItems = mutableListOf<UsuarioLista>() // Lista visible
@@ -26,7 +27,7 @@ class MentoriadoAdapter(
 
     override fun onBindViewHolder(holder: MentoriadoViewHolder, position: Int) {
         val item = currentItems[position]
-        holder.render(item, onItemSelected)
+        holder.render(item, onItemSelected, onDeleteSelected)
     }
     fun updateList(newItems: List<UsuarioLista>) {
         currentItems.clear()

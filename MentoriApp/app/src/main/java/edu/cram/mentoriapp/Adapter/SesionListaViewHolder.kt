@@ -54,6 +54,7 @@ class SesionListaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
         Glide.with(context)
             .asBitmap()
             .load(imageData)
+            .placeholder(R.drawable.logoula)
             .into(imageView)
 
         dialog.show()

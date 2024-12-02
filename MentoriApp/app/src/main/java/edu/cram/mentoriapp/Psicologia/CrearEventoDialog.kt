@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import edu.cram.mentoriapp.DAO.CommonDAO
@@ -35,6 +36,16 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
     private lateinit var editTextUrl: EditText
     private lateinit var buttonSeleccionarImagen: Button
     private var selectedImageUri: Uri? = null
+    private var selectedImageBytes: ByteArray? = null
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            selectedImageUri = it
+            context.contentResolver.openInputStream(it)?.use { inputStream ->
+                selectedImageBytes = inputStream.readBytes()
+            }
+            Toast.makeText(context, "Imagen seleccionada exitosamente", Toast.LENGTH_SHORT).show()
+        } ?: Toast.makeText(context, "No se seleccionó ninguna imagen", Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): AlertDialog {
         val builder = AlertDialog.Builder(context)
@@ -61,9 +72,7 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
 
         // Establecer el click listener para seleccionar una imagen
         buttonSeleccionarImagen.setOnClickListener {
-            // Aquí debes implementar la lógica para seleccionar una imagen
-            // Por simplicidad, no se implementará en este ejemplo
-            Toast.makeText(context, "Seleccionar imagen (sin funcionalidad por ahora)", Toast.LENGTH_SHORT).show()
+            imagePickerLauncher.launch("image/*")
         }
 
         // Botón para crear el evento y horario
@@ -152,6 +161,8 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
             // Aquí deberías manejar la respuesta de la creación del horario
             // Simulamos que se obtiene un ID del nuevo horario
             val horarioCreado = commonDAO.createHorario(nuevoHorario) // Debes crear este método en CommonDAO
+
+            val posterData = selectedImageBytes ?: "Sin Imagen".toByteArray()
             Log.d("AEA", "llegue")
             // Ahora crea el evento con el horarioId del nuevo horario
             dia = dia.replace("/", "-")
@@ -176,7 +187,7 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
                     nombre = nombre,
                     horarioId = it, // Usar el ID del horario creado
                     descripcion = if (descripcion.isNotEmpty()) descripcion else null,
-                    poster = "Sin Imagen", // Coloca un ByteArray provisional
+                    poster = posterData, // Coloca un ByteArray provisional
                     url = if (url.isNotEmpty()) url else null,
                     fecha_evento = dia
 

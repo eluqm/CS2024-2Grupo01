@@ -21,7 +21,8 @@ data class SesionInfo(
     val temaSesion: String,
     val lugar: String,
     val fechaRegistrada: String,
-    val participantes: String
+    val participantes: String,
+    val foto: ByteArray
 )
 
 @Serializable
@@ -53,7 +54,8 @@ class GruposService(private val connection: Connection) {
                 s.tema_sesion,
                 h.lugar,
                 DATE(s.fecha_hora) AS fecha_registrada,
-                CONCAT(COUNT(a.mentoriado_id), '/', (SELECT COUNT(*) FROM miembros_grupo mg WHERE mg.grupo_id = g.grupo_id)) AS participantes
+                CONCAT(COUNT(a.mentoriado_id), '/', (SELECT COUNT(*) FROM miembros_grupo mg WHERE mg.grupo_id = g.grupo_id)) AS participantes,
+                s.fotografia AS foto
             FROM 
                 sesiones_mentoria s
             JOIN 
@@ -209,7 +211,8 @@ class GruposService(private val connection: Connection) {
                     temaSesion = resultSet.getString("tema_sesion"),
                     lugar = resultSet.getString("lugar"),
                     fechaRegistrada = resultSet.getString("fecha_registrada"),
-                    participantes = resultSet.getString("participantes")
+                    participantes = resultSet.getString("participantes"),
+                    foto = resultSet.getBytes("foto")
                 )
             )
         }

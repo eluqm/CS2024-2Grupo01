@@ -4,10 +4,9 @@
         <!-- Colores para el modo claro -->
         <item name="colorPrimary">#0A3D6F</item>
         <item name="colorPrimaryVariant">#072A4C</item>
-        <item name="android:colorBackground">#FFFFFF</item>
+        <item name="android:colorBackground">#00FFFFFF</item>
         <item name="colorSecondary">#00BCD4</item>
         <item name="colorSecondaryVariant">#008C9E</item>
-        <item name="colorSurface">#FFFFFF</item>
         <item name="colorOnSurface">#000000</item>
         <item name="colorError">#B00020</item>
         <item name="colorOnError">#FFFFFF</item>

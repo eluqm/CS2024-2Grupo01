@@ -152,10 +152,22 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
 
         when (tipoUsuario) {
-            "psicologia" -> view.findNavController().navigate(R.id.action_loginFragment_to_psicoActivity)
-            "coordinador" -> view.findNavController().navigate(R.id.action_loginFragment_to_coorActivity)
-            "mentor" -> view.findNavController().navigate(R.id.action_loginFragment_to_mentorActivity)
-            "mentoriado" -> view.findNavController().navigate(R.id.action_loginFragment_to_mentoriadoActivity)
+            "psicologia" -> {
+                view.findNavController().navigate(R.id.action_loginFragment_to_psicoActivity, null)
+                requireActivity().finish()
+            }
+            "coordinador" -> {
+                view.findNavController().navigate(R.id.action_loginFragment_to_coorActivity, null)
+                requireActivity().finish()
+            }
+            "mentor" -> {
+                view.findNavController().navigate(R.id.action_loginFragment_to_mentorActivity, null)
+                requireActivity().finish()
+            }
+            "mentoriado" -> {
+                view.findNavController().navigate(R.id.action_loginFragment_to_mentoriadoActivity, null)
+                requireActivity().finish()
+            }
             else -> Toast.makeText(context, "Tipo de usuario no reconocido", Toast.LENGTH_SHORT).show()
         }
     }

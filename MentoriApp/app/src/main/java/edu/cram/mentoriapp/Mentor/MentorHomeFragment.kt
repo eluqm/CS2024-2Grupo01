@@ -1,5 +1,7 @@
 package edu.cram.mentoriapp.Mentor
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import edu.cram.mentoriapp.Adapter.ChatAdapter
+import edu.cram.mentoriapp.MainActivity
 import edu.cram.mentoriapp.Model.Chat
 import edu.cram.mentoriapp.Model.Horario
 import edu.cram.mentoriapp.Model.MensajeGrupo
@@ -123,10 +126,25 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
         val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
 
         btnCerrarsesion.setOnClickListener {
-            val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
-            val editor = sharedPreferences.edit()
-            editor.clear()
-            editor.apply()
+            AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
+                .setTitle("Cerrar sesión")
+                .setMessage("¿Estás seguro de que deseas cerrar sesión?")
+                .setPositiveButton("Sí") { _, _ ->
+                    // Acción para cerrar sesión
+                    val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.clear()
+                    editor.apply()
+
+                    // Navegar a la actividad principal
+                    val intent = Intent(requireContext(), MainActivity::class.java)
+                    startActivity(intent)
+                    requireActivity().finish()
+                }
+                .setNegativeButton("Cancelar", null)
+                .create()
+                .show()
+
         }
 
         btnLlamarAsistencia.setOnClickListener {

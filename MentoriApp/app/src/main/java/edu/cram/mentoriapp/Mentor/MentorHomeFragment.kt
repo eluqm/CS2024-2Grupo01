@@ -126,7 +126,8 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
         val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
 
         btnCerrarsesion.setOnClickListener {
-            AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
+            // Crear el diálogo
+            AlertDialog.Builder(requireContext())
                 .setTitle("Cerrar sesión")
                 .setMessage("¿Estás seguro de que deseas cerrar sesión?")
                 .setPositiveButton("Sí") { _, _ ->
@@ -139,13 +140,13 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
                     // Navegar a la actividad principal
                     val intent = Intent(requireContext(), MainActivity::class.java)
                     startActivity(intent)
-                    requireActivity().finish()
+                    requireActivity().finish() // Limpia la pila manualmente
                 }
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton("Cancelar", null) // No hacer nada si cancela
                 .create()
                 .show()
-
         }
+
 
         btnLlamarAsistencia.setOnClickListener {
             // Mapa para traducir días de inglés (LocalDateTime) a español

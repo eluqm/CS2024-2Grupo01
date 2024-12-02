@@ -23,7 +23,7 @@ data class Evento(
     val nombre: String,
     val horarioId: Int,
     val descripcion: String?,
-    val poster: String?,
+    val poster: ByteArray,
     val url: String?,
     val fecha_evento: String
 )
@@ -41,7 +41,7 @@ class EventosService(private val connection: Connection) {
         statement.setString(1, evento.nombre)
         statement.setInt(2, evento.horarioId)
         statement.setString(3, evento.descripcion)
-        statement.setString(4, evento.poster)
+        statement.setBytes(4, evento.poster)
         statement.setString(5, evento.url)
         val date = java.sql.Date.valueOf(evento.fecha_evento)  // Convierte el String a Date si es necesario
         statement.setDate(6, date)
@@ -65,7 +65,7 @@ class EventosService(private val connection: Connection) {
                 nombre = resultSet.getString("nombre"),
                 horarioId = resultSet.getInt("horario_id"),
                 descripcion = resultSet.getString("descripcion"),
-                poster = resultSet.getString("poster"),
+                poster = resultSet.getBytes("poster"),
                 url = resultSet.getString("url"),
                 fecha_evento = resultSet.getString("fecha_evento")
             )
@@ -88,7 +88,7 @@ class EventosService(private val connection: Connection) {
                 nombre = resultSet.getString("nombre"),
                 horarioId = resultSet.getInt("horario_id"),
                 descripcion = resultSet.getString("descripcion"),
-                poster = resultSet.getString("poster"),
+                poster = resultSet.getBytes("poster"),
                 url = resultSet.getString("url"),
                 fecha_evento = resultSet.getString("fecha_evento")
             )
@@ -104,7 +104,7 @@ class EventosService(private val connection: Connection) {
         statement.setString(1, evento.nombre)
         statement.setInt(2, evento.horarioId)
         statement.setString(3, evento.descripcion)
-        statement.setString(4, evento.poster)
+        statement.setBytes(4, evento.poster)
         statement.setString(5, evento.url)
         statement.setString(6, evento.fecha_evento)
         statement.setInt(7, eventoId)

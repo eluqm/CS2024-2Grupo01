@@ -24,21 +24,36 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val etDni = view.findViewById<EditText>(R.id.et_codigo)
-        val etContrasena = view.findViewById<EditText>(R.id.et_contrasena)
-        val btnLogin = view.findViewById<Button>(R.id.btn_ingresar)
+        if (existeSesionIniciada()) {
+            val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+            val tipoUsuario = sharedPreferences.getString("tipoUsuario", "")
+            redirigirSegunTipoUsuario(tipoUsuario!!, view)
+        } else {
+            val etDni = view.findViewById<EditText>(R.id.et_codigo)
+            val etContrasena = view.findViewById<EditText>(R.id.et_contrasena)
+            val btnLogin = view.findViewById<Button>(R.id.btn_ingresar)
 
-        btnLogin.setOnClickListener {
-            val dni = etDni.text.toString().trim()
-            val password = etContrasena.text.toString().trim()
+            btnLogin.setOnClickListener {
+                val dni = etDni.text.toString().trim()
+                val password = etContrasena.text.toString().trim()
 
-            if (dni.isNotEmpty() && password.isNotEmpty()) {
-                iniciarSesion(dni, password, view)
-            } else {
-                Toast.makeText(context, "Por favor ingresa todos los datos", Toast.LENGTH_SHORT).show()
+                if (dni.isNotEmpty() && password.isNotEmpty()) {
+                    iniciarSesion(dni, password, view)
+                } else {
+                    Toast.makeText(context, "Por favor ingresa todos los datos", Toast.LENGTH_SHORT).show()
+                }
             }
         }
+
     }
+
+    private fun existeSesionIniciada(): Boolean {
+        val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+        val usuarioSesion = sharedPreferences.getInt("userId", -1) // Cambia "userId" por la clave correcta
+
+        return usuarioSesion != -1 // Retorna true si userId tiene un valor válido, false en caso contrario
+    }
+
 
     private fun iniciarSesion(dni: String, password: String, view: View) {
         lifecycleScope.launch {
@@ -72,7 +87,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         if (esContrasenaPorDefecto) {
                             mostrarCambioContrasena(usuario)
                         } else {
-                            redirigirSegunTipoUsuario(usuario, view)
+                            redirigirSegunTipoUsuario(usuario.tipoUsuario, view)
                         }
 
 
@@ -119,7 +134,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             if (response.isSuccessful) {
                 Toast.makeText(context, "Contraseña actualizada correctamente", Toast.LENGTH_SHORT).show()
                 // Iniciar sesión automáticamente redirigiendo según el tipo de usuario
-                redirigirSegunTipoUsuario(usuario, view)
+                redirigirSegunTipoUsuario(usuario.tipoUsuario, view)
             } else {
                 Toast.makeText(context, "Error al actualizar la contraseña", Toast.LENGTH_SHORT).show()
             }
@@ -133,10 +148,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         return hashBytes.joinToString("") { "%02x".format(it) }
     }
 
-    private fun redirigirSegunTipoUsuario(usuario: Usuario, view: View) {
+    private fun redirigirSegunTipoUsuario(tipoUsuario: String, view: View) {
 
 
-        when (usuario.tipoUsuario) {
+        when (tipoUsuario) {
             "psicologia" -> view.findNavController().navigate(R.id.action_loginFragment_to_psicoActivity)
             "coordinador" -> view.findNavController().navigate(R.id.action_loginFragment_to_coorActivity)
             "mentor" -> view.findNavController().navigate(R.id.action_loginFragment_to_mentorActivity)

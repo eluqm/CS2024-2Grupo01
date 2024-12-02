@@ -35,11 +35,35 @@ class CoorSesionesGruposFragment : Fragment(R.layout.fragment_coor_sesiones_grup
             jefeActual = it.getInt("JefeID")
         }
 
+        val buscador = view.findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView)
         apiRest = RetrofitClient.makeRetrofitClient()
 
         initRecyclerView(view)
-    }
 
+        // Configurar el SearchView
+        buscador.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // No necesitamos manejar la acción de enviar
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Filtrar la lista del adaptador
+                filterList(newText)
+                return true
+            }
+        })
+    }
+    private fun filterList(query: String?) {
+        if (query.isNullOrBlank()) {
+            sesionListaAdapter.resetList() // Restablecer la lista completa
+        } else {
+            val filteredList = sesesionxGrupo.filter {
+                it.temaSesion.contains(query, ignoreCase = true)
+            }
+            sesionListaAdapter.updateList(filteredList)
+        }
+    }
     private fun initRecyclerView(view: View) {
         loadSesionMentoriados()  // Carga los mentoriados directamente con mentorId
         val manager = LinearLayoutManager(context)

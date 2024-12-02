@@ -7,7 +7,7 @@ data class Evento(
     val nombre: String,
     val horarioId: Int,
     val descripcion: String?,
-    val poster: String?,
+    val poster: ByteArray,
     val url: String?,
     val fecha_evento: String
 ): Serializable

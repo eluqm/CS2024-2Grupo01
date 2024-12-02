@@ -376,6 +376,18 @@ fun Application.configureDatabases() {
             }
         }
 
+        // Endpoint para obtener el horario por grupoId
+        get("/horarios/grupo/{grupoId}") {
+            val grupoId = call.parameters["grupoId"]?.toInt() ?: throw IllegalArgumentException("Invalid grupoId")
+            try {
+                val horario = horariosService.readHorarioByGrupo(grupoId)
+                call.respond(HttpStatusCode.OK, horario)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.NotFound, "Horario not found for grupoId: $grupoId")
+            }
+        }
+
+
 
         // Update schedule
         /*put("/horarios/{id}") {

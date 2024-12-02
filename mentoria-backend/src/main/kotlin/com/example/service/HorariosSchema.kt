@@ -100,6 +100,31 @@ class HorariosService(private val connection: Connection) {
         }
     }
 
+    suspend fun readHorarioByGrupo(grupoId: Int): Horario = withContext(Dispatchers.IO) {
+        val query = """
+        select * from horarios
+        inner join grupos g on horarios.horario_id = g.horario_id
+        where grupo_id = ?
+    """
+        val statement = connection.prepareStatement(query)
+        statement.setInt(1, grupoId)
+        val resultSet = statement.executeQuery()
+
+        if (resultSet.next()) {
+            return@withContext Horario(
+                horarioId = resultSet.getInt("horario_id"),
+                lugar = resultSet.getString("lugar"),
+                dia = resultSet.getString("dia"),
+                horaInicio = resultSet.getTime("hora_inicio").toLocalTime().toString(),
+                horaFin = resultSet.getTime("hora_fin").toLocalTime().toString(),
+                estado = resultSet.getBoolean("estado")
+            )
+        } else {
+            throw Exception("Horario not found for grupoId: $grupoId")
+        }
+    }
+
+
     suspend fun readAll(): List<Horario> = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_HORARIO_BY_ID2)
         val resultSet = statement.executeQuery()

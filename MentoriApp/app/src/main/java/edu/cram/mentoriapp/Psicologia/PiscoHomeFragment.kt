@@ -1,5 +1,6 @@
 package edu.cram.mentoriapp.Psicologia
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -60,17 +61,29 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
         val txtMensaje = view.findViewById<EditText>(R.id.et_chat_message)
         val recargarFloating = view.findViewById<FloatingActionButton>(R.id.btn_update_chat)
 
+
         val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
 
         btnCerrarsesion.setOnClickListener {
-            val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
-            val editor = sharedPreferences.edit()
-            editor.clear()
-            editor.apply()
+            // Crear el diálogo
+            AlertDialog.Builder(requireContext())
+                .setTitle("Cerrar sesión")
+                .setMessage("¿Estás seguro de que deseas cerrar sesión?")
+                .setPositiveButton("Sí") { _, _ ->
+                    // Acción para cerrar sesión
+                    val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.clear()
+                    editor.apply()
 
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            startActivity(intent)
-            requireActivity().finish() // Limpia la pila manualmente
+                    // Navegar a la actividad principal
+                    val intent = Intent(requireContext(), MainActivity::class.java)
+                    startActivity(intent)
+                    requireActivity().finish() // Limpia la pila manualmente
+                }
+                .setNegativeButton("Cancelar", null) // No hacer nada si cancela
+                .create()
+                .show()
         }
 
         recargarFloating.setOnClickListener {

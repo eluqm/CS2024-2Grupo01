@@ -1,5 +1,7 @@
 package edu.cram.mentoriapp.Mentoriado
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import edu.cram.mentoriapp.Adapter.ChatAdapter
+import edu.cram.mentoriapp.MainActivity
 import edu.cram.mentoriapp.Model.Chat
 import edu.cram.mentoriapp.Model.MensajeGrupo
 import edu.cram.mentoriapp.R
@@ -47,6 +50,30 @@ class MentoriadoHomeFragment : Fragment(R.layout.fragment_mentoriado_home) {
 
         val btnEnviar = view.findViewById<ImageButton>(R.id.btn_send_message)
         val txtMensaje = view.findViewById<EditText>(R.id.et_chat_message)
+
+        val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
+
+        btnCerrarsesion.setOnClickListener {
+            // Crear el diálogo
+            AlertDialog.Builder(requireContext())
+                .setTitle("Cerrar sesión")
+                .setMessage("¿Estás seguro de que deseas cerrar sesión?")
+                .setPositiveButton("Sí") { _, _ ->
+                    // Acción para cerrar sesión
+                    val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.clear()
+                    editor.apply()
+
+                    // Navegar a la actividad principal
+                    val intent = Intent(requireContext(), MainActivity::class.java)
+                    startActivity(intent)
+                    requireActivity().finish() // Limpia la pila manualmente
+                }
+                .setNegativeButton("Cancelar", null) // No hacer nada si cancela
+                .create()
+                .show()
+        }
 
         recargarFloating.setOnClickListener {
             // Simula la recarga de datos (consulta al servidor)

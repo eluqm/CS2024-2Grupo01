@@ -1,6 +1,7 @@
 package edu.cram.mentoriapp.Psicologia
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,6 +24,7 @@ import edu.cram.mentoriapp.Adapter.ChatAdapter
 import edu.cram.mentoriapp.Adapter.EventosAdapter
 import edu.cram.mentoriapp.DAO.CommonDAO
 import edu.cram.mentoriapp.DAO.PsicologiaDAO
+import edu.cram.mentoriapp.MainActivity
 import edu.cram.mentoriapp.Model.Chat
 import edu.cram.mentoriapp.Model.Cities
 import edu.cram.mentoriapp.Model.Evento
@@ -57,6 +59,19 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
         val btnEnviar = view.findViewById<ImageButton>(R.id.btn_send_message)
         val txtMensaje = view.findViewById<EditText>(R.id.et_chat_message)
         val recargarFloating = view.findViewById<FloatingActionButton>(R.id.btn_update_chat)
+
+        val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
+
+        btnCerrarsesion.setOnClickListener {
+            val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.clear()
+            editor.apply()
+
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish() // Limpia la pila manualmente
+        }
 
         recargarFloating.setOnClickListener {
             // Simula la recarga de datos (consulta al servidor)

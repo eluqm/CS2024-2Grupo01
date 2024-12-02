@@ -12,11 +12,12 @@ class MentoriadoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val viewCorreo = itemView.findViewById<TextView>(R.id.correo)
     private val viewNumero = itemView.findViewById<TextView>(R.id.numero)
     private val viewDni = itemView.findViewById<TextView>(R.id.dni)
-    private val imgUsuario = itemView.findViewById<ImageButton>(R.id.img_usuario)
+    private val imgUsuario = itemView.findViewById<ImageButton>(R.id.borrar)
     @SuppressLint("SetTextI18n")
     fun render(
         item: UsuarioLista,
-        onClickListener: (UsuarioLista) -> Unit
+        onClickListener: (UsuarioLista) -> Unit,
+        onDeleteClickListener: (UsuarioLista) -> Unit
     ) {
         viewCorreo.text = item.email
         viewNombre.text = item.nombreCompletoUsuario
@@ -24,5 +25,8 @@ class MentoriadoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         viewDni.text = item.dniUsuario
 
         itemView.setOnClickListener() { onClickListener(item) }
+        imgUsuario.setOnClickListener {
+            onDeleteClickListener(item) // Notificar al Fragment sobre el clic en eliminar
+        }
     }
 }

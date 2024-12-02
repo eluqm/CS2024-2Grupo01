@@ -1,3 +1,4 @@
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -57,10 +58,47 @@ class MentorListadoMentoriadosFragment : Fragment(R.layout.fragment_listado_ment
     private fun initRecyclerView(view: View) {
         loadUsuariosMentoriados()  // Carga los mentoriados directamente con mentorId
         val manager = LinearLayoutManager(context)
-        mentoriadoAdapter = MentoriadoAdapter(mentoreadosxGrupo) { usuario -> onItemSelected(usuario) }
+        mentoriadoAdapter = MentoriadoAdapter(mentoreadosxGrupo, { usuario -> onItemSelected(usuario) }, { usuario -> showDeleteDialog(usuario) })
         val mentoriadoRecyclerView = view.findViewById<RecyclerView>(R.id.mentoriadoRecyclerView)
         mentoriadoRecyclerView.layoutManager = manager
         mentoriadoRecyclerView.adapter = mentoriadoAdapter
+    }
+
+    private fun showDeleteDialog(usuario: UsuarioLista) {
+        val reasons = arrayOf("Separó Matricula", "No desea participar del programa", "Se cambiará a otro grupo")
+        var selectedReason: String? = null
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Motivo:")
+        builder.setSingleChoiceItems(reasons, -1) { _, which ->
+            selectedReason = reasons[which]
+        }
+        builder.setNegativeButton("Cancelar", null)
+        builder.setPositiveButton("Aceptar") { _, _ ->
+            if (selectedReason != null) {
+                usuario.id?.let { deleteUsuario(it) }
+            } else {
+                Toast.makeText(requireContext(), "Seleccione una razón para eliminar", Toast.LENGTH_SHORT).show()
+            }
+        }
+        builder.show()
+    }
+
+    private fun deleteUsuario(usuarioId: Int) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val response = apiRest.deleteMiembroGrupo(usuarioId)
+                if (response.isSuccessful) {
+                    Toast.makeText(requireContext(), "Usuario eliminado con éxito", Toast.LENGTH_SHORT).show()
+                    mentoreadosxGrupo.removeAll { it.id == usuarioId }
+                    mentoriadoAdapter.resetList()
+                } else {
+                    Toast.makeText(requireContext(), "Error al eliminar usuario: ${response.code()}", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun loadUsuariosMentoriados() {

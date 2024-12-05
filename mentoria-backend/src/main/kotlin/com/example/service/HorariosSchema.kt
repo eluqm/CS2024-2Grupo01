@@ -16,6 +16,7 @@ data class Horario(
     val estado: Boolean
 )
 
+@Serializable
 data class HorarioDetalles(
     val horarioId: Int,
     val lugar: String,
@@ -48,9 +49,9 @@ class HorariosService(private val connection: Connection) {
         h.hora_inicio,
         h.hora_fin,
         h.estado,
-        g.nombre AS nombre_grupo,
-        u.nombre_usuario || ' ' || u.apellido_usuario AS nombre_completo_jefe,
-        e.nombre AS nombre_escuela
+        COALESCE(g.nombre, '') AS nombre_grupo,
+        COALESCE(u.nombre_usuario || ' ' || u.apellido_usuario, '') AS nombre_completo_jefe,
+        COALESCE(e.nombre, '') AS nombre_escuela
     FROM horarios h
     LEFT JOIN grupos g ON h.horario_id = g.horario_id
     LEFT JOIN usuarios u ON g.jefe_id = u.user_id
@@ -59,20 +60,20 @@ class HorariosService(private val connection: Connection) {
 """
 
         private const val SELECT_HORARIOS_DETALLES = """
-    SELECT 
-        h.horario_id,
-        h.lugar,
-        h.dia,
-        h.hora_inicio,
-        h.hora_fin,
-        h.estado,
-        g.nombre AS nombre_grupo,
-        u.nombre_usuario || ' ' || u.apellido_usuario AS nombre_completo_jefe,
-        e.nombre AS nombre_escuela
-    FROM horarios h
-    LEFT JOIN grupos g ON h.horario_id = g.horario_id
-    LEFT JOIN usuarios u ON g.jefe_id = u.user_id
-    LEFT JOIN escuelas e ON u.escuela_id = e.escuela_id
+SELECT 
+    h.horario_id,
+    h.lugar,
+    h.dia,
+    h.hora_inicio,
+    h.hora_fin,
+    h.estado,
+    COALESCE(g.nombre, '') AS nombre_grupo,
+    COALESCE(u.nombre_usuario || ' ' || u.apellido_usuario, '') AS nombre_completo_jefe,
+    COALESCE(e.nombre, '') AS nombre_escuela
+FROM horarios h
+LEFT JOIN grupos g ON h.horario_id = g.horario_id
+LEFT JOIN usuarios u ON g.jefe_id = u.user_id
+LEFT JOIN escuelas e ON u.escuela_id = e.escuela_id
 """
 
 

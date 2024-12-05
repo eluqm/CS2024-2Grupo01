@@ -1,5 +1,7 @@
 package edu.cram.mentoriapp.Model
 
+import java.io.Serializable
+
 data class HorarioDetalles(
     var horarioId: Int,
     val lugar: String,
@@ -10,4 +12,4 @@ data class HorarioDetalles(
     val nombreGrupo: String?,
     val nombreCompletoJefe: String?,
     val nombreEscuela: String?
-)
+): Serializable

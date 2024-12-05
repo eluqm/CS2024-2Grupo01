@@ -72,7 +72,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
             // Agregar las celdas para cada día
             for (dia in dias) {
                 val evento = horarios.find { it.dia == dia && it.horaInicio == hora }
-                celdas.add(HorarioCell(hora, dia, evento?.lugar,evento?.horarioId))
+                celdas.add(HorarioCell(hora, dia, evento?.lugar,evento?.horarioId, evento?.estado ?: false))
             }
         }
 

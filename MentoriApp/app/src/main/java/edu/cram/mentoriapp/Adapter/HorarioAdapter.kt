@@ -1,3 +1,4 @@
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,6 @@ import edu.cram.mentoriapp.Model.Evento
 import edu.cram.mentoriapp.Model.GrupoMentoria
 import edu.cram.mentoriapp.Model.HorarioCell
 import edu.cram.mentoriapp.R
-
 class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: (HorarioCell) -> Unit) : RecyclerView.Adapter<HorarioAdapter.HorarioViewHolder>() {
 
     class HorarioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -16,7 +16,25 @@ class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: 
         fun render(item: HorarioCell, onClickListener:(HorarioCell) -> Unit) {
             if (item.horarioId == null) {
                 itemView.background = null
+            } else {
+                when (item.estado) {
+                    false -> {
+                        itemView.setBackgroundColor(Color.RED) // Fondo rojo para estado false
+                        itemView.isClickable = true // Permitir clics
+                    }
+                    null -> {
+                        itemView.setBackgroundColor(Color.BLUE) // Fondo azul para estado null
+                        itemView.isClickable = true // Permitir clics
+                    }
+                    true -> {
+                        itemView.setBackgroundColor(Color.GREEN) // Fondo verde para estado true
+                        itemView.isEnabled = false // Desactivar clics
+                    }
+                }
             }
+
+
+
             itemView.setOnClickListener() {
                 onClickListener(item)
             }

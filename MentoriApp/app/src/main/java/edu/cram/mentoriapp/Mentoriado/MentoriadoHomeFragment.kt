@@ -42,7 +42,6 @@ class MentoriadoHomeFragment : Fragment(R.layout.fragment_mentoriado_home) {
         inicializarRecycle(view)
 
         iniciar_eventos(view)
-
     }
 
     private fun iniciar_eventos(view: View) {

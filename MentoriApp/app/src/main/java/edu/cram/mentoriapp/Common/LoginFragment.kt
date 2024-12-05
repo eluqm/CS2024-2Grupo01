@@ -184,8 +184,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         editor.putInt("escuelaId",usuario.escuelaId)
         Log.d("escuela", usuario.escuelaId.toString())
         // solo para el mentor
-        editor.putString("horaProgramada", "17:59:00")
-        editor.putString("diaProgramado", "Lunes")
+        //editor.putString("horaProgramada", "17:59:00")
+        //editor.putString("diaProgramado", "Lunes")
 
         // Guardamos el grupoId si es disponible
         grupoId?.let {

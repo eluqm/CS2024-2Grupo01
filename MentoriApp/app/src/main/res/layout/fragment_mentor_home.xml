@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="#FFFFFF">
 
     <!-- Barra Superior -->
@@ -86,6 +87,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
+            android:visibility="gone"
+            tools:visibility="visible"
             android:orientation="vertical">
 
             <TextView
@@ -157,9 +160,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/estadoCard"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/cherry_cream_soda"
             android:text="Proponer Horario"
+            android:textColor="#FFFFFF"
+            android:textSize="20dp"
             android:visibility="gone"
-            android:layout_marginTop="8dp" />
+            app:icon="@drawable/baseline_calendar_month_24" />
 
         <!-- Botón para proponer un horario (solo si no hay horario aceptado) -->
         <ImageButton

@@ -49,15 +49,16 @@ class HorariosService(private val connection: Connection) {
         h.hora_inicio,
         h.hora_fin,
         h.estado,
-        COALESCE(g.nombre, '') AS nombre_grupo,
-        COALESCE(u.nombre_usuario || ' ' || u.apellido_usuario, '') AS nombre_completo_jefe,
-        COALESCE(e.nombre, '') AS nombre_escuela
+        g.nombre AS nombre_grupo,
+        u.nombre_usuario || ' ' || u.apellido_usuario AS nombre_completo_jefe,
+        e.nombre AS nombre_escuela
     FROM horarios h
     LEFT JOIN grupos g ON h.horario_id = g.horario_id
     LEFT JOIN usuarios u ON g.jefe_id = u.user_id
     LEFT JOIN escuelas e ON u.escuela_id = e.escuela_id
     WHERE h.horario_id = ?
 """
+
 
         private const val SELECT_HORARIOS_DETALLES = """
 SELECT 
@@ -187,19 +188,20 @@ LEFT JOIN escuelas e ON u.escuela_id = e.escuela_id
             horarios.add(
                 HorarioDetalles(
                     horarioId = resultSet.getInt("horario_id"),
-                    lugar = resultSet.getString("lugar"),
-                    dia = resultSet.getString("dia"),
-                    horaInicio = resultSet.getString("hora_inicio"),
-                    horaFin = resultSet.getString("hora_fin"),
+                    lugar = resultSet.getString("lugar") ?: "Sin lugar",
+                    dia = resultSet.getString("dia") ?: "Sin día",
+                    horaInicio = resultSet.getString("hora_inicio") ?: "Sin horaI",
+                    horaFin = resultSet.getString("hora_fin") ?: "Sin horaF",
                     estado = resultSet.getBoolean("estado"),
-                    nombreGrupo = resultSet.getString("nombre_grupo"),
-                    nombreCompletoJefe = resultSet.getString("nombre_completo_jefe"),
-                    nombreEscuela = resultSet.getString("nombre_escuela")
+                    nombreGrupo = resultSet.getString("nombre_grupo") ?: "Sin grupo",
+                    nombreCompletoJefe = resultSet.getString("nombre_completo_jefe") ?: "Sin jefe",
+                    nombreEscuela = resultSet.getString("nombre_escuela") ?: "Sin escuela"
                 )
             )
         }
         return@withContext horarios
     }
+
 
 
 

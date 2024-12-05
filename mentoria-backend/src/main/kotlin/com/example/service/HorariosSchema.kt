@@ -16,6 +16,19 @@ data class Horario(
     val estado: Boolean
 )
 
+data class HorarioDetalles(
+    val horarioId: Int,
+    val lugar: String,
+    val dia: String,
+    val horaInicio: String,
+    val horaFin: String,
+    val estado: Boolean,
+    val nombreGrupo: String?,
+    val nombreCompletoJefe: String?,
+    val nombreEscuela: String?
+)
+
+
 @Serializable
 data class HorarioUpdate(
     val horarioId: Int,
@@ -27,8 +40,42 @@ class HorariosService(private val connection: Connection) {
     companion object {
         private const val UPDATE_GRUPO_HORARIO = "UPDATE grupos SET horario_id = ? WHERE jefe_id = ? AND horario_id IS NULL"
         private const val INSERT_HORARIO = "INSERT INTO horarios (lugar, dia, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?, ?)"
-        private const val SELECT_HORARIO_BY_ID = "SELECT * FROM horarios WHERE horario_id = ?"
-        private const val SELECT_HORARIO_BY_ID2 = "SELECT * FROM horarios"
+        private const val SELECT_HORARIO_BY_ID = """
+    SELECT 
+        h.horario_id,
+        h.lugar,
+        h.dia,
+        h.hora_inicio,
+        h.hora_fin,
+        h.estado,
+        g.nombre AS nombre_grupo,
+        u.nombre_usuario || ' ' || u.apellido_usuario AS nombre_completo_jefe,
+        e.nombre AS nombre_escuela
+    FROM horarios h
+    LEFT JOIN grupos g ON h.horario_id = g.horario_id
+    LEFT JOIN usuarios u ON g.jefe_id = u.user_id
+    LEFT JOIN escuelas e ON u.escuela_id = e.escuela_id
+    WHERE h.horario_id = ?
+"""
+
+        private const val SELECT_HORARIOS_DETALLES = """
+    SELECT 
+        h.horario_id,
+        h.lugar,
+        h.dia,
+        h.hora_inicio,
+        h.hora_fin,
+        h.estado,
+        g.nombre AS nombre_grupo,
+        u.nombre_usuario || ' ' || u.apellido_usuario AS nombre_completo_jefe,
+        e.nombre AS nombre_escuela
+    FROM horarios h
+    LEFT JOIN grupos g ON h.horario_id = g.horario_id
+    LEFT JOIN usuarios u ON g.jefe_id = u.user_id
+    LEFT JOIN escuelas e ON u.escuela_id = e.escuela_id
+"""
+
+
         private const val UPDATE_PARTIAL_HORARIO = "UPDATE horarios SET lugar = ?, estado = ? WHERE horario_id = ?"
         private const val UPDATE_HORARIO = "UPDATE horarios SET lugar = ?, dia = ?, hora_inicio = ?, hora_fin = ?, estado = ? WHERE horario_id = ?"
         private const val DELETE_HORARIO = "DELETE FROM horarios WHERE horario_id = ?"
@@ -82,23 +129,28 @@ class HorariosService(private val connection: Connection) {
             throw Exception("No group found with jefe_id = $jefeId and null horario_id")
         }
     }
-    suspend fun read(horarioId: Int): Horario = withContext(Dispatchers.IO) {
+    suspend fun read(horarioId: Int): HorarioDetalles = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_HORARIO_BY_ID)
         statement.setInt(1, horarioId)
         val resultSet = statement.executeQuery()
 
         if (resultSet.next()) {
-            return@withContext Horario(
+            return@withContext HorarioDetalles(
+                horarioId = resultSet.getInt("horario_id"),
                 lugar = resultSet.getString("lugar"),
                 dia = resultSet.getString("dia"),
                 horaInicio = resultSet.getTime("hora_inicio").toLocalTime().toString(),
                 horaFin = resultSet.getTime("hora_fin").toLocalTime().toString(),
-                estado = resultSet.getBoolean("estado")
+                estado = resultSet.getBoolean("estado"),
+                nombreGrupo = resultSet.getString("nombre_grupo"),
+                nombreCompletoJefe = resultSet.getString("nombre_completo_jefe"),
+                nombreEscuela = resultSet.getString("nombre_escuela")
             )
         } else {
             throw Exception("Horario not found")
         }
     }
+
 
     suspend fun readHorarioByGrupo(grupoId: Int): Horario = withContext(Dispatchers.IO) {
         val query = """
@@ -125,25 +177,29 @@ class HorariosService(private val connection: Connection) {
     }
 
 
-    suspend fun readAll(): List<Horario> = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(SELECT_HORARIO_BY_ID2)
+    suspend fun readAll(): List<HorarioDetalles> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_HORARIOS_DETALLES)
         val resultSet = statement.executeQuery()
 
-        val horarios = mutableListOf<Horario>()
+        val horarios = mutableListOf<HorarioDetalles>()
         while (resultSet.next()) {
             horarios.add(
-                Horario(
+                HorarioDetalles(
                     horarioId = resultSet.getInt("horario_id"),
                     lugar = resultSet.getString("lugar"),
                     dia = resultSet.getString("dia"),
-                    horaInicio = resultSet.getTime("hora_inicio").toLocalTime().toString(),
-                    horaFin = resultSet.getTime("hora_fin").toLocalTime().toString(),
-                    estado = resultSet.getBoolean("estado")
+                    horaInicio = resultSet.getString("hora_inicio"),
+                    horaFin = resultSet.getString("hora_fin"),
+                    estado = resultSet.getBoolean("estado"),
+                    nombreGrupo = resultSet.getString("nombre_grupo"),
+                    nombreCompletoJefe = resultSet.getString("nombre_completo_jefe"),
+                    nombreEscuela = resultSet.getString("nombre_escuela")
                 )
             )
         }
         return@withContext horarios
     }
+
 
 
     suspend fun update(horarioId: Int, horario: Horario) = withContext(Dispatchers.IO) {

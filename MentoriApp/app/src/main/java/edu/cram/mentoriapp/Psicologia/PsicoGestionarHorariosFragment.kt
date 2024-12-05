@@ -14,16 +14,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import edu.cram.mentoriapp.Model.Horario
 import edu.cram.mentoriapp.Model.HorarioCell
+import edu.cram.mentoriapp.Model.HorarioDetalles
 import edu.cram.mentoriapp.Model.HorarioUpdate
-import edu.cram.mentoriapp.Model.SesionMentoriaLista
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
 import edu.cram.mentoriapp.Service.RetrofitClient
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestionar_horarios) {
 
@@ -60,7 +57,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
         }
     }
 
-    private fun setupRecyclerView(horarios: List<Horario>) {
+    private fun setupRecyclerView(horarios: List<HorarioDetalles>) {
         val horas = listOf("07:15", "08:00", "08:45", "09:30", "10:15", "11:00", "11:45", "12:30", "13:15", "14:00", "14:45", "15:30", "16:15", "17:00")
         val dias = listOf("Lunes", "Martes", "Miercoles", "Jueves", "Viernes")
 
@@ -72,7 +69,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
             // Agregar las celdas para cada día
             for (dia in dias) {
                 val evento = horarios.find { it.dia == dia && it.horaInicio == hora }
-                celdas.add(HorarioCell(hora, dia, evento?.lugar,evento?.horarioId, evento?.estado ?: false))
+                celdas.add(HorarioCell(hora, dia, evento?.lugar,evento?.horarioId, evento?.estado ?: false, evento?.nombreGrupo ?: "", evento?.nombreCompletoJefe ?: "", evento?.nombreEscuela ?: ""))
             }
         }
 
@@ -87,7 +84,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
                 try {
                     val response = apiRest.getHorario(horarioCell.horarioId)
                     if (response.isSuccessful) {
-                        var horario = response.body()
+                        val horario = response.body()
 
                         if (horario != null) {
                             horario.horarioId = horarioCell.horarioId
@@ -114,7 +111,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
 
 
     @SuppressLint("MissingInflatedId")
-    private fun initDialogo(horario: Horario) {
+    private fun initDialogo(horario: HorarioDetalles) {
         // Crear el diálogo
         val dialogView = layoutInflater.inflate(R.layout.dialog_horario, null)
         val editTextLugar = dialogView.findViewById<EditText>(R.id.editTextLugar)

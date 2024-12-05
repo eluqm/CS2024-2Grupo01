@@ -9,6 +9,7 @@ import edu.cram.mentoriapp.Model.EvaluacionComentario
 import edu.cram.mentoriapp.Model.Evento
 import edu.cram.mentoriapp.Model.GrupoMentoria
 import edu.cram.mentoriapp.Model.Horario
+import edu.cram.mentoriapp.Model.HorarioDetalles
 import edu.cram.mentoriapp.Model.HorarioUpdate
 import edu.cram.mentoriapp.Model.MensajeGrupo
 import edu.cram.mentoriapp.Model.Mentor
@@ -140,10 +141,10 @@ interface ApiRest {
     suspend fun deleteMentoriado(@Path("id") id: Int): retrofit2.Response<Unit>
     //horarios
     @GET("/horarios/{id}")
-    suspend fun getHorario(@Path("id") id: Int): retrofit2.Response<Horario>
+    suspend fun getHorario(@Path("id") id: Int): retrofit2.Response<HorarioDetalles>
 
     @GET("/horarios")
-    suspend fun getHorarios(): retrofit2.Response<List<Horario>>
+    suspend fun getHorarios(): retrofit2.Response<List<HorarioDetalles>>
 
     @POST("/horarios")
     suspend fun createHorario(@Body horario: Horario): retrofit2.Response<Int>

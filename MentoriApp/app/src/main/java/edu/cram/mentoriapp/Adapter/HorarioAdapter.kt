@@ -12,6 +12,7 @@ class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: 
 
     class HorarioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(R.id.cellTextView)
+        val textView2: TextView = itemView.findViewById(R.id.textView2)
 
         fun render(item: HorarioCell, onClickListener:(HorarioCell) -> Unit) {
             if (item.horarioId == null) {
@@ -48,7 +49,8 @@ class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: 
 
     override fun onBindViewHolder(holder: HorarioViewHolder, position: Int) {
         val cell = celdas[position]
-        holder.textView.text = cell.lugar ?: "" // Mostrar el lugar o vacío si no hay evento
+        holder.textView.text = cell.nombreEscuela ?: "" // Mostrar el lugar o vacío si no hay evento
+        holder.textView2.text = cell.nombreGrupo ?: ""
         holder.render(cell, onItemSelected)
     }
 

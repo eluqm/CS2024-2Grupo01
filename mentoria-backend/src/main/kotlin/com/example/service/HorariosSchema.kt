@@ -70,7 +70,7 @@ class HorariosService(private val connection: Connection) {
         h.estado,
         g.nombre AS nombre_grupo,
         u.nombre_usuario || ' ' || u.apellido_usuario AS nombre_completo_jefe,
-        e.nombre AS nombre_escuela
+        e.acronimo AS acronimo
     FROM horarios h
     LEFT JOIN grupos g ON h.horario_id = g.horario_id
     LEFT JOIN usuarios u ON g.jefe_id = u.user_id
@@ -195,7 +195,7 @@ class HorariosService(private val connection: Connection) {
                     estado = resultSet.getBoolean("estado"),
                     nombreGrupo = resultSet.getString("nombre_grupo"),
                     nombreCompletoJefe = resultSet.getString("nombre_completo_jefe"),
-                    nombreEscuela = resultSet.getString("nombre_escuela")
+                    nombreEscuela = resultSet.getString("acronimo")
                 )
             )
         }

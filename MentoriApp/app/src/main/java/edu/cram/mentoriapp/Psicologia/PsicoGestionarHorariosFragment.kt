@@ -47,6 +47,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
                 val response = apiRest.getHorarios()
                 if (response.isSuccessful) {
                     val horarios = response.body() ?: emptyList()
+                    Log.d("hola", horarios.toString())
                     setupRecyclerView(horarios)
                 } else {
                     Toast.makeText(requireContext(), "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
@@ -64,12 +65,12 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
         val celdas = mutableListOf<HorarioCell>()
         for (hora in horas) {
             // Agregar primera columna con las horas
-            celdas.add(HorarioCell("hora", "Horas", lugar = hora))
+            celdas.add(HorarioCell("inicio", "dia", "fin", lugar = hora))
 
             // Agregar las celdas para cada día
             for (dia in dias) {
-                val evento = horarios.find { it.dia == dia && it.horaInicio == hora }
-                celdas.add(HorarioCell(hora, dia, evento?.lugar,evento?.horarioId, evento?.estado ?: false, evento?.nombreGrupo ?: "", evento?.nombreCompletoJefe ?: "", evento?.nombreEscuela ?: ""))
+                val evento = horarios.find { it.dia == dia && it.horaInicio.substring(0, 5) == hora }
+                celdas.add(HorarioCell(hora, dia, evento?.horaFin, evento?.lugar,evento?.horarioId, evento?.estado ?: false, evento?.nombreGrupo, evento?.nombreCompletoJefe, evento?.nombreEscuela))
             }
         }
 
@@ -79,7 +80,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
 
     private fun onItemSelected(horarioCell: HorarioCell) {
         // Verificar si el horarioId está disponible
-        if (horarioCell.horarioId != null) {
+        /*if (horarioCell.horarioId != null) {
             lifecycleScope.launch {
                 try {
                     val response = apiRest.getHorario(horarioCell.horarioId)
@@ -105,13 +106,15 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
             }
         } else {
             Toast.makeText(requireContext(), "No hay información para esta celda", Toast.LENGTH_SHORT).show()
-        }
+        }*/
+
+        initDialogo(horarioCell)
     }
 
 
 
     @SuppressLint("MissingInflatedId")
-    private fun initDialogo(horario: HorarioDetalles) {
+    private fun initDialogo(horario: HorarioCell) {
         // Crear el diálogo
         val dialogView = layoutInflater.inflate(R.layout.dialog_horario, null)
         val editTextLugar = dialogView.findViewById<EditText>(R.id.editTextLugar)
@@ -125,36 +128,49 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
         textViewHoraInicio.text = horario.horaInicio
         textViewHoraFin.text = horario.horaFin
 
-        // Crear el diálogo de alerta
-        val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("Detalles del Horario")
-            .setView(dialogView)
-            .setPositiveButton("Aceptar") { dialog, _ ->
-                Log.d("aea", "aceptar")
-                val lugarActualizado = editTextLugar.text.toString()
-                Log.d("aea", "aceptar2 ${horario.horarioId} $lugarActualizado")
-                // Crear el objeto de actualización
-                val horarioUpdate = HorarioUpdate(
-                    horarioId = horario.horarioId!!,
-                    lugar = lugarActualizado,
-                    estado = true // Cambiar el estado a true
-                )
-                Log.d("aea", "aceptar3")
+        if (horario.estado == true) {
+            editTextLugar.isEnabled = false
+            // Crear el diálogo de alerta
+            val dialog = AlertDialog.Builder(requireContext())
+                .setTitle("Detalles del Horario")
+                .setView(dialogView)
+                .setNegativeButton("Okey") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+            dialog.show()
+        } else {
+            // Crear el diálogo de alerta
+            val dialog = AlertDialog.Builder(requireContext())
+                .setTitle("Detalles del Horario")
+                .setView(dialogView)
+                .setPositiveButton("Confirmar") { dialog, _ ->
+                    Log.d("aea", "aceptar")
+                    val lugarActualizado = editTextLugar.text.toString()
+                    Log.d("aea", "aceptar2 ${horario.horarioId} $lugarActualizado")
+                    // Crear el objeto de actualización
+                    val horarioUpdate = HorarioUpdate(
+                        horarioId = horario.horarioId!!,
+                        lugar = lugarActualizado,
+                        estado = true // Cambiar el estado a true
+                    )
+                    Log.d("aea", "aceptar3")
 
-                Log.d("aea", horarioUpdate.toString())
+                    Log.d("aea", horarioUpdate.toString())
 
-                // TODO: Aquí puedes llamar a tu función para actualizar en la base de datos
-                updateHorario(horarioUpdate)
+                    // TODO: Aquí puedes llamar a tu función para actualizar en la base de datos
+                    updateHorario(horarioUpdate)
 
-                // Cerrar el diálogo
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
+                    // Cerrar el diálogo
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancelar") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+            dialog.show()
+        }
 
-        dialog.show()
     }
 
     private fun updateHorario(horarioUpdate: HorarioUpdate) {

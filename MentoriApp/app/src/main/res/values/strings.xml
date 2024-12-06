@@ -22,4 +22,5 @@
     <string name="tema">Tema...</string>
     <string name="s">Tema:</string>
     <string name="cerrar_asistencia">Cerrar Asistencia</string>
+    <string name="select_role_label">"Seleccione un rol: "</string>
 </resources>

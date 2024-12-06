@@ -20,7 +20,9 @@ data class Usuarios(
     val creadoEn: String? = null
 )
 
+@Serializable
 data class UserExistResponse(val exists: Boolean)
+
 @Serializable
 data class UserView(
     val id: Int?,

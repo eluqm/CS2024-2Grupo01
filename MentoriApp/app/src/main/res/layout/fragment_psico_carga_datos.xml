@@ -28,22 +28,42 @@
             android:gravity="center_vertical"
             android:text="Carga de datos"
             android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="24sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="142dp"
+            tools:layout_editor_absoluteY="13dp" />
     </androidx.appcompat.widget.Toolbar>
 
     <!-- Spinner Cargo -->
+
+    <TextView
+        android:id="@+id/text_select_role"
+        android:layout_width="196dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="2dp"
+        android:text="@string/select_role_label"
+        android:textColor="@color/spinner_text_color"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/spinner_cargo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.074"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.666" />
+
     <Spinner
         android:id="@+id/spinner_cargo"
+        style="@style/CustomSpinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="16dp"
         android:prompt="@string/select_cargo_prompt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
 
 
     <!-- Spinner Carrera
@@ -74,24 +94,28 @@
     <!-- Icono de carga -->
     <ImageView
         android:id="@+id/upload_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/baseline_file_upload_24"
+        android:layout_width="113dp"
+        android:layout_height="129dp"
+        android:layout_marginTop="48dp"
         android:contentDescription="@string/upload_icon"
-        app:layout_constraintTop_toBottomOf="@id/spinner_cargo"
-        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/baseline_file_upload_24"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="48dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner_cargo" />
 
     <!-- Botón Cargar -->
     <Button
         android:id="@+id/btn_cargar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="165dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="60dp"
         android:text="@string/btn_cargar_datos"
-        app:layout_constraintTop_toBottomOf="@id/upload_icon"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="19dp"
+        android:textStyle="bold"
+        android:typeface="monospace"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/upload_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

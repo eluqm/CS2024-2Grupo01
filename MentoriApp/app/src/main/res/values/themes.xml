@@ -1,4 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
+    <color name="selected_item_background">#004C8C</color>
+    <color name="spinner_background">#FFFFFF</color>
+    <color name="spinner_text_color">#000000</color>
+    <color name="spinner_popup_background">#FFFFFF</color>
+    <color name="principal_spinner">#6200EE</color> <!-- Ajusta según tu diseño -->
+
     <!-- Base application theme -->
     <style name="Base.Theme.MentoriApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Colores para el modo claro -->

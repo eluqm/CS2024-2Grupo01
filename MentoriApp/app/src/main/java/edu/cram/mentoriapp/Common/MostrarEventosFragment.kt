@@ -99,7 +99,7 @@ class MostrarEventosFragment : Fragment(R.layout.fragment_mostrar_eventos) {
     private fun showImageDialog(imageData: ByteArray, url: String) {
         // Crear y configurar el Dialog para mostrar la imagen
         val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_image) // Usar un layout personalizado para la imagen ampliada
+        dialog.setContentView(R.layout.dialog_image_event) // Usar un layout personalizado para la imagen ampliada
         val imageView = dialog.findViewById<ImageView>(R.id.dialogImageView)
         val Texturl = dialog.findViewById<TextView>(R.id.TextUrl)
         Texturl.text = url

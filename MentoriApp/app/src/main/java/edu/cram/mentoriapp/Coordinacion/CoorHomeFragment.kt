@@ -2,6 +2,7 @@ package edu.cram.mentoriapp.Coordinacion
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -52,6 +53,33 @@ class CoorHomeFragment : Fragment(R.layout.fragment_coor_home) {
         val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
 
         val btnMostrarEventos = view.findViewById<ImageButton>(R.id.btn_notification)
+
+        val actividad = requireActivity() as CoorActivity
+        // Funciones que se llaman en cada caso
+        fun onKeyboardShown() {
+            actividad.bottomNav.visibility = View.GONE
+        }
+
+        fun onKeyboardHidden() {
+            actividad.bottomNav.visibility = View.VISIBLE
+            // Acción cuando el teclado se oculta
+        }
+
+        txtMensaje.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            txtMensaje.rootView.getWindowVisibleDisplayFrame(rect)
+
+            val screenHeight = txtMensaje.rootView.height
+            val keypadHeight = screenHeight - rect.bottom
+
+            if (keypadHeight > screenHeight * 0.15) {
+                // Teclado visible
+                onKeyboardShown()
+            } else {
+                // Teclado oculto
+                onKeyboardHidden()
+            }
+        }
 
         btnMostrarEventos.setOnClickListener {
             view.findNavController().navigate(R.id.action_coorHomeFragment_to_mostrarEventosFragment4)

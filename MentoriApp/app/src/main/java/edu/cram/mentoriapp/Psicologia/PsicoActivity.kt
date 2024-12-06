@@ -11,11 +11,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import edu.cram.mentoriapp.R
 
 class PsicoActivity : AppCompatActivity() {
+
+    lateinit var bottomNav: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_psico)
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationViewPsico)
+        bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationViewPsico)
 
         val navFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_psico) as NavHostFragment
 

@@ -273,6 +273,16 @@ fun Application.configureDatabases() {
             }
         }
 
+        get("/mentoresByGrupo/{grupoId}") {
+            val id = call.parameters["grupoId"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
+            val mentor = mentoresService.readMentorByGroupID(id)
+            if (mentor != null) {
+                call.respond(HttpStatusCode.OK, mentor)
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
         // Update mentor
         put("/mentores/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")

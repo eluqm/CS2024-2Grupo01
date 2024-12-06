@@ -1,5 +1,7 @@
 package edu.cram.mentoriapp.Common
 
+import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import edu.cram.mentoriapp.Adapter.EventosAdapter
 import edu.cram.mentoriapp.Model.Evento
 import edu.cram.mentoriapp.R
@@ -88,6 +92,23 @@ class MostrarEventosFragment : Fragment(R.layout.fragment_mostrar_eventos) {
         evento.eventoId?.let {
             Toast.makeText(requireActivity(), it.toString(), Toast.LENGTH_SHORT).show()
         }
+        showImageDialog(evento.poster)
+    }
+
+    private fun showImageDialog(imageData: ByteArray) {
+        // Crear y configurar el Dialog para mostrar la imagen
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_image) // Usar un layout personalizado para la imagen ampliada
+        val imageView = dialog.findViewById<ImageView>(R.id.dialogImageView)
+
+        // Cargar la imagen en el ImageView
+        Glide.with(requireContext())
+            .asBitmap()
+            .load(imageData)
+            .placeholder(R.drawable.logoula)
+            .into(imageView)
+
+        dialog.show()
     }
 
 

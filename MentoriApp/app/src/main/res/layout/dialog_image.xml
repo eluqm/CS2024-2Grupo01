@@ -11,5 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter"
+
+        />
+
+    <TextView
+        android:id="@+id/TextUrl"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:autoLink="web"
+        android:linksClickable="true"
+        android:textColor="@color/principal" />
 </LinearLayout>

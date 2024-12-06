@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -92,14 +93,16 @@ class MostrarEventosFragment : Fragment(R.layout.fragment_mostrar_eventos) {
         evento.eventoId?.let {
             Toast.makeText(requireActivity(), it.toString(), Toast.LENGTH_SHORT).show()
         }
-        showImageDialog(evento.poster)
+        evento.url?.let { showImageDialog(evento.poster, it) }
     }
 
-    private fun showImageDialog(imageData: ByteArray) {
+    private fun showImageDialog(imageData: ByteArray, url: String) {
         // Crear y configurar el Dialog para mostrar la imagen
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_image) // Usar un layout personalizado para la imagen ampliada
         val imageView = dialog.findViewById<ImageView>(R.id.dialogImageView)
+        val Texturl = dialog.findViewById<TextView>(R.id.TextUrl)
+        Texturl.text = url
 
         // Cargar la imagen en el ImageView
         Glide.with(requireContext())

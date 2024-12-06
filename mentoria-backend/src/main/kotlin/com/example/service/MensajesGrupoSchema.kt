@@ -21,7 +21,8 @@ data class Chat(
     val emisor: String,
     val fecha: String,
     val mensaje: String,
-    val hora: String
+    val hora: String,
+    val rol: String
 )
 
 @Serializable
@@ -97,7 +98,7 @@ class MensajesGrupoService(private val connection: Connection) {
 
         while (resultSetMensajes.next()) {
             val remitenteId = resultSetMensajes.getInt("remitente_id")
-            val remitenteNombre = getUsuarioNombreById(remitenteId) // Consulta para obtener el nombre del usuario
+            val (remitenteNombre, remitenteRol) = getUsuarioAndRoleNombreById(remitenteId) // Obtiene nombre y rol
             val enviadoEn = resultSetMensajes.getTimestamp("enviado_en").toLocalDateTime()
             val fecha = enviadoEn.toLocalDate().toString()
             val hora = enviadoEn.toLocalTime().toString()
@@ -107,7 +108,8 @@ class MensajesGrupoService(private val connection: Connection) {
                     emisor = remitenteNombre,
                     fecha = fecha,
                     hora = hora,
-                    mensaje = resultSetMensajes.getString("texto_mensaje")
+                    mensaje = resultSetMensajes.getString("texto_mensaje"),
+                    rol = remitenteRol
                 )
             )
         }
@@ -121,16 +123,22 @@ class MensajesGrupoService(private val connection: Connection) {
 
 
     // Consulta auxiliar para obtener el nombre del usuario por ID
-    private fun getUsuarioNombreById(usuarioId: Int): String {
-        val statementUsuario = connection.prepareStatement("SELECT nombre_usuario FROM usuarios WHERE user_id = ?")
+    private fun getUsuarioAndRoleNombreById(usuarioId: Int): Pair<String, String> {
+        val statementUsuario = connection.prepareStatement(
+            "SELECT nombre_usuario, tipo_usuario FROM usuarios WHERE user_id = ?"
+        )
         statementUsuario.setInt(1, usuarioId)
         val resultSetUsuario = statementUsuario.executeQuery()
         return if (resultSetUsuario.next()) {
-            resultSetUsuario.getString("nombre_usuario")
+            Pair(
+                resultSetUsuario.getString("nombre_usuario"),
+                resultSetUsuario.getString("tipo_usuario")
+            )
         } else {
             throw Exception("Usuario not found for ID $usuarioId")
         }
     }
+
 
 
 

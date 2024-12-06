@@ -4,6 +4,7 @@ import SesionesAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -36,9 +37,16 @@ class CoorSesionesGruposFragment : Fragment(R.layout.fragment_coor_sesiones_grup
         }
 
         val buscador = view.findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView)
+        val atras = view.findViewById<ImageButton>(R.id.atras)
         apiRest = RetrofitClient.makeRetrofitClient()
 
         initRecyclerView(view)
+
+        atras.setOnClickListener {
+            // Retrocede al fragmento anterior en la pila
+            parentFragmentManager.popBackStack()
+        }
+
 
         // Configurar el SearchView
         buscador.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {

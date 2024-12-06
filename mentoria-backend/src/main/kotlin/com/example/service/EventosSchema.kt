@@ -78,7 +78,7 @@ class EventosService(private val connection: Connection) {
         val eventos = mutableListOf<Evento>()
 
         // Preparamos la consulta para obtener todos los eventos
-        val statement = connection.prepareStatement("SELECT * FROM eventos")
+        val statement = connection.prepareStatement("select * from eventos order by fecha_evento desc")
         val resultSet = statement.executeQuery()
 
         // Iteramos sobre el ResultSet para agregar los eventos a la lista

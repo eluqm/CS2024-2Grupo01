@@ -23,6 +23,9 @@
         <action
             android:id="@+id/action_piscoHomeFragment_to_psicoCrearEventoFragment"
             app:destination="@id/psicoCrearEventoFragment" />
+        <action
+            android:id="@+id/action_piscoHomeFragment_to_mostrarEventosFragment2"
+            app:destination="@id/mostrarEventosFragment2" />
     </fragment>
     <fragment
         android:id="@+id/psicoGestionarHorariosFragment"
@@ -44,4 +47,9 @@
         android:name="edu.cram.mentoriapp.Psicologia.PsicoCrearEventoFragment"
         android:label="fragment_psico_crear_evento"
         tools:layout="@layout/fragment_psico_crear_evento" />
+    <fragment
+        android:id="@+id/mostrarEventosFragment2"
+        android:name="edu.cram.mentoriapp.Common.MostrarEventosFragment"
+        android:label="fragment_mostrar_eventos"
+        tools:layout="@layout/fragment_mostrar_eventos" />
 </navigation>

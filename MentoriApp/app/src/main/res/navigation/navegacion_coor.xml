@@ -25,10 +25,18 @@
         <action
             android:id="@+id/action_coorHomeFragment_to_coorGruposFragment"
             app:destination="@id/coorGruposFragment" />
+        <action
+            android:id="@+id/action_coorHomeFragment_to_mostrarEventosFragment4"
+            app:destination="@id/mostrarEventosFragment4" />
     </fragment>
     <fragment
         android:id="@+id/coorSesionesGruposFragment"
         android:name="edu.cram.mentoriapp.Coordinacion.CoorSesionesGruposFragment"
         android:label="fragment_coor_sesiones_grupos"
         tools:layout="@layout/fragment_coor_sesiones_grupos" />
+    <fragment
+        android:id="@+id/mostrarEventosFragment4"
+        android:name="edu.cram.mentoriapp.Common.MostrarEventosFragment"
+        android:label="fragment_mostrar_eventos"
+        tools:layout="@layout/fragment_mostrar_eventos" />
 </navigation>

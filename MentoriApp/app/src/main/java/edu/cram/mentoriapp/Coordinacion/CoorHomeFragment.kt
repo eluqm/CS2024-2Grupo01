@@ -19,6 +19,7 @@ import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
 import edu.cram.mentoriapp.Service.RetrofitClient
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -49,6 +50,12 @@ class CoorHomeFragment : Fragment(R.layout.fragment_coor_home) {
         val txtMensaje = view.findViewById<EditText>(R.id.et_chat_message)
 
         val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
+
+        val btnMostrarEventos = view.findViewById<ImageButton>(R.id.btn_notification)
+
+        btnMostrarEventos.setOnClickListener {
+            view.findNavController().navigate(R.id.action_coorHomeFragment_to_mostrarEventosFragment4)
+        }
 
         btnCerrarsesion.setOnClickListener {
             // Crear el diálogo

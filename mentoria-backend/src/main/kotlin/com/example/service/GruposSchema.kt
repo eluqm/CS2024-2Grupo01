@@ -79,6 +79,7 @@ class GruposService(private val connection: Connection) {
                 AND a.asistio = true
             GROUP BY 
                 s.tema_sesion, h.lugar, fecha_registrada, foto, g.grupo_id
+            ORDER BY fecha_registrada DESC
         """
     }
 

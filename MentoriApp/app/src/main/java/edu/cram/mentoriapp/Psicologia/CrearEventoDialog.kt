@@ -34,7 +34,7 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
     private lateinit var editTextNombre: EditText
     private lateinit var editTextDescripcion: EditText
     private lateinit var editTextUrl: EditText
-    private lateinit var buttonSeleccionarImagen: Button
+    private lateinit var buttonSeleccionarImagen: ImageButton
     private var selectedImageUri: Uri? = null
     private var selectedImageBytes: ByteArray? = null
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -75,14 +75,44 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
             imagePickerLauncher.launch("image/*")
         }
 
+
+
         // Botón para crear el evento y horario
         view.findViewById<Button>(R.id.buttonCrearEvento).setOnClickListener {
-            crearEventoYHorario()
+            val lugar = editTextLugar.text.toString().trim()
+            val fecha = editTextDia.text.toString().trim()
+            val horaInicio = editTextHoraInicio.text.toString().trim()
+            val horaFin = editTextHoraFin.text.toString().trim()
+            val nombre = editTextNombre.text.toString().trim()
+            val descripcion = editTextDescripcion.text.toString().trim()
+            val url = editTextUrl.text.toString().trim()
+
+            // Validaciones
+            when {
+                lugar.isEmpty() -> editTextLugar.error = "Este campo es obligatorio"
+                fecha.isEmpty() -> editTextDia.error = "Este campo es obligatorio"
+                horaInicio.isEmpty() -> editTextHoraInicio.error = "Este campo es obligatorio"
+                horaFin.isEmpty() -> editTextHoraFin.error = "Este campo es obligatorio"
+                nombre.isEmpty() -> editTextNombre.error = "Este campo es obligatorio"
+                descripcion.isEmpty() -> editTextDescripcion.error = "Este campo es obligatorio"
+                selectedImageUri == null -> Toast.makeText(
+                    context,
+                    "Debes seleccionar una imagen",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                else -> {
+                    crearEventoYHorario()
+                }
+            }
+        }
+
+
+        view.findViewById<Button>(R.id.buttonCancelarEvento).setOnClickListener {
+            dismiss()
         }
 
         builder.setView(view)
-            .setTitle("Crear Nuevo Evento")
-            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
 
         return builder.create()
     }

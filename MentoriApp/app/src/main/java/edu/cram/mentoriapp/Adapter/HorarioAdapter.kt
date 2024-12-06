@@ -4,42 +4,42 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import edu.cram.mentoriapp.Model.Evento
-import edu.cram.mentoriapp.Model.GrupoMentoria
 import edu.cram.mentoriapp.Model.HorarioCell
 import edu.cram.mentoriapp.R
+
 class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: (HorarioCell) -> Unit) : RecyclerView.Adapter<HorarioAdapter.HorarioViewHolder>() {
 
     class HorarioViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView.findViewById(R.id.cellTextView)
         val textView2: TextView = itemView.findViewById(R.id.textView2)
 
-        fun render(item: HorarioCell, onClickListener:(HorarioCell) -> Unit) {
-            if (item.horarioId == null) {
+        fun render(item: HorarioCell, onClickListener: (HorarioCell) -> Unit) {
+            if (item.horarioId == null && !item.esConflicto) {
                 itemView.background = null
+                itemView.isEnabled = false
             } else {
-                when (item.estado) {
-                    false -> {
-                        itemView.setBackgroundColor(Color.parseColor("#FFC8C8")) // Rojo suave (pastel)
-                        itemView.isClickable = true // Permitir clics
+                when {
+
+                    item.esConflicto -> {
+                        itemView.setBackgroundColor(Color.parseColor("#e0a2ec")) // Celda con conflicto
+                        itemView.isClickable = true
                     }
-                    null -> {
-                        itemView.setBackgroundColor(Color.parseColor("#C8DFFF")) // Azul suave (pastel)
-                        itemView.isClickable = true // Permitir clics
+                    item.estado -> {
+                        itemView.setBackgroundColor(Color.parseColor("#C8F6C8")) // Verde (activo)
+                        itemView.isClickable = true
                     }
-                    true -> {
-                        itemView.setBackgroundColor(Color.parseColor("#C8F6C8")) // Verde suave (pastel)
-                        itemView.isEnabled = true // Desactivar clics
+                    item.estado == false -> {
+                        itemView.setBackgroundColor(Color.parseColor("#FFC8C8")) // Rojo (inactivo)
+                        itemView.isClickable = true
+                    }
+                    else -> {
+                        itemView.setBackgroundColor(Color.parseColor("#C8DFFF")) // Azul (por defecto)
+                        itemView.isClickable = true
                     }
                 }
-
             }
 
-
-
-            itemView.setOnClickListener() {
-                onClickListener(item)
-            }
+            itemView.setOnClickListener { onClickListener(item) }
         }
     }
 
@@ -50,16 +50,19 @@ class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: 
 
     override fun onBindViewHolder(holder: HorarioViewHolder, position: Int) {
         val cell = celdas[position]
-            if (cell.horaInicio == "inicio") {
-                holder.textView.text = cell.lugar
-
-            } else {
-                holder.textView.text =
-                    cell.nombreEscuela ?: "" // Mostrar el lugar o vacío si no hay evento
-                holder.textView2.text = cell.nombreGrupo ?: ""
-                holder.render(cell, onItemSelected)
-            }
+        if (cell.horaInicio == "inicio") {
+            holder.textView.text = cell.lugar
+        } else if (cell.esConflicto) {
+            holder.textView.text = ". . ."
+            holder.textView.textSize = 20F
+            holder.render(cell, onItemSelected)
+        } else {
+            holder.textView.text = cell.nombreEscuela ?: ""
+            holder.textView2.text = cell.nombreGrupo ?: ""
+            holder.render(cell, onItemSelected)
+        }
     }
 
     override fun getItemCount(): Int = celdas.size
 }
+

@@ -3,7 +3,7 @@ package edu.cram.mentoriapp.Model
 import java.io.Serializable
 
 data class HorarioDetalles(
-    var horarioId: Int,
+    var horarioId: Int?,
     val lugar: String,
     val dia: String,
     val horaInicio: String,

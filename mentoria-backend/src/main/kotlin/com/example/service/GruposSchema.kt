@@ -58,6 +58,7 @@ class GruposService(private val connection: Connection) {
             FROM usuarios u
             JOIN miembros_grupo mg ON u.user_id = mg.user_id
             WHERE mg.grupo_id = ? AND u.tipo_usuario = 'mentoriado'
+            ORDER BY nombre_completo
         """
         private const val SELECT_SESIONES_POR_JEFE = """
             SELECT 

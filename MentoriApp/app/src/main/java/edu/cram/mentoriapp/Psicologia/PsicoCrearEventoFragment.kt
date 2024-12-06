@@ -1,15 +1,19 @@
 package edu.cram.mentoriapp.Psicologia
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import edu.cram.mentoriapp.Adapter.EventosAdapter
 import edu.cram.mentoriapp.Adapter.SesionListaAdapter
@@ -92,6 +96,26 @@ class PsicoCrearEventoFragment : Fragment(R.layout.fragment_psico_crear_evento) 
         evento.eventoId?.let {
             Toast.makeText(requireActivity(), it.toString(), Toast.LENGTH_SHORT).show()
         }
+
+        evento.url?.let { showImageDialog(evento.poster, it) }
+    }
+
+    private fun showImageDialog(imageData: ByteArray, url: String) {
+        // Crear y configurar el Dialog para mostrar la imagen
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_image_event) // Usar un layout personalizado para la imagen ampliada
+        val imageView = dialog.findViewById<ImageView>(R.id.dialogImageView)
+        val Texturl = dialog.findViewById<TextView>(R.id.TextUrl)
+        Texturl.text = url
+
+        // Cargar la imagen en el ImageView
+        Glide.with(requireContext())
+            .asBitmap()
+            .load(imageData)
+            .placeholder(R.drawable.logoula)
+            .into(imageView)
+
+        dialog.show()
     }
 
 

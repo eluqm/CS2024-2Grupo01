@@ -112,7 +112,10 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
                     }
                 }
 
-                view.findNavController().navigate(R.id.mentorHomeFragment)
+                view.findNavController().apply {
+                    popBackStack(R.id.mentorHomeFragment, false)
+                    navigate(R.id.mentorHomeFragment)
+                }
 
             }
         } else {
@@ -131,7 +134,7 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
             val photo = data?.extras?.get("data") as? Bitmap
             if (photo != null) {
                 photoByteArray = bitmapToByteArray(photo)
-                Toast.makeText(requireContext(), "Foto capturada con éxito: \n ${photoByteArray.toString()}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Foto capturada con éxito", Toast.LENGTH_SHORT).show()
             }
         }
     }

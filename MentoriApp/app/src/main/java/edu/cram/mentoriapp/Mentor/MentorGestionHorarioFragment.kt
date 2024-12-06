@@ -91,7 +91,10 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                 estado = estado
             )
 
-            view.findNavController().navigate(R.id.mentorHomeFragment)
+            view.findNavController().apply {
+                popBackStack(R.id.mentorHomeFragment, false) // Esto borra todo hasta llegar al fragmento especificado
+                navigate(R.id.mentorHomeFragment) // Luego navegas al nuevo fragmento
+            }
 
         }
     }

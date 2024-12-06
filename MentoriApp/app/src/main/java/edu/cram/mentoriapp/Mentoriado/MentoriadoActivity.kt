@@ -11,11 +11,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import edu.cram.mentoriapp.R
 
 class MentoriadoActivity : AppCompatActivity() {
+    lateinit var bottomNav: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mentoriado)
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationViewMentoriado)
+        bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigationViewMentoriado)
 
         val navFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_mentoriado) as NavHostFragment
 

@@ -3,6 +3,7 @@ package edu.cram.mentoriapp.Psicologia
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -61,6 +62,34 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
         val txtMensaje = view.findViewById<EditText>(R.id.et_chat_message)
         val recargarFloating = view.findViewById<FloatingActionButton>(R.id.btn_update_chat)
 
+        val actividad = requireActivity() as PsicoActivity
+        // Funciones que se llaman en cada caso
+        fun onKeyboardShown() {
+            actividad.bottomNav.visibility = View.GONE
+        }
+
+        fun onKeyboardHidden() {
+            actividad.bottomNav.visibility = View.VISIBLE
+            // Acción cuando el teclado se oculta
+        }
+
+        txtMensaje.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            txtMensaje.rootView.getWindowVisibleDisplayFrame(rect)
+
+            val screenHeight = txtMensaje.rootView.height
+            val keypadHeight = screenHeight - rect.bottom
+
+            if (keypadHeight > screenHeight * 0.15) {
+                // Teclado visible
+                onKeyboardShown()
+            } else {
+                // Teclado oculto
+                onKeyboardHidden()
+            }
+        }
+
+
 
         val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
 
@@ -96,6 +125,8 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
             // Simula la recarga de datos (consulta al servidor)
             loadSesionChats()
         }
+
+
 
         btnEnviar.setOnClickListener {
             val mensaje = txtMensaje.text.toString()

@@ -1,6 +1,7 @@
 package edu.cram.mentoriapp.Adapter
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +18,21 @@ class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     @SuppressLint("SetTextI18n")
     fun render(item: Chat, onClickListener:(Chat) -> Unit) {
-        viewNombre.text = item.emisor
+        when (item.rol) {
+            "mentor" -> {
+                viewNombre.text = item.emisor + "(Mentor)"
+                viewNombre.setTextColor(Color.parseColor("#FFD700"))
+            }
+            "psicologia" -> {
+                viewNombre.text = item.emisor + "(Psicologia)"
+                viewNombre.setTextColor(Color.parseColor("#FFD700"))
+            }
+            else -> {
+                viewNombre.text = item.emisor
+            }
+        }
+
+
         viewMensaje.text = item.mensaje
         viewFecha.text = item.fecha
         viewHora.text = item.hora.substring(0, 5)

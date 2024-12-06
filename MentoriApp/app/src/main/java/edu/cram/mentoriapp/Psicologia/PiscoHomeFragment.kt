@@ -64,6 +64,12 @@ class PiscoHomeFragment : Fragment(R.layout.fragment_pisco_home) {
 
         val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
 
+        val btnMostrarEventos = view.findViewById<ImageButton>(R.id.btn_notification)
+
+        btnMostrarEventos.setOnClickListener {
+            view.findNavController().navigate(R.id.action_piscoHomeFragment_to_mostrarEventosFragment2)
+        }
+
         btnCerrarsesion.setOnClickListener {
             // Crear el diálogo
             AlertDialog.Builder(requireContext())

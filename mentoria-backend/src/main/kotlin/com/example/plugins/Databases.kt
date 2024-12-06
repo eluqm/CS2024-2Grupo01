@@ -782,7 +782,7 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.Created, id)
         }
 
-        get("/eventos") {
+        get("/readAllEventos") {
             try {
                 // Llamamos a la función readAll() para obtener todos los eventos
                 val eventos = eventosService.readAll()

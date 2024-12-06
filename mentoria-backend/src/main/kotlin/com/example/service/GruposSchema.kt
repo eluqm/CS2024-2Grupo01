@@ -17,6 +17,16 @@ data class Grupo(
 )
 
 @Serializable
+data class GrupoMentoriaPlus(
+    val grupoId: Int? = null,
+    val jefeId: Int,
+    val jefeName: String,
+    val nombre: String,
+    val descripcion: String?,
+    val creadoEn: String? = null
+)
+
+@Serializable
 data class SesionInfo(
     val temaSesion: String,
     val lugar: String,
@@ -220,27 +230,34 @@ class GruposService(private val connection: Connection) {
         return@withContext sesiones
     }
 
-    suspend fun readAllByEscuelaId(escuelaId: Int): List<Grupo> = withContext(Dispatchers.IO) {
+    suspend fun readAllByEscuelaId(escuelaId: Int): List<GrupoMentoriaPlus> = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(
             """
-        SELECT *
+        SELECT 
+            g.grupo_id,
+            g.jefe_id,
+            CONCAT(u.nombre_usuario, ' ', u.apellido_usuario) AS jefe_name,
+            g.nombre,
+            g.descripcion,
+            g.creado_en
         FROM grupos g
         JOIN usuarios u ON g.jefe_id = u.user_id
-        WHERE u.escuela_id = ?
+        WHERE u.escuela_id = ? order by creado_en desc
+
         """
         )
         statement.setInt(1, escuelaId)
         val resultSet = statement.executeQuery()
 
-        val grupos = mutableListOf<Grupo>()
+        val grupos = mutableListOf<GrupoMentoriaPlus>()
 
         while (resultSet.next()) {
             grupos.add(
-                Grupo(
+                GrupoMentoriaPlus(
                     grupoId = resultSet.getInt("grupo_id"),
                     jefeId = resultSet.getInt("jefe_id"),
+                    jefeName = resultSet.getString("jefe_name"),
                     nombre = resultSet.getString("nombre"),
-                    horarioId = resultSet.getInt("horario_id"),
                     descripcion = resultSet.getString("descripcion"),
                     creadoEn = resultSet.getString("creado_en")
                 )

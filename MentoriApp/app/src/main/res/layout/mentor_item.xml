@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/item_mentor.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:paddingStart="28dp"
+    android:paddingEnd="28dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Nombre del mentor -->
+    <TextView
+        android:id="@+id/mentor_name"
+        android:text="Nombre del Mentor"
+        android:textSize="16sp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="start|center_vertical"/>
+
+    <!-- Semestre del mentor -->
+    <TextView
+        android:id="@+id/mentor_semester"
+        android:text="Semestre"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end|center_vertical"/>
+
+</LinearLayout>

@@ -8,6 +8,7 @@ import edu.cram.mentoriapp.Model.Escuela
 import edu.cram.mentoriapp.Model.EvaluacionComentario
 import edu.cram.mentoriapp.Model.Evento
 import edu.cram.mentoriapp.Model.GrupoMentoria
+import edu.cram.mentoriapp.Model.GrupoMentoriaPlus
 import edu.cram.mentoriapp.Model.Horario
 import edu.cram.mentoriapp.Model.HorarioDetalles
 import edu.cram.mentoriapp.Model.HorarioUpdate
@@ -22,6 +23,7 @@ import edu.cram.mentoriapp.Model.SesionMentoria
 import edu.cram.mentoriapp.Model.SesionMentoriaLista
 import edu.cram.mentoriapp.Model.SolicitudMentoria
 import edu.cram.mentoriapp.Model.UserExistResponse
+import edu.cram.mentoriapp.Model.UserView
 import edu.cram.mentoriapp.Model.Usuario
 import edu.cram.mentoriapp.Model.UsuarioLista
 import retrofit2.Response
@@ -90,7 +92,14 @@ interface ApiRest {
     suspend fun findUsuariosByTypeAndSchool(
         @Path("tipo") tipo: String,
         @Path("escuelaId") escuelaId: Int
-    ): retrofit2.Response<List<Usuario>>
+    ): retrofit2.Response<List<UserView>>
+
+    @GET("/usuarios/tipo/{tipo}/escuela/{escuelaId}/semestre/{semestre}")
+    suspend fun findUsuariosByTypeAndSchoolAndSemester(
+        @Path("tipo") tipo: String,
+        @Path("escuelaId") escuelaId: Int
+        ,@Path("semestre") semestre: String
+    ): retrofit2.Response<List<UserView>>
 
     //Psicologia
     @GET("/psicologia/{id}")
@@ -195,7 +204,7 @@ interface ApiRest {
     suspend fun deleteGrupo(@Path("id") id: Int): retrofit2.Response<Unit>
 
     @GET("/grupos/escuela/{escuelaId}")
-    suspend fun getGrupoByEscuela(@Path("escuelaId") escuelaId: Int): retrofit2.Response<List<GrupoMentoria>>
+    suspend fun getGrupoByEscuela(@Path("escuelaId") escuelaId: Int): retrofit2.Response<List<GrupoMentoriaPlus>>
 
 
 

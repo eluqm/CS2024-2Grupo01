@@ -18,9 +18,9 @@
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/baseline_group_24"
+            android:src="@drawable/diversidad"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="26dp"
             />
 
         <LinearLayout
@@ -51,14 +51,6 @@
                 android:layout_marginBottom="4dp"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/txt_monto2"
-            tools:text="12"
-            tools:textSize="24sp"
-            android:textSize="20sp"
-            android:layout_gravity="end|center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

@@ -124,6 +124,23 @@ fun Application.configureDatabases() {
             }
         }
 
+
+        get("/usuarios/tipo/{tipo}/escuela/{escuelaId}/semestre/{semestre}") {
+            val tipo = call.parameters["tipo"] ?: throw IllegalArgumentException("Invalid user type")
+            val escuelaId = call.parameters["escuelaId"]?.toIntOrNull() ?: throw IllegalArgumentException("Invalid school ID")
+            val semestre = call.parameters["semestre"] ?: throw IllegalArgumentException("Invalid semester")
+
+            // Llama al servicio para obtener los usuarios por tipo y escuela
+            val usuarios = usuariosService.findUsuariosByTypeAndSchoolAndSemester(tipo, escuelaId, semestre)
+
+            if (usuarios.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, usuarios) // Responde con la lista de usuarios
+            } else {
+                call.respond(HttpStatusCode.NotFound, "No users found for type: $tipo in school ID: $escuelaId")
+            }
+        }
+
+
         get("/usuarios/exist/{dni}") {
             val dniUsuario = call.parameters["dni"] ?: throw IllegalArgumentException("DNI missing")
             val exists = usuariosService.userExistsByDni(dniUsuario)

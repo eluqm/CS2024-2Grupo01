@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import edu.cram.mentoriapp.Model.AsistenciaSesion
 import edu.cram.mentoriapp.Model.MiembroGrupo
 import edu.cram.mentoriapp.Model.SesionMentoria
@@ -110,6 +111,9 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
                         enviarAsistencias(sesionId, seleccionados, checkBoxContainer)
                     }
                 }
+
+                view.findNavController().navigate(R.id.mentorHomeFragment)
+
             }
         } else {
             Toast.makeText(requireContext(), "Error al obtener la información del mentor o grupo", Toast.LENGTH_SHORT).show()

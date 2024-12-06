@@ -3,9 +3,13 @@ package edu.cram.mentoriapp.Coordinacion
 import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -14,9 +18,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import edu.cram.mentoriapp.Adapter.GruposAdapter
+import edu.cram.mentoriapp.Adapter.MentorAdapter
 import edu.cram.mentoriapp.Model.GrupoMentoria
+import edu.cram.mentoriapp.Model.GrupoMentoriaPlus
 import edu.cram.mentoriapp.Model.MiembroGrupo
+import edu.cram.mentoriapp.Model.UserView
 import edu.cram.mentoriapp.Model.Usuario
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
@@ -27,10 +36,10 @@ import retrofit2.Response
 class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
 
     private lateinit var gruposAdapter: GruposAdapter
-    private lateinit var mentores: List<Usuario> // Lista de escuelas a mostrar
+    private lateinit var mentores: List<UserView> // Lista de escuelas a mostrar
     private lateinit var apiRest: ApiRest
     // Inicializa gruposMentoria como una lista vacía desde el principio
-    private var gruposMentoria: MutableList<GrupoMentoria> = mutableListOf()
+    private var gruposMentoria: MutableList<GrupoMentoriaPlus> = mutableListOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,14 +57,12 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
         //loadGruposManualmente()
         loadGrupos()
         val manager = LinearLayoutManager(context)
-        Toast.makeText(requireContext(), "Antes del recicler", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(requireContext(), "Antes del recicler", Toast.LENGTH_SHORT).show()
         gruposAdapter = GruposAdapter(gruposMentoria) { user -> onItemSelected(user) }
-        val decoration = DividerItemDecoration(context, manager.orientation)
         val usersRecyler = view.findViewById<RecyclerView>(R.id.recycler_grupos)
         usersRecyler.layoutManager = manager
         usersRecyler.adapter = gruposAdapter
-        usersRecyler.addItemDecoration(decoration)
-        Toast.makeText(requireContext(), "Despues del recicler", Toast.LENGTH_SHORT).show()
+        //Toast.makeText(requireContext(), "Despues del recicler", Toast.LENGTH_SHORT).show()
     }
 
     private fun loadGrupos() {
@@ -80,7 +87,7 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
                             gruposMentoria.clear() // Limpiar la lista antes de agregar nuevos elementos
                             gruposMentoria.addAll(grupos) // Agregar los grupos obtenidos
                             gruposAdapter.notifyDataSetChanged() // Notificar al adaptador sobre los cambios
-                            Toast.makeText(requireContext(), "Grupos obtenidos: ${gruposMentoria.toString()}", Toast.LENGTH_LONG).show()
+                            //Toast.makeText(requireContext(), "Grupos obtenidos: ${gruposMentoria.toString()}", Toast.LENGTH_LONG).show()
                             Log.d("loadGrupos", "Se obtuvieron grupos para la escuelaId $escuelaId: ${gruposMentoria.toString()}")
 
                         } else {
@@ -107,8 +114,8 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
     }
 
 
-    private fun onItemSelected(group:GrupoMentoria) {
-        Toast.makeText(requireActivity(), group.nombre, Toast.LENGTH_SHORT).show()
+    private fun onItemSelected(group: GrupoMentoriaPlus) {
+        Toast.makeText(requireActivity(), "Creado el" + group.creadoEn, Toast.LENGTH_LONG).show()
         val delivery = Bundle().apply {
             putInt("JefeID", group.jefeId)
         }
@@ -129,7 +136,7 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
 
                     if (mentores.isNotEmpty()) {
                         // Mostrar el diálogo para seleccionar un mentor
-                        showMentorSelectionDialog(mentores)
+                        showMentorSelectionDialog(mentores, escuelaId)
                     } else {
                         // Mensaje si no hay mentores disponibles
                         Toast.makeText(requireContext(), "No hay mentores disponibles", Toast.LENGTH_SHORT).show()
@@ -147,69 +154,78 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
     }
 
 
-    private fun showMentorSelectionDialog(mentores: List<Usuario>) {
-        val mentorNombres = mentores.map { it.nombreUsuario } // Asegúrate de que Usuario tenga esta propiedad
+    private fun showMentorSelectionDialog(mentores: List<UserView>, escuelaId: Int) {
+        if (mentores.isEmpty()) {
+            Toast.makeText(requireContext(), "No hay mentores disponibles", Toast.LENGTH_SHORT).show()
+            return
+        }
 
+        // Crear un ArrayAdapter personalizado
+        val adapter = object : ArrayAdapter<UserView>(requireContext(), R.layout.mentor_item, mentores) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.mentor_item, parent, false)
+
+                val mentor = getItem(position)
+
+                // Referencias de las vistas del layout
+                val mentorNameTextView = view.findViewById<TextView>(R.id.mentor_name)
+                val mentorSemesterTextView = view.findViewById<TextView>(R.id.mentor_semester)
+
+                mentor?.let {
+                    // Rellenar las vistas con la información del mentor
+                    mentorNameTextView.text = it.fullName
+                    mentorSemesterTextView.text = it.semester
+                }
+
+                return view
+            }
+        }
+
+        // Mostrar el AlertDialog con el ArrayAdapter personalizado
         AlertDialog.Builder(requireContext())
             .setTitle("Selecciona un Mentor")
-            .setItems(mentorNombres.toTypedArray()) { dialogInterface, which ->
+            .setAdapter(adapter) { dialogInterface, which ->
                 val mentorSeleccionado = mentores[which]
-                // Lógica adicional después de seleccionar el mentor
-                println("Mentor seleccionado: ${mentorSeleccionado.nombreUsuario}, Tipo: ${mentorSeleccionado.tipoUsuario}")
-                showCreateGrupoMentoriaDialog(mentorSeleccionado)
-                // Aquí puedes continuar con la lógica que necesites después de seleccionar un mentor
-                // Por ejemplo, almacenar el ID del mentor seleccionado o hacer otra operación
+                println("Mentor seleccionado: ${mentorSeleccionado.fullName}, Semestre: ${mentorSeleccionado.semester}")
+                showSemesterSelectionDialog(mentorSeleccionado, escuelaId)
             }
             .setNegativeButton("Cancelar", null)
             .show()
     }
 
 
-    private fun showCreateGrupoMentoriaDialog(mentorSeleccionado: Usuario) {
-        val builder = AlertDialog.Builder(requireContext())
-        val inflater = requireActivity().layoutInflater
-        val dialogView = inflater.inflate(R.layout.dialog_create_grupo_mentoria, null)
 
-        // Referencias a los campos del diálogo
-        val editTextNombre = dialogView.findViewById<EditText>(R.id.editTextNombre)
-        val editTextDescripcion = dialogView.findViewById<EditText>(R.id.editTextDescripcion)
 
-        builder.setView(dialogView)
-            .setTitle("Crear Grupo de Mentoría")
-            .setPositiveButton("Crear") { dialog, which ->
-                // Obtener el nombre y la descripción ingresados
-                val nombre = editTextNombre.text.toString()
-                val descripcion = editTextDescripcion.text.toString().takeIf { it.isNotEmpty() } // Descripción opcional
+    private fun showSemesterSelectionDialog(mentorSeleccionado: UserView, escuelaId: Int) {
+        val semestres = arrayOf("I", "II")  // Los valores de los semestres como strings
 
-                // Crear el objeto GrupoMentoria
-                val grupoMentoria = mentorSeleccionado.userId?.let {
-                    GrupoMentoria(
-                        jefeId = it, // Asegúrate de que Usuario tenga userId
-                        nombre = nombre,
-                        horarioId = 5, // ID del horario manualmente asignado
-                        descripcion = descripcion
-                    )
-                }
-
-                Log.d("XDDD",grupoMentoria.toString())
-
-                // Pasar al siguiente diálogo (aún no implementado)
-                if (grupoMentoria != null) {
-                    loadMentoriados(mentorSeleccionado.escuelaId, grupoMentoria)
-                }
+        AlertDialog.Builder(requireContext())
+            .setTitle("Selecciona el Semestre")
+            .setItems(semestres) { _, which ->
+                val semestreSeleccionado = semestres[which]  // Asignar el valor "I" o "II"
+                // Llamamos al método para cargar los mentoriados del semestre
+                loadMentoriados(mentorSeleccionado, semestreSeleccionado, escuelaId)
             }
-            .setNegativeButton("Cancelar") { dialog, which -> dialog.cancel() }
+            .setNegativeButton("Cancelar", null)
             .show()
     }
 
-    private fun loadMentoriados(escuelaId: Int, grupoMentoria: GrupoMentoria) {
+
+
+    private fun loadMentoriados(mentorSeleccionado: UserView, semestreSeleccionado: String, escuelaId: Int) {
+        Log.d("Jaula", "loadMentoriados() iniciado")
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val response = apiRest.findUsuariosByTypeAndSchool("mentoriado", escuelaId)
+                val response = apiRest.findUsuariosByTypeAndSchoolAndSemester("mentoriado", escuelaId, semestreSeleccionado)
                 if (response.isSuccessful) {
+                    Log.d("Jaula", "xd1")
                     val mentoriados = response.body() ?: emptyList()
-                    showMentoriadosSelectionDialog(mentoriados, grupoMentoria)
+
+                    showMentoriadosSelectionDialog(mentoriados, mentorSeleccionado)
+                    Toast.makeText(requireContext(), "Mentoriados disponibles", Toast.LENGTH_SHORT).show()
+
                 } else {
+                    Toast.makeText(requireContext(), "No hay mentoriados disponibles", Toast.LENGTH_SHORT).show()
                     val errorBody = response.errorBody()?.string() ?: "Error vacío"
                     Log.e("Mentoriados", "Error: ${response.code()} - $errorBody")
                 }
@@ -221,15 +237,20 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
 
 
 
-    private fun showMentoriadosSelectionDialog(mentoriados: List<Usuario>, grupoMentoria: GrupoMentoria) {
-        val selectedMentoriados = mentoriados.take(20).map { it.userId }.toMutableSet() // Auto-seleccionar los primeros 20
-        val items = mentoriados.map { "${it.nombreUsuario} ${it.apellidoUsuario}" }.toTypedArray()
+    private fun showMentoriadosSelectionDialog(mentoriados: List<UserView>, mentorSeleccionado: UserView) {
+
+
+
+        val selectedMentoriados = mentoriados.take(20).map { it.id }.toMutableSet() // Auto-seleccionar los primeros 20
+        val items = mentoriados.map { it.fullName }.toTypedArray()
+
+
 
         // Crear un AlertDialog
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Seleccionar Mentoriados")
-        builder.setMultiChoiceItems(items, selectedMentoriados.map { it in mentoriados.map { it.userId } }.toBooleanArray()) { dialog, which, isChecked ->
-            val userId = mentoriados[which].userId
+        builder.setMultiChoiceItems(items, selectedMentoriados.map { it in mentoriados.map { it.id } }.toBooleanArray()) { dialog, which, isChecked ->
+            val userId = mentoriados[which].id
             if (isChecked) {
                 selectedMentoriados.add(userId) // Agregar el ID a la selección
             } else {
@@ -238,11 +259,60 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
         }
 
         builder.setPositiveButton("Crear Grupo") { dialog, _ ->
-            createGrupo(selectedMentoriados.toList() ,grupoMentoria) // Crear el grupo y luego las relaciones
+            showCreateGrupoMentoriaDialog(selectedMentoriados.toList() ,mentorSeleccionado) // Crear el grupo y luego las relaciones
         }
         builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
         builder.show()
     }
+
+
+    private fun showCreateGrupoMentoriaDialog(selectedMentoriados: List<Int?>, mentorSeleccionado: UserView) {
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = requireActivity().layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_create_grupo_mentoria, null)
+
+        // Referencias a los campos del diálogo
+        val editTextNombre = dialogView.findViewById<TextInputEditText>(R.id.editTextNombre)
+        val editTextDescripcion = dialogView.findViewById<TextInputEditText>(R.id.editTextDescripcion)
+        val inputLayoutNombre = dialogView.findViewById<TextInputLayout>(R.id.inputLayoutNombre)
+
+        builder.setView(dialogView)
+            .setTitle("Crear Grupo de Mentoría")
+            .setPositiveButton("Crear") { dialog, which ->
+                // Obtener el nombre y la descripción ingresados
+                val nombre = editTextNombre.text.toString().trim()
+                val descripcion = editTextDescripcion.text.toString().takeIf { it.isNotEmpty() }
+
+                // Validar que el nombre del grupo no esté vacío
+                if (nombre.isEmpty()) {
+                    // Si no hay nombre, mostrar un mensaje de error
+                    inputLayoutNombre.error = "El nombre del grupo es obligatorio"
+                    return@setPositiveButton
+                } else {
+                    inputLayoutNombre.error = null  // Limpiar el error si hay un nombre
+                }
+
+                // Crear el objeto GrupoMentoria
+                val grupoMentoria = mentorSeleccionado.id?.let {
+                    GrupoMentoria(
+                        jefeId = it, // Asegúrate de que Usuario tenga userId
+                        nombre = nombre,
+                        horarioId = 5, // ID del horario manualmente asignado
+                        descripcion = descripcion
+                    )
+                }
+
+                Log.d("XDDD", grupoMentoria.toString())
+
+                // Pasar al siguiente paso si todo es válido
+                if (grupoMentoria != null) {
+                    createGrupo(selectedMentoriados, grupoMentoria)
+                }
+            }
+            .setNegativeButton("Cancelar") { dialog, which -> dialog.cancel() }
+            .show()
+    }
+
 
     private fun createGrupo(selectedMentoriados: List<Int?>, grupoMentoria: GrupoMentoria) {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -268,6 +338,7 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
                             }
                         } ?: Log.e("Grupo", "Usuario es nulo")
                     }
+                    loadGrupos()
                 } else {
                     // Manejar error al crear el grupo
                     val errorBody = grupoResponse.errorBody()?.string() ?: "Error vacío"

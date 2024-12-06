@@ -13,6 +13,7 @@ import edu.cram.mentoriapp.Model.HorarioDetalles
 import edu.cram.mentoriapp.Model.HorarioUpdate
 import edu.cram.mentoriapp.Model.MensajeGrupo
 import edu.cram.mentoriapp.Model.Mentor
+import edu.cram.mentoriapp.Model.MentorRead
 import edu.cram.mentoriapp.Model.Mentoriado
 import edu.cram.mentoriapp.Model.MiembroGrupo
 import edu.cram.mentoriapp.Model.Notificacion
@@ -118,6 +119,9 @@ interface ApiRest {
     //Mentores
     @GET("/mentores/{id}")
     suspend fun getMentor(@Path("id") id: Int): retrofit2.Response<Mentor>
+
+    @GET("/mentoresByGrupo/{grupoId}")
+    suspend fun getMentorByGroupId(@Path("grupoId") id: Int): retrofit2.Response<MentorRead>
 
     @POST("/mentores")
     suspend fun createMentor(@Body mentor: Mentor): retrofit2.Response<Int>

@@ -297,7 +297,6 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
                     GrupoMentoria(
                         jefeId = it, // Asegúrate de que Usuario tenga userId
                         nombre = nombre,
-                        horarioId = 5, // ID del horario manualmente asignado
                         descripcion = descripcion
                     )
                 }

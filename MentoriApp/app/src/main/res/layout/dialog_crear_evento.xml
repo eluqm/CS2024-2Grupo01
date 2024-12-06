@@ -100,7 +100,7 @@
         android:id="@+id/editTextUrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="URL (opcional)"
+        android:hint="URL"
         android:background="@drawable/rounded_edittext"
         android:padding="12dp"
         android:textColor="#333333"

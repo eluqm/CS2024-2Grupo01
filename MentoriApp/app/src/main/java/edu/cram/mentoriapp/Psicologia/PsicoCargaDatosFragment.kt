@@ -43,11 +43,12 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
 
     private fun initSpinnerCargo(view: View) {
         spinnerCargo = view.findViewById(R.id.spinner_cargo)
-        val cargos = listOf("coordinador", "mentor", "mentoriado")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, cargos)
+        val cargos = listOf("Coordinador", "Mentor", "Mentoriado")
+        val adapter = ArrayAdapter(requireContext(), R.layout.spinner_item, cargos)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCargo.adapter = adapter
     }
+
 
     private fun setupButton(view: View) {
         val btnCargar: Button = view.findViewById(R.id.btn_cargar)

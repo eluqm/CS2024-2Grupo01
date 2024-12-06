@@ -102,6 +102,12 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
                     return@setOnClickListener
                 }
 
+                // Verifica si se tomó una foto
+                if (photoByteArray == null) {
+                    Toast.makeText(requireContext(), "Por favor tome la foto", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
                 val estadoSesion = "realizada"
 
                 photoByteArray?.let { it1 ->

@@ -20,18 +20,19 @@ class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: 
             } else {
                 when (item.estado) {
                     false -> {
-                        itemView.setBackgroundColor(Color.RED) // Fondo rojo para estado false
+                        itemView.setBackgroundColor(Color.parseColor("#FFC8C8")) // Rojo suave (pastel)
                         itemView.isClickable = true // Permitir clics
                     }
                     null -> {
-                        itemView.setBackgroundColor(Color.BLUE) // Fondo azul para estado null
+                        itemView.setBackgroundColor(Color.parseColor("#C8DFFF")) // Azul suave (pastel)
                         itemView.isClickable = true // Permitir clics
                     }
                     true -> {
-                        itemView.setBackgroundColor(Color.GREEN) // Fondo verde para estado true
-                        itemView.isEnabled = false // Desactivar clics
+                        itemView.setBackgroundColor(Color.parseColor("#C8F6C8")) // Verde suave (pastel)
+                        itemView.isEnabled = true // Desactivar clics
                     }
                 }
+
             }
 
 
@@ -49,9 +50,15 @@ class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: 
 
     override fun onBindViewHolder(holder: HorarioViewHolder, position: Int) {
         val cell = celdas[position]
-        holder.textView.text = cell.nombreEscuela ?: "" // Mostrar el lugar o vacío si no hay evento
-        holder.textView2.text = cell.nombreGrupo ?: ""
-        holder.render(cell, onItemSelected)
+            if (cell.horaInicio == "inicio") {
+                holder.textView.text = cell.lugar
+
+            } else {
+                holder.textView.text =
+                    cell.nombreEscuela ?: "" // Mostrar el lugar o vacío si no hay evento
+                holder.textView2.text = cell.nombreGrupo ?: ""
+                holder.render(cell, onItemSelected)
+            }
     }
 
     override fun getItemCount(): Int = celdas.size

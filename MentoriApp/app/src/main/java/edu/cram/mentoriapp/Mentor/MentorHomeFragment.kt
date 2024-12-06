@@ -57,6 +57,8 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
         val Horario = view.findViewById<LinearLayout>(R.id.linearLayoutHorario)
         val cardEstado = view.findViewById<androidx.cardview.widget.CardView>(R.id.estadoCard)
         val btnProponerHorario = view.findViewById<Button>(R.id.proponerHorarioButton)
+        val btnLlamarAsistencia = view.findViewById<ImageButton>(R.id.irSesion)
+
 
         val txtLugar = view.findViewById<TextView>(R.id.tv_lugar)
         val txtDiaHora = view.findViewById<TextView>(R.id.tv_dia_hora)
@@ -86,6 +88,8 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
                         // Ejemplo: mostrar el lugar del horario en algún TextView
                         // txtLugar.text = horarioGrupo.lugar
                         if (horarioGrupo.estado == true) {
+                            btnLlamarAsistencia.visibility = View.VISIBLE
+                            Horario.visibility = View.VISIBLE
                             txtLugar.text = "Lugar: " + horarioGrupo.lugar
                             txtDiaHora.text = "Dia y Hora: " + horarioGrupo.dia + ", " + horarioGrupo.horaInicio
                         } else {
@@ -151,54 +155,55 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
 
         if (!::horarioGrupo.isInitialized) {
             btnLlamarAsistencia.visibility = View.GONE
-        } else {
-            btnLlamarAsistencia.setOnClickListener {
-                // Mapa para traducir días de inglés (LocalDateTime) a español
-                val diasMap = mapOf(
-                    DayOfWeek.MONDAY to "Lunes",
-                    DayOfWeek.TUESDAY to "Martes",
-                    DayOfWeek.WEDNESDAY to "Miercoles",
-                    DayOfWeek.THURSDAY to "Jueves",
-                    DayOfWeek.FRIDAY to "Viernes",
-                    DayOfWeek.SATURDAY to "Sábado",
-                    DayOfWeek.SUNDAY to "Domingo"
-                )
+        }
 
-                // Obtener fecha y hora actuales
-                val now = LocalDateTime.now()
-                val currentDay = diasMap[now.dayOfWeek] // Traducción del día actual a español
-                val currentTime = now.toLocalTime() // Hora actual
+        btnLlamarAsistencia.setOnClickListener {
+            // Mapa para traducir días de inglés (LocalDateTime) a español
+            val diasMap = mapOf(
+                DayOfWeek.MONDAY to "Lunes",
+                DayOfWeek.TUESDAY to "Martes",
+                DayOfWeek.WEDNESDAY to "Miercoles",
+                DayOfWeek.THURSDAY to "Jueves",
+                DayOfWeek.FRIDAY to "Viernes",
+                DayOfWeek.SATURDAY to "Sábado",
+                DayOfWeek.SUNDAY to "Domingo"
+            )
 
-                // Validar si el día actual coincide con el día del horario
-                if (horarioGrupo.dia.equals(currentDay, ignoreCase = true)) {
-                    // Obtener la hora de inicio del horario y calcular el rango válido
-                    val horaInicio =
-                        LocalTime.parse(horarioGrupo.horaInicio) // Hora de inicio del horario
-                    val rangoInicio = horaInicio.minusMinutes(5) // 5 minutos antes
-                    val rangoFin = horaInicio.plusMinutes(55) // 55 minutos después
+            // Obtener fecha y hora actuales
+            val now = LocalDateTime.now()
+            val currentDay = diasMap[now.dayOfWeek] // Traducción del día actual a español
+            val currentTime = now.toLocalTime() // Hora actual
 
-                    // Validar si la hora actual está dentro del rango
-                    if (currentTime.isAfter(rangoInicio) && currentTime.isBefore(rangoFin)) {
-                        // Día y hora válidos, permitir navegación
-                        view.findNavController()
-                            .navigate(R.id.action_mentorHomeFragment_to_mentorLlamadoAsistenciaFragment)
-                    } else {
-                        // Hora inválida
-                        Toast.makeText(
-                            context,
-                            "No es la hora asignada para llamar a la asistencia",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+            // Validar si el día actual coincide con el día del horario
+            if (horarioGrupo.dia.equals(currentDay, ignoreCase = true)) {
+                // Obtener la hora de inicio del horario y calcular el rango válido
+                val horaInicio =
+                    LocalTime.parse(horarioGrupo.horaInicio) // Hora de inicio del horario
+                val rangoInicio = horaInicio.minusMinutes(5) // 5 minutos antes
+                val rangoFin = horaInicio.plusMinutes(55) // 55 minutos después
+
+                // Validar si la hora actual está dentro del rango
+                if (currentTime.isAfter(rangoInicio) && currentTime.isBefore(rangoFin)) {
+                    // Día y hora válidos, permitir navegación
+                    view.findNavController()
+                        .navigate(R.id.action_mentorHomeFragment_to_mentorLlamadoAsistenciaFragment)
                 } else {
-                    // Día inválido
+                    // Hora inválida
                     Toast.makeText(
                         context,
-                        "Hoy no es el día asignado para esta asistencia",
+                        "No es la hora asignada para llamar a la asistencia",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+            } else {
+                // Día inválido
+                Toast.makeText(
+                    context,
+                    "Hoy no es el día asignado para esta asistencia",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+
         }
 
 

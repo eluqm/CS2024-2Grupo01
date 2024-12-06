@@ -6,7 +6,7 @@
     android:padding="8dp"
     android:layout_margin="2dp"
     android:gravity="center"
-    android:background="@drawable/day_background">
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/cellTextView"

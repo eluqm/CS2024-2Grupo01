@@ -6,6 +6,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import com.google.gson.Gson
 import edu.cram.mentoriapp.Model.Horario
 import edu.cram.mentoriapp.R
@@ -89,6 +90,9 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                 horaFin = horaFinString,
                 estado = estado
             )
+
+            view.findNavController().navigate(R.id.mentorHomeFragment)
+
         }
     }
 

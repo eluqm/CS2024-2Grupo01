@@ -3,11 +3,11 @@ package edu.cram.mentoriapp.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import edu.cram.mentoriapp.Model.GrupoMentoria
+import edu.cram.mentoriapp.Model.GrupoMentoriaPlus
 import edu.cram.mentoriapp.R
 
-class GruposAdapter(val items: MutableList<GrupoMentoria>,
-                    val onItemSelected: (GrupoMentoria) -> Unit
+class GruposAdapter(val items: MutableList<GrupoMentoriaPlus>,
+                    val onItemSelected: (GrupoMentoriaPlus) -> Unit
 ): RecyclerView.Adapter<GruposViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GruposViewHolder {
@@ -22,7 +22,7 @@ class GruposAdapter(val items: MutableList<GrupoMentoria>,
         holder.render(item, onItemSelected)
     }
 
-    fun addUser(item: GrupoMentoria) {
+    fun addUser(item: GrupoMentoriaPlus) {
         items.add(0, item)
         notifyItemInserted(0)
     }
@@ -33,7 +33,7 @@ class GruposAdapter(val items: MutableList<GrupoMentoria>,
         notifyItemRangeChanged(index, items.size)
     }
 
-    fun editUser(index: Int, item: GrupoMentoria) {
+    fun editUser(index: Int, item: GrupoMentoriaPlus) {
         items.removeAt(index)
         items[index] = item
         notifyItemChanged(index)

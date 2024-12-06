@@ -169,8 +169,8 @@ class HorariosService(private val connection: Connection) {
                 horarioId = resultSet.getInt("horario_id"),
                 lugar = resultSet.getString("lugar"),
                 dia = resultSet.getString("dia"),
-                horaInicio = resultSet.getTime("hora_inicio").toLocalTime().toString(),
-                horaFin = resultSet.getTime("hora_fin").toLocalTime().toString(),
+                horaInicio = resultSet.getString("hora_inicio"),
+                horaFin = resultSet.getString("hora_fin"),
                 estado = resultSet.getBoolean("estado")
             )
         } else {

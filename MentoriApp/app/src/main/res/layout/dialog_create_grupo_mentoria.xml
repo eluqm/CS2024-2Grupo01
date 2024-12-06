@@ -1,20 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/dialog_create_grupo_mentoria.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/editTextNombre"
+    <!-- Campo para el nombre del grupo -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutNombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre del grupo" />
+        android:hint="Nombre del grupo">
 
-    <EditText
-        android:id="@+id/editTextDescripcion"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Campo para la descripción del grupo -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutDescripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Descripcion(opcional)"
-        android:inputType="textMultiLine" />
+        android:hint="Descripción (opcional)"
+        android:layout_marginTop="16dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:maxLines="3" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 </LinearLayout>

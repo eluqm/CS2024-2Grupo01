@@ -10,3 +10,13 @@ data class GrupoMentoria(
     val descripcion: String?,
     val creadoEn: String? = null
 )
+
+
+data class GrupoMentoriaPlus(
+    val grupoId: Int? = null,
+    val jefeId: Int,
+    val jefeName: String,
+    val nombre: String,
+    val descripcion: String?,
+    val creadoEn: String? = null
+)

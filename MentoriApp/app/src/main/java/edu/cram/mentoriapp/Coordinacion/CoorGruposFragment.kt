@@ -115,7 +115,7 @@ class CoorGruposFragment : Fragment(R.layout.fragment_coor_grupos) {
 
 
     private fun onItemSelected(group: GrupoMentoriaPlus) {
-        Toast.makeText(requireActivity(), "Creado el" + group.creadoEn, Toast.LENGTH_LONG).show()
+        Toast.makeText(requireActivity(), "Creado el: " + group.creadoEn!!.substring(0, 9), Toast.LENGTH_LONG).show()
         val delivery = Bundle().apply {
             putInt("JefeID", group.jefeId)
         }

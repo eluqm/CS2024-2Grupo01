@@ -42,7 +42,6 @@ class PsicoCrearEventoFragment : Fragment(R.layout.fragment_psico_crear_evento) 
         view.findViewById<FloatingActionButton>(R.id.boton_crear_evento).setOnClickListener {
             // Mostrar el diálogo
             CrearEventoDialog(requireContext(), commonDAO).show(childFragmentManager, "CrearEventoDialog")
-            eventosAdapter.notifyDataSetChanged()
         }
         apiRest = RetrofitClient.makeRetrofitClient()
         initRecyclerView(view)
@@ -76,11 +75,11 @@ class PsicoCrearEventoFragment : Fragment(R.layout.fragment_psico_crear_evento) 
                             eventos.addAll(sesiones)
                             eventosAdapter.notifyDataSetChanged()
                         } else {
-                            Toast.makeText(requireContext(), "No hay mentoriados disponibles", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "No hay eventos disponibles", Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
-                        Toast.makeText(requireContext(), "Error al cargar mentoriados: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "Error al cargar eventos: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
                     }
                 } else {
                     Toast.makeText(requireContext(), "Mentor ID no encontrado en SharedPreferences", Toast.LENGTH_SHORT).show()

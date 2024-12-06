@@ -95,6 +95,7 @@ class CrearEventoDialog(private val context: Context, private val commonDAO: Com
                 horaFin.isEmpty() -> editTextHoraFin.error = "Este campo es obligatorio"
                 nombre.isEmpty() -> editTextNombre.error = "Este campo es obligatorio"
                 descripcion.isEmpty() -> editTextDescripcion.error = "Este campo es obligatorio"
+                url.isEmpty() -> editTextUrl.error = "Este campo es obligatorio"
                 selectedImageUri == null -> Toast.makeText(
                     context,
                     "Debes seleccionar una imagen",

@@ -285,7 +285,7 @@ interface ApiRest {
     @DELETE("/mensajes_grupo/{id}")
     suspend fun deleteMensajeGrupo(@Path("id") id: Int): retrofit2.Response<Unit>
     //Eventos
-    @GET("/eventos")
+    @GET("/readAllEventos")
     suspend fun getAllEventos(): Response<List<Evento>>
 
     @GET("/eventos/{id}")

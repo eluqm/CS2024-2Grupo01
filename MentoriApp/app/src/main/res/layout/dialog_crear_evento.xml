@@ -1,64 +1,149 @@
-<!-- dialog_crear_evento.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:clipToPadding="false">
 
+    <!-- Título del diálogo -->
+    <TextView
+        android:id="@+id/tv_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crear Evento"
+        android:textColor="#1B4E80"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="16dp" />
+
+    <!-- Campo: Lugar -->
     <EditText
         android:id="@+id/editTextLugar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Lugar" />
+        android:hint="Lugar"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:textColor="#333333"
+        android:textColorHint="#757575"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Campo: Fecha -->
     <EditText
         android:id="@+id/editTextFecha"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Fecha"
-        android:focusable="false" />
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:textColor="#333333"
+        android:textColorHint="#757575"
+        android:focusable="false"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Campo: Hora de inicio -->
     <EditText
         android:id="@+id/editTextHoraInicio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Hora de Inicio"
-        android:focusable="false" />
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:textColor="#333333"
+        android:textColorHint="#757575"
+        android:focusable="false"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Campo: Hora de fin -->
     <EditText
         android:id="@+id/editTextHoraFin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Hora de Fin"
-        android:focusable="false" />
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:textColor="#333333"
+        android:textColorHint="#757575"
+        android:focusable="false"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Campo: Nombre del Evento -->
     <EditText
         android:id="@+id/editTextNombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nombre del Evento" />
+        android:hint="Nombre del Evento"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:textColor="#333333"
+        android:textColorHint="#757575"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Campo: Descripción -->
     <EditText
         android:id="@+id/editTextDescripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Descripción" />
+        android:hint="Descripción"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:textColor="#333333"
+        android:textColorHint="#757575"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Campo: URL -->
     <EditText
         android:id="@+id/editTextUrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="URL (opcional)" />
+        android:hint="URL (opcional)"
+        android:background="@drawable/rounded_edittext"
+        android:padding="12dp"
+        android:textColor="#333333"
+        android:textColorHint="#757575"
+        android:layout_marginBottom="16dp" />
 
-    <Button
+    <!-- Botón para seleccionar imagen -->
+    <ImageButton
         android:id="@+id/buttonSeleccionarImagen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Seleccionar Imagen" />
+        android:layout_width="63dp"
+        android:layout_height="52dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Seleccionar Imagen"
+        android:src="@drawable/baseline_image_24"
+        app:tint="#1B4E80" />
 
-    <Button
-        android:id="@+id/buttonCrearEvento"
-        android:layout_width="wrap_content"
+    <!-- Botones de Crear y Cancelar -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Crear Evento" />
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="8dp">
+
+        <!-- Botón Cancelar -->
+        <Button
+            android:id="@+id/buttonCancelarEvento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:background="@drawable/rounded_button_secondary"
+            android:textColor="#FFFFFF"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Botón Crear -->
+        <Button
+            android:id="@+id/buttonCrearEvento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crear Evento"
+            android:background="@drawable/rounded_button_primary"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 </LinearLayout>

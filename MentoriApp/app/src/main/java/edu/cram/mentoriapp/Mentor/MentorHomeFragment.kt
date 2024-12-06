@@ -130,6 +130,12 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
 
         val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
 
+        val btnMostrarEventos = view.findViewById<ImageButton>(R.id.btn_notification)
+
+        btnMostrarEventos.setOnClickListener {
+            view.findNavController().navigate(R.id.action_mentorHomeFragment_to_mostrarEventosFragment3)
+        }
+
         btnCerrarsesion.setOnClickListener {
             // Crear el diálogo
             AlertDialog.Builder(requireContext())

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -28,7 +29,13 @@ class MostrarEventosFragment : Fragment(R.layout.fragment_mostrar_eventos) {
         super.onViewCreated(view, savedInstanceState)
 
         apiRest = RetrofitClient.makeRetrofitClient()
+        val atras = view.findViewById<ImageButton>(R.id.atras)
         initRecyclerView(view)
+
+        atras.setOnClickListener {
+            // Retrocede al fragmento anterior en la pila
+            parentFragmentManager.popBackStack()
+        }
 
     }
 

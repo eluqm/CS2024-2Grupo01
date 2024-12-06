@@ -7,6 +7,14 @@
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/textViewMentor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mentor"
+        android:textSize="16sp"
+        android:paddingBottom="8dp" />
+
+    <TextView
         android:id="@+id/textViewDia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

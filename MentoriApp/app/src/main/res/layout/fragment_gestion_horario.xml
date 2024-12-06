@@ -28,13 +28,13 @@
             tools:ignore="RtlSymmetry" />
     </LinearLayout>
 
-    <TimePicker
-        android:id="@+id/time_picker"
+    <NumberPicker
+        android:id="@+id/number_picker"
         android:layout_width="wrap_content"
+        android:layout_margin="20dp"
         android:layout_height="wrap_content"
-        android:timePickerMode="spinner"
-        android:padding="30dp"
-        />
+        android:padding="40dp" />
+
 
     <!-- Selector de día -->
     <TextView

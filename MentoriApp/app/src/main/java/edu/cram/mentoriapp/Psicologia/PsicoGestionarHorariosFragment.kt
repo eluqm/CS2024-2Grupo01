@@ -111,7 +111,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
 
 
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint("MissingInflatedId", "SuspiciousIndentation")
     private fun initDialogo(horarioDetalles: Any) {
         // Inflar el layout del diálogo
         val dialogView = layoutInflater.inflate(R.layout.dialog_horario, null)

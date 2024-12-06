@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_mentorHomeFragment_to_mentorListadoMentoriadosFragment"
             app:destination="@id/mentorListadoMentoriadosFragment" />
+        <action
+            android:id="@+id/action_mentorHomeFragment_to_mostrarEventosFragment3"
+            app:destination="@id/mostrarEventosFragment3" />
     </fragment>
     <fragment
         android:id="@+id/mentorGestionHorarioFragment"
@@ -43,4 +46,9 @@
         android:name="MentorListadoMentoriadosFragment"
         android:label="MentorListadoMentoriadosFragment"
         tools:layout="@layout/fragment_listado_mentoriados"/>
+    <fragment
+        android:id="@+id/mostrarEventosFragment3"
+        android:name="edu.cram.mentoriapp.Common.MostrarEventosFragment"
+        android:label="fragment_mostrar_eventos"
+        tools:layout="@layout/fragment_mostrar_eventos" />
 </navigation>

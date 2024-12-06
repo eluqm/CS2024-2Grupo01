@@ -9,5 +9,14 @@
         android:id="@+id/mentoriadoHomeFragment"
         android:name="edu.cram.mentoriapp.Mentoriado.MentoriadoHomeFragment"
         android:label="fragment_mentoriado_home"
-        tools:layout="@layout/fragment_mentoriado_home" />
+        tools:layout="@layout/fragment_mentoriado_home" >
+        <action
+            android:id="@+id/action_mentoriadoHomeFragment_to_mostrarEventosFragment"
+            app:destination="@id/mostrarEventosFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mostrarEventosFragment"
+        android:name="edu.cram.mentoriapp.Common.MostrarEventosFragment"
+        android:label="fragment_mostrar_eventos"
+        tools:layout="@layout/fragment_mostrar_eventos" />
 </navigation>

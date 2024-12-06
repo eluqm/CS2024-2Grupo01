@@ -19,8 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import edu.cram.mentoriapp.Adapter.ChatAdapter
+import edu.cram.mentoriapp.Adapter.EventosAdapter
 import edu.cram.mentoriapp.MainActivity
 import edu.cram.mentoriapp.Model.Chat
+import edu.cram.mentoriapp.Model.Evento
 import edu.cram.mentoriapp.Model.Horario
 import edu.cram.mentoriapp.Model.MensajeGrupo
 import edu.cram.mentoriapp.Model.MentorRead
@@ -160,6 +162,12 @@ class MentoriadoHomeFragment : Fragment(R.layout.fragment_mentoriado_home) {
 
         val btnCerrarsesion = view.findViewById<ImageButton>(R.id.cerrar_sesion)
 
+        val btnMostrarEventos = view.findViewById<ImageButton>(R.id.btn_notification)
+
+        btnMostrarEventos.setOnClickListener {
+            view.findNavController().navigate(R.id.action_mentoriadoHomeFragment_to_mostrarEventosFragment)
+        }
+
         btnCerrarsesion.setOnClickListener {
             // Crear el diálogo
             AlertDialog.Builder(requireContext())
@@ -229,7 +237,11 @@ class MentoriadoHomeFragment : Fragment(R.layout.fragment_mentoriado_home) {
                 Toast.makeText(context, "El mensaje no puede estar vacío", Toast.LENGTH_SHORT).show()
             }
         }
+
+
+
     }
+
 
     private fun obtenerUsuarioId(): Int? {
         val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)

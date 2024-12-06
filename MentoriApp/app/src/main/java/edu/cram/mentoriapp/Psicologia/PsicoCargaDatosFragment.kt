@@ -2,6 +2,8 @@ package edu.cram.mentoriapp.Psicologia
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -20,7 +22,9 @@ import androidx.lifecycle.lifecycleScope
 import edu.cram.mentoriapp.DAO.CommonDAO
 import edu.cram.mentoriapp.Model.Usuario
 import edu.cram.mentoriapp.R
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
@@ -94,87 +98,133 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
     }
 
     private fun readExcelFile(uri: Uri) {
-        try {
-            requireContext().contentResolver.openInputStream(uri).use { inputStream ->
-                val workbook = XSSFWorkbook(inputStream)
-                val sheet = workbook.getSheetAt(0)
+        // Mostrar ProgressDialog
+        val progressDialog = ProgressDialog(requireContext()).apply {
+            setMessage("Cargando datos...")
+            setCancelable(false)
+            show()
+        }
 
-                var escuelaActual: Int? = null
-                var semestreActual: String? = null
-                val palabrasClaveCabecera = listOf("DNI", "NOMBRES", "APELLIDOS", "CELULAR", "CORREO")
+        val usuariosExistentes = mutableListOf<String>() // Lista de DNIs ya existentes
+        var totalUsuarios = 0
+        var usuariosInsertados = 0
 
-                for (row in sheet) {
-                    val filaDatos = mutableListOf<String>()
-                    for (cell in row) {
-                        val cellValue = when (cell.cellType) {
-                            CellType.STRING -> cell.stringCellValue
-                            CellType.NUMERIC -> cell.numericCellValue.toInt().toString() // Convertir números sin decimales
-                            CellType.BLANK -> ""
-                            else -> "Tipo desconocido"
-                        }
-                        filaDatos.add(cellValue)
-                    }
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                Log.e("ExcelNormal", "1")
+                requireContext().contentResolver.openInputStream(uri).use { inputStream ->
+                    val workbook = XSSFWorkbook(inputStream)
+                    val sheet = workbook.getSheetAt(0)
 
-                    if (filaDatos.any { it.uppercase() in palabrasClaveCabecera }) {
-                        continue
-                    }
-
-                    if (escuelaMap.containsKey(filaDatos[0].lowercase())) {
-                        escuelaActual = escuelaMap[filaDatos[0].lowercase()]
-                        continue
-                    }
-
-                    if (filaDatos[0].startsWith("SEMESTRE", true)) {
-                        val numeroSemestre = filaDatos[0].split(" ")[1].toIntOrNull()
-                        semestreActual = numeroSemestre?.let { convertirARomano(it) }
-                        continue
-                    }
-
-                    val tipoUsuarioSeleccionado = spinnerCargo.selectedItem.toString()
-                    if (filaDatos.size >= 6 && escuelaActual != null && semestreActual != null) {
-                        val usuario = Usuario(
-                            dniUsuario = filaDatos[1],
-                            nombreUsuario = filaDatos[3],
-                            apellidoUsuario = filaDatos[2],
-                            celularUsuario = filaDatos[5],
-                            passwordHash = "12345",
-                            escuelaId = escuelaActual,
-                            semestre = semestreActual,
-                            email = filaDatos[4],
-                            tipoUsuario = tipoUsuarioSeleccionado,
-                            creadoEn = "null"
-                        )
-                        usuarios.add(usuario)
-                    }
-                }
-
-                lifecycleScope.launch {
-                    for (usuario in usuarios) {
-                        try {
-                            if (commonDAO.userExists(usuario.dniUsuario)) {
-                                showDialog("Error", "El DNI ${usuario.dniUsuario} ya existe en la base de datos.")
-                                break
-                            } else {
-                                commonDAO.createUser(usuario)
+                    var escuelaActual: Int? = null
+                    var semestreActual: String? = null
+                    val palabrasClaveCabecera = listOf("DNI", "NOMBRES", "APELLIDOS", "CELULAR", "CORREO")
+                    Log.e("ExcelNormal", "2")
+                    for (row in sheet) {
+                        val filaDatos = mutableListOf<String>()
+                        for (cell in row) {
+                            val cellValue = when (cell.cellType) {
+                                CellType.STRING -> cell.stringCellValue
+                                CellType.NUMERIC -> cell.numericCellValue.toInt().toString() // Convertir números sin decimales
+                                CellType.BLANK -> ""
+                                else -> "Tipo desconocido"
                             }
-                        } catch (e: Exception) {
-                            showDialog("Error", "Error al insertar el usuario: ${e.message}")
-                            break
+                            filaDatos.add(cellValue)
+                        }
+
+                        if (filaDatos.any { it.uppercase() in palabrasClaveCabecera }) {
+                            continue
+                        }
+
+                        if (escuelaMap.containsKey(filaDatos[0].lowercase())) {
+                            escuelaActual = escuelaMap[filaDatos[0].lowercase()]
+                            continue
+                        }
+
+                        if (filaDatos[0].startsWith("SEMESTRE", true)) {
+                            val numeroSemestre = filaDatos[0].split(" ")[1].toIntOrNull()
+                            semestreActual = numeroSemestre?.let { convertirARomano(it) }
+                            continue
+                        }
+                        Log.e("ExcelNormal", "3")
+                        val tipoUsuarioSeleccionado = spinnerCargo.selectedItem.toString().lowercase()
+
+                        Log.e("ExcelNormal", "3.5")
+                        if (filaDatos.size >= 6 && escuelaActual != null && semestreActual != null && filaDatos[1].isNotEmpty()) {
+                            val usuario = Usuario(
+                                dniUsuario = filaDatos[1],
+                                nombreUsuario = filaDatos[3],
+                                apellidoUsuario = filaDatos[2],
+                                celularUsuario = filaDatos[5],
+                                passwordHash = "12345",
+                                escuelaId = escuelaActual,
+                                semestre = semestreActual,
+                                email = filaDatos[4],
+                                tipoUsuario = tipoUsuarioSeleccionado,
+                                creadoEn = "null"
+                            )
+                            totalUsuarios++
+                            Log.e("ExcelNormal", "3.8")
+
+
+                            // Intentar insertar el usuario
+                            if (commonDAO.userExists(usuario.dniUsuario)) {
+                                Log.e("ExcelNormal", "4")
+                                usuariosExistentes.add(usuario.dniUsuario)
+                            } else {
+                                try {
+                                    commonDAO.createUser(usuario)
+                                    usuariosInsertados++
+                                } catch (e: Exception) {
+                                    Log.e("InsertionError", "Error al insertar usuario: ${e.message}")
+                                }
+                            }
+                            Log.e("ExcelNormal", "5")
+                        } else if (semestreActual == null && escuelaActual == null) {
+                            showDialog("Error de formato", "El formato del archivo Excel no es válido.")
+                            //salimos del ciclo
+                            break;
                         }
                     }
+
+                    workbook.close()
                 }
-                workbook.close()
+
+                withContext(Dispatchers.Main) {
+                    // Ocultar ProgressDialog
+                    progressDialog.dismiss()
+
+                    // Mostrar resumen
+                    val resumen = """
+                    Total de usuarios procesados: $totalUsuarios
+                    Nuevos usuarios insertados: $usuariosInsertados
+                    Usuarios ya existentes: ${usuariosExistentes.size}
+                    DNIs existentes: ${usuariosExistentes.joinToString(", ")}
+                """.trimIndent()
+
+                    showDialog("Resumen de carga", resumen)
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("ExcelError", "Error al leer el archivo: ${e.message}")
+                    //Toast.makeText(requireContext(), "Error al leer el archivo. Intenta nuevamente.", Toast.LENGTH_SHORT).show()
+
+                    progressDialog.dismiss()
+                    showDialog("Error de formato", "El formato del archivo Excel no es válido. Revice")
+                }
             }
-        } catch (e: Exception) {
-            Log.e("ExcelError", "Error al leer el archivo: ${e.message}")
-            Toast.makeText(requireContext(), "Error al leer el archivo. Intenta nuevamente.", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun showDialog(title: String, message: String) {
-        // Aquí se puede implementar un diálogo para mostrar los errores al usuario
-        Toast.makeText(requireContext(), "$title: $message", Toast.LENGTH_LONG).show()
+        AlertDialog.Builder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Aceptar", null)
+            .show()
     }
+
+
 
     // Convertir número a romano
     private fun convertirARomano(numero: Int): String? {

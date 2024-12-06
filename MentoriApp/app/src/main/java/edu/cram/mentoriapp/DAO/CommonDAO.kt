@@ -34,14 +34,16 @@ class CommonDAO(val context: Context) {
             val response = apiRest.createUsuario(user)
             if (response.isSuccessful) {
                 val newUserId = response.body()
-                Toast.makeText(context, "Usuario creado con ID: $newUserId", Toast.LENGTH_SHORT).show()
+                Log.d("UsuarioCreado", "Usuario creado con ID: $newUserId")
             } else {
                 // Mostrar el código de error y el mensaje de la API
                 val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
-                Toast.makeText(context, "Error al crear el usuario: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                Log.e("APIError", "Error al crear el usuario: ${response.code()} - $errorBody")
+                //Toast.makeText(context, "Error al crear el usuario: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
-            Toast.makeText(context, "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e("NetworkError", "Error de red: ${e.message}")
+            //Toast.makeText(context, "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -54,11 +56,11 @@ class CommonDAO(val context: Context) {
             } else {
                 // Manejar el error de respuesta de la API
                 val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
-                Toast.makeText(context, "Error al verificar usuario: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                Log.d("APIError", "Error al verificar usuario: ${response.code()} - $errorBody")
                 false
             }
         } catch (e: Exception) {
-            Toast.makeText(context, "Error de red: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.d("APIError", "Error de red: ${e.message}")
             false
         }
     }

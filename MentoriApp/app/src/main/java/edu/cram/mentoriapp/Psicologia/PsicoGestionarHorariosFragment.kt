@@ -136,7 +136,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
             textViewMentor.text = "Mentor: ${horarioDetalles.nombreCompletoJefe}"
             textViewDia.text = "Día: ${horarioDetalles.dia}"
             textViewHoraInicio.text = "Hora de inicio: ${horarioDetalles.horaInicio}"
-            textViewHoraFin.text = "Hora de fin: ${horarioDetalles.horaFin}"
+            textViewHoraFin.text = "Hora de fin: ${horarioDetalles.horaFin.substring(0,5)}"
         }
 
         if(horarioDetalles is HorarioCell){

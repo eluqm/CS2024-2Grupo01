@@ -92,7 +92,7 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
                             btnLlamarAsistencia.visibility = View.VISIBLE
                             Horario.visibility = View.VISIBLE
                             txtLugar.text = "Lugar: " + horarioGrupo.lugar
-                            txtDiaHora.text = "Dia y Hora: " + horarioGrupo.dia + ", " + horarioGrupo.horaInicio
+                            txtDiaHora.text = "Dia y Hora: " + horarioGrupo.dia + ", " + horarioGrupo.horaInicio.substring(0,5)
                         } else {
                             Horario.visibility = View.GONE
                             cardEstado.visibility = View.VISIBLE

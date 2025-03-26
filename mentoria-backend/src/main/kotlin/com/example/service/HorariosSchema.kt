@@ -15,7 +15,6 @@ data class Horario(
     val horaFin: String,
     val estado: Boolean
 )
-
 @Serializable
 data class HorarioDetalles(
     val horarioId: Int? = null,

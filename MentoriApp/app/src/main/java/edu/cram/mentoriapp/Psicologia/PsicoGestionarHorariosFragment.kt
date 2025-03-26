@@ -60,7 +60,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
     }
 
     private fun setupRecyclerView(horarios: List<HorarioDetalles>) {
-        val horas = listOf("07:15", "08:00", "08:45", "09:30", "10:15", "11:00", "11:45", "12:30", "13:15", "14:00", "14:45", "15:30", "16:15", "17:00")
+        val horas = listOf("07:15", "08:00", "08:45", "09:30", "10:15", "11:00", "11:45", "12:30", "13:15", "14:00", "14:45", "15:30", "16:15", "17:00", "17:45", "18:30", "19:15", "20:00")
         val dias = listOf("Lunes", "Martes", "Miercoles", "Jueves", "Viernes")
 
         val celdas = mutableListOf<HorarioCell>()
@@ -127,7 +127,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
             textViewMentor.text = "Mentor: ${horarioDetalles.nombreCompletoJefe}"
             textViewDia.text = "Día: ${horarioDetalles.dia}"
             textViewHoraInicio.text = "Hora de inicio: ${horarioDetalles.horaInicio}"
-            textViewHoraFin.text = "Hora de fin: ${horarioDetalles.horaFin}"
+            textViewHoraFin.text = "Hora de fin: ${horarioDetalles.horaFin?.substring(0,5)}"
         }
 
         // Si el objeto pasado es de tipo `HorarioDetalles`, usamos sus valores

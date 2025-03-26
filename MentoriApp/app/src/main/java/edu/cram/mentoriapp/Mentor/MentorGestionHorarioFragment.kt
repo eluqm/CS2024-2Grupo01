@@ -26,26 +26,16 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
         super.onViewCreated(view, savedInstanceState)
 
         apiRest = RetrofitClient.makeRetrofitClient()
-
         // Obtén las vistas del layout
         val radioGroupDays = view.findViewById<RadioGroup>(R.id.radio_group_days)
-        val numberPicker = view.findViewById<NumberPicker>(R.id.number_picker)
+        val timePicker = view.findViewById<TimePicker>(R.id.time_picker)
         val proposeButton = view.findViewById<Button>(R.id.btn_proponer_horario)
 
         val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
         val mentorId = sharedPreferences.getInt("userId", -1)
 
-        // Lista de horarios
-        val horas = listOf(
-            "07:15:00", "08:00:00", "08:45:00", "09:30:00", "10:15:00",
-            "11:00:00", "11:45:00", "12:30:00", "13:15:00", "14:00:00",
-            "14:45:00", "15:30:00", "16:15:00", "17:00:00"
-        )
-
-        // Configura el NumberPicker
-        numberPicker.minValue = 0
-        numberPicker.maxValue = horas.size - 1
-        numberPicker.displayedValues = horas.toTypedArray()
+        // Configura el TimePicker para formato de 12 horas (AM/PM)
+        timePicker.setIs24HourView(false)
 
         // Botón para guardar los datos
         proposeButton.setOnClickListener {
@@ -65,22 +55,30 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
             }
 
             // Hora de inicio seleccionada
-            val horaInicioString = horas[numberPicker.value]
+            val hour = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                timePicker.hour
+            } else {
+                timePicker.currentHour
+            }
 
-            // Convierte la hora de inicio a LocalTime
-            val horaInicio = LocalTime.parse(horaInicioString)
-            val horaFin = horaInicio.plusMinutes(45)
-
-            // Formatea las horas
+            val minute = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                timePicker.minute
+            } else {
+                timePicker.currentMinute
+            }
             val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
-            val horaFinString = horaFin.format(formatter)
+            // Convierte a LocalTime
+            val horaInicio = LocalTime.of(hour, minute, 0)
 
+            // Calcula la hora_fin sumando 45 minutos
+            val horaFin = horaInicio.plusMinutes(45)
+            val horaInicioString = horaInicio.format(formatter)
+            val horaFinString = horaFin.format(formatter)
             // Asigna NULL a "aula" como se solicitó
             val aula = null
 
             // Estado predeterminado como false
             val estado = false
-
             // Guarda los datos en la base de datos (lógica simulada aquí)
             saveHorarioToDatabase(
                 jefeId = mentorId,
@@ -90,15 +88,10 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                 horaFin = horaFinString,
                 estado = estado
             )
-
-            view.findNavController().apply {
-                popBackStack(R.id.mentorHomeFragment, false) // Esto borra todo hasta llegar al fragmento especificado
-                navigate(R.id.mentorHomeFragment) // Luego navegas al nuevo fragmento
-            }
-
         }
-    }
 
+
+    }
 
     private fun saveHorarioToDatabase(
         jefeId: Int,

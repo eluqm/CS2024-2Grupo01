@@ -65,18 +65,27 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
             cerrarAsistencia.setOnClickListener {
 
                 val hoy = LocalDate.now()
-                val diaActual = hoy.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, Locale("es", "ES")).lowercase(Locale.getDefault())
+                var diaActual = hoy.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, Locale("es", "ES")).lowercase(Locale.getDefault())
                 val horaActual = LocalTime.now()
+                //quitar tilde a dia actual
+                diaActual = diaActual.replace('é', 'e')
+
 
                 Log.d("hola21", "dia: $diaActual")
                 Log.d("hola21", "hora: $horaActual")
 
                 val temaa = tema.text.toString()
                 val descripcion = descriptionEditText.text.toString()
-                val seleccionados = getSelectedMentoriados(checkBoxContainer)
+
 
                 if (temaa.isBlank() || descripcion.isBlank()) {
                     Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                //Verificar la foto(puede ser null)
+                if (photoByteArray == null) {
+                    Toast.makeText(requireContext(), "Captura una foto como evidencia", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
 
@@ -102,11 +111,6 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
                     return@setOnClickListener
                 }
 
-                // Verifica si se tomó una foto
-                if (photoByteArray == null) {
-                    Toast.makeText(requireContext(), "Por favor tome la foto", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
 
                 val estadoSesion = "realizada"
 
@@ -114,14 +118,13 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
                     enviarSesion(grupoId, temaa, descripcion, estadoSesion,
                         it1
                     ) { sesionId ->
-                        enviarAsistencias(sesionId, seleccionados, checkBoxContainer)
+                        val asistencias = getSelectedMentoriados(checkBoxContainer, sesionId)
+                        enviarAsistencias(asistencias)
                     }
                 }
 
-                view.findNavController().apply {
-                    popBackStack(R.id.mentorHomeFragment, false)
-                    navigate(R.id.mentorHomeFragment)
-                }
+                Log.d("buga","Llegamos")
+                
 
             }
         } else {
@@ -186,15 +189,21 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
         }
     }
 
-    private fun getSelectedMentoriados(checkBoxContainer: LinearLayout): List<Int> {
-        val seleccionados = mutableListOf<Int>()
+    private fun getSelectedMentoriados(checkBoxContainer: LinearLayout, sesionId: Int): List<AsistenciaSesion> {
+        val asistencia = mutableListOf<AsistenciaSesion>()
+
         for (i in 0 until checkBoxContainer.childCount) {
             val child = checkBoxContainer.getChildAt(i)
             if (child is CheckBox && child.isChecked) {
-                seleccionados.add(child.tag as Int)
+                asistencia.add(AsistenciaSesion(sesionId, child.tag as Int, true))
+            } else {
+                asistencia.add(AsistenciaSesion(sesionId, child.tag as Int, false))
             }
         }
-        return seleccionados
+
+
+
+        return asistencia.toList()
     }
 
     private fun enviarSesion(
@@ -232,18 +241,9 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
         }
     }
 
-    private fun enviarAsistencias(sesionId: Int, seleccionados: List<Int>, checkBoxContainer: LinearLayout) {
+    private fun enviarAsistencias(asistencias: List<AsistenciaSesion>) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val asistencias = mutableListOf<AsistenciaSesion>()
-                for (i in 0 until checkBoxContainer.childCount) {
-                    val child = checkBoxContainer.getChildAt(i)
-                    if (child is CheckBox) {
-                        val mentoriadoId = child.tag as Int
-                        val asistio = seleccionados.contains(mentoriadoId)
-                        asistencias.add(AsistenciaSesion(sesionId, mentoriadoId, asistio))
-                    }
-                }
                 val response = apiRest.registrarAsistencias(asistencias)
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Asistencias registradas con éxito", Toast.LENGTH_SHORT).show()

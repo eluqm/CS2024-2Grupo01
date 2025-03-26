@@ -80,7 +80,7 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
                         val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
                         val editor = sharedPreferences.edit()
 
-                        editor.putString("horaProgramada", horarioGrupo.horaInicio + ":00")
+                        editor.putString("horaProgramada", horarioGrupo.horaInicio)
                         editor.putString("diaProgramado", horarioGrupo.dia)
 
                         editor.apply()
@@ -353,7 +353,7 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
                         }
                     } else {
                         val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
-                        Toast.makeText(requireContext(), "Error al cargar mensajes: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "No hay mensajes", Toast.LENGTH_LONG).show()
                     }
                 } else {
                     Toast.makeText(requireContext(), "User ID no encontrado en SharedPreferences", Toast.LENGTH_SHORT).show()

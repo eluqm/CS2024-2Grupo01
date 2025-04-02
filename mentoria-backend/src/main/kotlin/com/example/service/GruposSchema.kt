@@ -123,9 +123,10 @@ class GruposService(private val connection: Connection) {
     suspend fun getMiembrosPorJefe(jefeId: Int): List<UsuarioLista> = withContext(Dispatchers.IO) {
         // Prepara la consulta
         val query = """
-        SELECT u.user_id, CONCAT(u.nombre_usuario, ' ', u.apellido_usuario) AS nombre_completo, 
+        SELECT ment.mentoriado_id as ment_id, CONCAT(u.nombre_usuario, ' ', u.apellido_usuario) AS nombre_completo, 
                u.email, u.celular_usuario, u.dni_usuario
         FROM usuarios u
+        JOIN mentoriados ment ON u.user_id = ment.user_id 
         JOIN miembros_grupo mg ON u.user_id = mg.user_id
         JOIN grupos g ON mg.grupo_id = g.grupo_id
         WHERE g.jefe_id = ?
@@ -142,7 +143,7 @@ class GruposService(private val connection: Connection) {
         while (resultSet.next()) {
             usuarios.add(
                 UsuarioLista(
-                    id = resultSet.getInt("user_id"),
+                    id = resultSet.getInt("ment_id"),
                     nombreCompletoUsuario = resultSet.getString("nombre_completo"),
                     email = resultSet.getString("email"),
                     celularUsuario = resultSet.getString("celular_usuario"),

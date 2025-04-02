@@ -164,8 +164,8 @@ interface ApiRest {
 
     @POST("/horarios2")
     suspend fun createHorario2(
-        @Body horario: Horario,
-        @Query("jefeId") jefeId: Int
+        @Query("jefeId") jefeId: Int,
+        @Body horario: Horario
     ): retrofit2.Response<Int>
 
     @PUT("/horariosPut/{id}")

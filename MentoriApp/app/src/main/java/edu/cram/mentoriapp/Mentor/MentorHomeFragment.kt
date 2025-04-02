@@ -1,6 +1,7 @@
 package edu.cram.mentoriapp.Mentor
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -27,7 +28,9 @@ import edu.cram.mentoriapp.Model.MensajeGrupo
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
 import edu.cram.mentoriapp.Service.RetrofitClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -192,53 +195,67 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
         }
 
         btnLlamarAsistencia.setOnClickListener {
-            // Mapa para traducir días de inglés (LocalDateTime) a español
-            val diasMap = mapOf(
-                DayOfWeek.MONDAY to "Lunes",
-                DayOfWeek.TUESDAY to "Martes",
-                DayOfWeek.WEDNESDAY to "Miercoles",
-                DayOfWeek.THURSDAY to "Jueves",
-                DayOfWeek.FRIDAY to "Viernes",
-                DayOfWeek.SATURDAY to "Sábado",
-                DayOfWeek.SUNDAY to "Domingo"
-            )
 
-            // Obtener fecha y hora actuales
-            val now = LocalDateTime.now()
-            val currentDay = diasMap[now.dayOfWeek] // Traducción del día actual a español
-            val currentTime = now.toLocalTime() // Hora actual
+            viewLifecycleOwner.lifecycleScope.launch {
+                val grupoId = obtenerGrupoId() ?: return@launch // Evita NullPointerException
 
-            // Validar si el día actual coincide con el día del horario
-            if (horarioGrupo.dia.equals(currentDay, ignoreCase = true)) {
-                // Obtener la hora de inicio del horario y calcular el rango válido
-                val horaInicio =
-                    LocalTime.parse(horarioGrupo.horaInicio) // Hora de inicio del horario
-                val rangoInicio = horaInicio.minusMinutes(5) // 5 minutos antes
-                val rangoFin = horaInicio.plusMinutes(50) // 50 minutos después
+                // Primero, verificamos si ya se tomó la asistencia
+                val yaTomoAsitencia = validarAsistenciaHoy(grupoId, requireContext())
 
-                // Validar si la hora actual está dentro del rango
-                if (currentTime.isAfter(rangoInicio) && currentTime.isBefore(rangoFin)) {
-                    // Día y hora válidos, permitir navegación
-                    view.findNavController()
-                        .navigate(R.id.action_mentorHomeFragment_to_mentorLlamadoAsistenciaFragment)
+                if (yaTomoAsitencia) {
+                    // Si ya se registró la asistencia, evitamos que continúe la ejecución
+                    Toast.makeText(context, "Ya se ha registrado la asistencia hoy.", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                // Luego, procesamos la validación del horario (día y hora)
+                // Mapa para traducir días de inglés (LocalDateTime) a español
+                val diasMap = mapOf(
+                    DayOfWeek.MONDAY to "Lunes",
+                    DayOfWeek.TUESDAY to "Martes",
+                    DayOfWeek.WEDNESDAY to "Miércoles",
+                    DayOfWeek.THURSDAY to "Jueves",
+                    DayOfWeek.FRIDAY to "Viernes",
+                    DayOfWeek.SATURDAY to "Sábado",
+                    DayOfWeek.SUNDAY to "Domingo"
+                )
+
+                // Obtener fecha y hora actuales
+                val now = LocalDateTime.now()
+                val currentDay = diasMap[now.dayOfWeek] // Traducción del día actual a español
+                val currentTime = now.toLocalTime() // Hora actual
+
+                // Validar si el día actual coincide con el día del horario
+                if (horarioGrupo.dia.equals(currentDay, ignoreCase = true)) {
+                    // Obtener la hora de inicio del horario y calcular el rango válido
+                    val horaInicio = LocalTime.parse(horarioGrupo.horaInicio) // Hora de inicio del horario
+                    val rangoInicio = horaInicio.minusMinutes(5) // 5 minutos antes
+                    val rangoFin = horaInicio.plusMinutes(50) // 50 minutos después
+
+                    // Validar si la hora actual está dentro del rango
+                    if (currentTime.isAfter(rangoInicio) && currentTime.isBefore(rangoFin)) {
+                        // Día y hora válidos, permitir navegación
+                        view.findNavController()
+                            .navigate(R.id.action_mentorHomeFragment_to_mentorLlamadoAsistenciaFragment)
+                    } else {
+                        // Hora inválida
+                        Toast.makeText(
+                            context,
+                            "No es la hora asignada para llamar a la asistencia",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 } else {
-                    // Hora inválida
+                    // Día inválido
                     Toast.makeText(
                         context,
-                        "No es la hora asignada para llamar a la asistencia",
+                        "Hoy no es el día asignado para esta asistencia",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-            } else {
-                // Día inválido
-                Toast.makeText(
-                    context,
-                    "Hoy no es el día asignado para esta asistencia",
-                    Toast.LENGTH_SHORT
-                ).show()
             }
-
         }
+
 
 
         recargarFloating.setOnClickListener {
@@ -289,6 +306,31 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
             }
         }
     }
+
+    suspend fun validarAsistenciaHoy(grupoId: Int, context: Context): Boolean {
+        return try {
+            val response = apiRest.existeSesionHoy(grupoId)
+            val existe = response.body()?.get("existe") ?: false
+
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    context,
+                    if (existe) "Ya registraste asistencia hoy." else "Puedes registrar asistencia.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            existe
+        } catch (e: Exception) {
+            Log.e("ErrorMentoria", "Error: ${e.message}")
+            withContext(Dispatchers.Main) {
+                Toast.makeText(context, "Error de conexión", Toast.LENGTH_SHORT).show()
+            }
+            false
+        }
+    }
+
+
 
     private fun obtenerUsuarioId(): Int? {
         val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)

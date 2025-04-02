@@ -36,6 +36,15 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiRest {
+
+
+    @GET("sesiones_mentoria/existe/{grupoId}")
+    suspend fun existeSesionHoy(@Path("grupoId") grupoId: Int): Response<Map<String, Boolean>>
+
+
+
+
+
     @GET("/cities/{id}")
     suspend fun getCity(@Path("id") id: Int): retrofit2.Response<Cities>
 

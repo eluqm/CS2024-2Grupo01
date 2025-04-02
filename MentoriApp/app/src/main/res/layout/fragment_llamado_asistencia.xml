@@ -1,20 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     tools:context=".Mentor.MentorLlamadoAsistenciaFragment">
+
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="51dp"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/title"
@@ -26,52 +28,56 @@
             android:text="Llamado de Asistencia"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Contenedor Principal -->
     <LinearLayout
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:padding="16dp"
-        android:layout_marginTop="55dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-
-
+        <!-- Etiqueta y campo de tema -->
         <TextView
-            android:fontFamily="@font/merriweather_light"
             android:id="@+id/tv_topic_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/s"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:fontFamily="@font/merriweather_light"/>
 
         <EditText
             android:id="@+id/et_topic"
-            android:fontFamily="@font/merriweather_light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/tema"
             android:padding="8dp"
             android:textSize="16sp"
-            android:background="@drawable/border_card" />
+            android:background="@drawable/border_card"
+            android:fontFamily="@font/merriweather_light"/>
 
+        <!-- Descripción -->
         <TextView
             android:id="@+id/tv_description_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/descripci_n"
-            android:textStyle="bold"
             android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
             android:fontFamily="@font/merriweather_light"
-            android:paddingTop="16dp"
-            android:textColor="#000000" />
+            android:paddingTop="16dp"/>
 
         <EditText
             android:id="@+id/et_description"
-            android:fontFamily="@font/merriweather_light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/escribe_una_descripci_n"
@@ -80,53 +86,65 @@
             android:background="@drawable/border_card"
             android:minLines="3"
             android:gravity="top"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:fontFamily="@font/merriweather_light"/>
+
+        <!-- Lista de mentoreados -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="16dp">
 
             <TextView
                 android:id="@+id/tv_mentees_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:fontFamily="@font/merriweather_light"
                 android:text="@string/lista_de_mentoriados"
                 android:textSize="18sp"
                 android:textColor="#000000"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:fontFamily="@font/merriweather_light"/>
 
             <ImageButton
                 android:id="@+id/imageButton"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="1"
-                android:backgroundTint="#FFFFFF"
-                android:foregroundGravity="right"
-                android:src="@drawable/baseline_photo_camera_24" />
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/baseline_photo_camera_24"
+                android:contentDescription="@string/capturar"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/container_checkboxes"
+        <!-- ScrollView para Checkboxes -->
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="354dp"
-            android:orientation="vertical"
-            android:paddingTop="8dp"
-            android:fontFamily="@font/merriweather_light">
-        </LinearLayout>
-        <Button
-            android:id="@+id/btn_close_attendance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/cerrar_asistencia"
-            android:backgroundTint="@color/selected_item_background"
-            android:textColor="#FFFFFF"
-            android:fontFamily="@font/merriweather_light"
-            android:padding="12dp"
-            android:layout_marginTop="16dp" />
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/container_checkboxes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:fontFamily="@font/merriweather_light"/>
+        </ScrollView>
+
     </LinearLayout>
 
-</FrameLayout>
+    <!-- Botón flotante -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_close_attendance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/cerrar_asistencia"
+        android:src="@drawable/baseline_check_24"
+        app:backgroundTint="@color/selected_item_background"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+</androidx.constraintlayout.widget.ConstraintLayout>

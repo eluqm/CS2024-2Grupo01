@@ -100,7 +100,14 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                 horaInicio = horaInicioString,
                 horaFin = horaFinString,
                 estado = estado
-            )
+            ) {
+                // Navegar solo cuando la API haya respondido correctamente
+                view.findNavController().apply {
+                    popBackStack(R.id.mentorHomeFragment, false) // Volver al menú principal
+                    navigate(R.id.mentorHomeFragment) // Ir al mentorHomeFragment
+                }
+            }
+
 
 
 
@@ -119,25 +126,18 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
         dia: String,
         horaInicio: String,
         horaFin: String,
-        estado: Boolean
+        estado: Boolean,
+        onSuccess: () -> Unit  // Agregamos un callback para ejecutar después del guardado
     ) {
-
-        Toast.makeText(requireContext(), "hola", Toast.LENGTH_SHORT).show()
-
-        Log.d("dasdasd","Guardando en DB -> Lugar: $lugar, Día: $dia, Hora inicio: $horaInicio, Hora fin: $horaFin, Estado: $estado")
-        val horario = Horario(
-            lugar = "hola",
-            dia = dia,
-            horaInicio = horaInicio,
-            horaFin = horaFin,
-            estado = estado
-        )
-
-
-
-        Log.d("dasdasd","$horario")
         viewLifecycleOwner.lifecycleScope.launch {
             try {
+                val horario = Horario(
+                    lugar = "",
+                    dia = dia,
+                    horaInicio = horaInicio,
+                    horaFin = horaFin,
+                    estado = estado
+                )
                 val response = apiRest.createHorario2(jefeId, horario)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
@@ -147,23 +147,25 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                             "Horario creado con éxito. ID: $horarioId",
                             Toast.LENGTH_SHORT
                         ).show()
-                        Log.d("ERROR Mentoria","Error al crear horario: ${response.errorBody()?.string()}")
-
+                        Log.d("ErrorMentoria", "Horario guardado correctamente.")
                     } else {
-                        Log.d("ERROR Mentoria","Error al crear horario: ${response.errorBody()?.string()}")
-                        Log.d("ERROR Mentoria","Hi: ${horario.toString()}")
+                        Log.e("ErrorMentoria", "Error al crear horario: ${response.errorBody()?.string()}")
                         Toast.makeText(
                             requireContext(),
-                            "Error al crear horario: ${response.errorBody()?.string()}",
+                            "Error al crear horario",
                             Toast.LENGTH_SHORT
                         ).show()
+
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Log.d("ERROR Mentoria", "Error: ${e.message}")
+                    Log.e("Mentoria", "Error en la solicitud: ${e.message}")
                 }
+                Toast.makeText(requireContext(), "aeaafasaffas", Toast.LENGTH_SHORT).show()
             }
+            onSuccess()
         }
     }
+
 }

@@ -19,6 +19,8 @@ fun Application.configureDatabases() {
 
     routing {
 
+
+
         // Create city
         post("/cities") {
             val city = call.receive<City>()
@@ -519,6 +521,21 @@ fun Application.configureDatabases() {
             sesionesMentoriaService.delete(id)
             call.respond(HttpStatusCode.OK)
         }
+
+        get("/sesiones_mentoria/existe/{grupoId}") {
+            val grupoId = call.parameters["grupoId"]?.toIntOrNull()
+
+            if (grupoId == null) {
+                call.respond(HttpStatusCode.BadRequest, mapOf("error" to "El grupoId debe ser un número válido"))
+                return@get
+            }
+
+            val existe = sesionesMentoriaService.existeSesionHoy(grupoId)
+            call.respond(mapOf("existe" to existe))  // Devuelve { "existe": true/false }
+        }
+
+
+
     }
     val gruposService = GruposService(dbConnection)
     routing {

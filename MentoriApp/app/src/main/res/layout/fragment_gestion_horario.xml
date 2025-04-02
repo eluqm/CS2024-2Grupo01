@@ -21,21 +21,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/gesti_n_de_horarios"
+            android:text="@string/propone_horario"
             android:fontFamily="@font/merriweather_light"
             android:textSize="30sp"
             android:textStyle="bold"
             tools:ignore="RtlSymmetry" />
     </LinearLayout>
 
-    <TimePicker
-        android:id="@+id/time_picker"
+    <NumberPicker
+        android:id="@+id/number_picker"
         android:layout_width="wrap_content"
         android:layout_margin="20dp"
         android:layout_height="wrap_content"
-        android:timePickerMode="spinner"
-        android:padding="30dp"
-        />
+        android:padding="40dp" />
+
 
     <!-- Selector de día -->
     <TextView

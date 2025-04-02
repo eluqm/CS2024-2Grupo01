@@ -305,7 +305,7 @@ class MentoriadoHomeFragment : Fragment(R.layout.fragment_mentoriado_home) {
                         }
                     } else {
                         val errorBody = response.errorBody()?.string() ?: "Cuerpo de error vacío"
-                        Toast.makeText(requireContext(), "No hay mensajes", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "Error al cargar mensajes: ${response.code()} - $errorBody", Toast.LENGTH_LONG).show()
                     }
                 } else {
                     Toast.makeText(requireContext(), "User ID no encontrado en SharedPreferences", Toast.LENGTH_SHORT).show()

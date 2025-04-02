@@ -73,4 +73,24 @@ class SesionesMentoriaService(private val connection: Connection) {
         statement.setInt(1, sesionId)
         statement.executeUpdate()
     }
+
+
+    suspend fun existeSesionHoy(grupoId: Int): Boolean = withContext(Dispatchers.IO) {
+        val query = """
+        SELECT EXISTS (
+            SELECT 1 FROM sesiones_mentoria 
+            WHERE grupo_id = ? 
+            AND fecha_hora::DATE = CURRENT_DATE
+        )
+    """.trimIndent()
+
+        val statement = connection.prepareStatement(query)
+        statement.setInt(1, grupoId)
+
+        val resultSet = statement.executeQuery()
+        return@withContext if (resultSet.next()) resultSet.getBoolean(1) else false
+    }
+
+
+
 }

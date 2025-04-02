@@ -80,7 +80,7 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
                         val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
                         val editor = sharedPreferences.edit()
 
-                        editor.putString("horaProgramada", horarioGrupo.horaInicio + ":00")
+                        editor.putString("horaProgramada", horarioGrupo.horaInicio)
                         editor.putString("diaProgramado", horarioGrupo.dia)
 
                         editor.apply()
@@ -214,7 +214,7 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
                 val horaInicio =
                     LocalTime.parse(horarioGrupo.horaInicio) // Hora de inicio del horario
                 val rangoInicio = horaInicio.minusMinutes(5) // 5 minutos antes
-                val rangoFin = horaInicio.plusMinutes(55) // 55 minutos después
+                val rangoFin = horaInicio.plusMinutes(50) // 50 minutos después
 
                 // Validar si la hora actual está dentro del rango
                 if (currentTime.isAfter(rangoInicio) && currentTime.isBefore(rangoFin)) {

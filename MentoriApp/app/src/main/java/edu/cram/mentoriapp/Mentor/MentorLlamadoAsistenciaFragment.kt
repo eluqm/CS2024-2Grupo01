@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import edu.cram.mentoriapp.Model.AsistenciaSesion
 import edu.cram.mentoriapp.Model.MiembroGrupo
 import edu.cram.mentoriapp.Model.SesionMentoria
@@ -42,7 +43,7 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
         apiRest = RetrofitClient.makeRetrofitClient()
 
         val checkBoxContainer: LinearLayout = view.findViewById(R.id.container_checkboxes)
-        val cerrarAsistencia = view.findViewById<Button>(R.id.btn_close_attendance)
+        val cerrarAsistencia = view.findViewById<FloatingActionButton>(R.id.btn_close_attendance)
         val tema = view.findViewById<EditText>(R.id.et_topic)
         val descriptionEditText = view.findViewById<EditText>(R.id.et_description)
         val foto = view.findViewById<ImageButton>(R.id.imageButton)
@@ -100,7 +101,7 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
 
                 // Calcular el rango de 45 minutos
                 val inicioRango = horaProgramada
-                val finRango = horaProgramada.plusMinutes(45)
+                val finRango = horaProgramada.plusMinutes(60)
 
                 // Validar que la hora actual esté dentro del rango
                 if (horaActual.isBefore(inicioRango)) {
@@ -119,7 +120,12 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
                         it1
                     ) { sesionId ->
                         val asistencias = getSelectedMentoriados(checkBoxContainer, sesionId)
-                        enviarAsistencias(asistencias)
+                        enviarAsistencias(asistencias) {
+                            view.findNavController().apply {
+                                popBackStack(R.id.mentorHomeFragment, false)
+                                navigate(R.id.mentorHomeFragment)
+                            }
+                        }
                     }
                 }
 
@@ -241,7 +247,7 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
         }
     }
 
-    private fun enviarAsistencias(asistencias: List<AsistenciaSesion>) {
+    private fun enviarAsistencias(asistencias: List<AsistenciaSesion>, onSuccess: () -> Unit) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = apiRest.registrarAsistencias(asistencias)
@@ -253,6 +259,7 @@ class MentorLlamadoAsistenciaFragment : Fragment(R.layout.fragment_llamado_asist
             } catch (e: Exception) {
                 Log.e("EnviarAsistencias", "Error: ${e.message}")
             }
+            onSuccess()
         }
     }
 

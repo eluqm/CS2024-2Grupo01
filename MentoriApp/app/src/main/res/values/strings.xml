@@ -24,4 +24,5 @@
     <string name="cerrar_asistencia">Cerrar Asistencia</string>
     <string name="select_role_label">"Seleccione un rol: "</string>
     <string name="propone_horario">Proponer Horario</string>
+    <string name="capturar">para capturar con la camara</string>
 </resources>

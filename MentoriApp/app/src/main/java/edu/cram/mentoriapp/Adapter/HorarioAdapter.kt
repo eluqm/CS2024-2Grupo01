@@ -1,8 +1,8 @@
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import edu.cram.mentoriapp.Model.HorarioCell
 import edu.cram.mentoriapp.R
@@ -14,32 +14,42 @@ class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: 
         val textView2: TextView = itemView.findViewById(R.id.textView2)
 
         fun render(item: HorarioCell, onClickListener: (HorarioCell) -> Unit) {
+            // Reset clickability for all items
+            itemView.isClickable = false
+            itemView.isFocusable = false
+
             if (item.horarioId == null && !item.esConflicto) {
                 itemView.background = null
-                itemView.isEnabled = false
             } else {
                 when {
-
                     item.esConflicto -> {
-                        itemView.setBackgroundColor(Color.parseColor("#e0a2ec")) // Celda con conflicto
+                        itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.horario_conflicto))
                         itemView.isClickable = true
+                        itemView.isFocusable = true
                     }
                     item.estado -> {
-                        itemView.setBackgroundColor(Color.parseColor("#C8F6C8")) // Verde (activo)
+                        itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.horario_activo))
                         itemView.isClickable = true
+                        itemView.isFocusable = true
                     }
                     item.estado == false -> {
-                        itemView.setBackgroundColor(Color.parseColor("#FFC8C8")) // Rojo (inactivo)
+                        itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.horario_inactivo))
                         itemView.isClickable = true
+                        itemView.isFocusable = true
                     }
                     else -> {
-                        itemView.setBackgroundColor(Color.parseColor("#C8DFFF")) // Azul (por defecto)
+                        itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.horario_default))
                         itemView.isClickable = true
+                        itemView.isFocusable = true
                     }
                 }
             }
 
-            itemView.setOnClickListener { onClickListener(item) }
+            if (itemView.isClickable) {
+                itemView.setOnClickListener { onClickListener(item) }
+            } else {
+                itemView.setOnClickListener(null)
+            }
         }
     }
 
@@ -50,6 +60,15 @@ class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: 
 
     override fun onBindViewHolder(holder: HorarioViewHolder, position: Int) {
         val cell = celdas[position]
+
+        // Reset all view properties first
+        holder.textView.text = ""
+        holder.textView2.text = ""
+        holder.textView.textSize = 14F  // Reset to default text size
+        holder.itemView.background = null
+        holder.itemView.isClickable = false
+
+        // Then apply specific properties
         if (cell.horaInicio == "inicio") {
             holder.textView.text = cell.lugar
         } else if (cell.esConflicto) {
@@ -65,4 +84,3 @@ class HorarioAdapter(private val celdas: List<HorarioCell>, val onItemSelected: 
 
     override fun getItemCount(): Int = celdas.size
 }
-

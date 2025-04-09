@@ -6,12 +6,21 @@
     android:layout_height="match_parent"
     android:padding="8dp">
 
+    <!-- Color Legend -->
+    <include
+        android:id="@+id/legendInclude"
+        layout="@layout/color_legend_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:stretchColumns="1,2,3,4,5,6"
         android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/legendInclude"
         tools:ignore="MissingConstraints">
 
         <!-- Primera fila: Nombres de los días -->
@@ -23,14 +32,12 @@
             <TextView android:text="Jueves" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:layout_gravity="center"/>
             <TextView android:text="Viernes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="8dp" android:textStyle="bold" android:layout_gravity="center"/>
         </TableRow>
-
-        <!-- Filas dinámicas (se generan en tiempo de ejecución) -->
     </TableLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewHorario"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:paddingTop="10dp"
         android:layout_marginStart="2dp"
         android:layout_marginTop="15dp"

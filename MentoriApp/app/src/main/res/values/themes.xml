@@ -5,6 +5,10 @@
     <color name="spinner_text_color">#000000</color>
     <color name="spinner_popup_background">#FFFFFF</color>
     <color name="principal_spinner">#6200EE</color> <!-- Ajusta según tu diseño -->
+    <color name="horario_activo">#C8F6C8</color>
+    <color name="horario_inactivo">#FFC8C8</color>
+    <color name="horario_conflicto">#e0a2ec</color>
+    <color name="horario_default">#C8DFFF</color>
 
     <!-- Base application theme -->
     <style name="Base.Theme.MentoriApp" parent="Theme.Material3.DayNight.NoActionBar">

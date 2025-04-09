@@ -213,10 +213,10 @@ class MentorHomeFragment : Fragment(R.layout.fragment_mentor_home) {
                 val diasMap = mapOf(
                     DayOfWeek.MONDAY to "Lunes",
                     DayOfWeek.TUESDAY to "Martes",
-                    DayOfWeek.WEDNESDAY to "Miércoles",
+                    DayOfWeek.WEDNESDAY to "Miercoles",
                     DayOfWeek.THURSDAY to "Jueves",
                     DayOfWeek.FRIDAY to "Viernes",
-                    DayOfWeek.SATURDAY to "Sábado",
+                    DayOfWeek.SATURDAY to "Sabado",
                     DayOfWeek.SUNDAY to "Domingo"
                 )
 

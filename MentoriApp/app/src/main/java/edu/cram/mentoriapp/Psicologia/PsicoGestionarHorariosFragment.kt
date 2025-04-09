@@ -34,11 +34,23 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
 
         apiRest = RetrofitClient.makeRetrofitClient()
         recyclerView = view.findViewById(R.id.recyclerViewHorario)
+
+        // Configura el RecyclerView con su LayoutManager
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 6)
+
+        // Añade las decoraciones
         val decoration1 = DividerItemDecoration(requireContext(), GridLayoutManager.HORIZONTAL)
         val decoration2 = DividerItemDecoration(requireContext(), GridLayoutManager.VERTICAL)
         recyclerView.addItemDecoration(decoration1)
         recyclerView.addItemDecoration(decoration2)
+
+        // AQUÍ ES DONDE DEBE IR EL CÓDIGO
+        recyclerView.setOnTouchListener { v, event ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            false
+        }
+
+        // Y luego continúas con el resto del código
         fetchHorarios()
     }
 

@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +14,8 @@ import androidx.navigation.findNavController
 import edu.cram.mentoriapp.Model.Usuario
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.RetrofitClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
@@ -25,6 +28,26 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        // Verificamos la conexión a la base de datos primero
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val response: Response<Boolean> = apiRest.checkDatabaseConnection()
+                if (!response.isSuccessful || response.body() != true) {
+                    // Si no hay conexión o hay error, mostramos el diálogo y no continuamos
+                    showConnectionErrorDialog()
+                } else {
+                    // Solo si hay conexión, procedemos con la lógica normal
+                    proceedWithLoginLogic(view)
+                }
+            } catch (e: Exception) {
+                // Si hay una excepción (ej. no hay red), mostramos el diálogo
+                showConnectionErrorDialog()
+            }
+        }
+    }
+
+    private fun proceedWithLoginLogic(view: View) {
         if (existeSesionIniciada()) {
             val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
             val tipoUsuario = sharedPreferences.getString("tipoUsuario", "")
@@ -45,7 +68,25 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
             }
         }
+    }
 
+    private fun showConnectionErrorDialog() {
+        try {
+            if (isAdded && activity != null) { // Verifica si el Fragmento está adjunto
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Error de conexión")
+                    .setMessage("No se pudo establecer la conexión. Por favor, verifica tu conexión e intenta de nuevo.")
+                    .setPositiveButton("Salir") { _, _ ->
+                        requireActivity().finish() // Cierra la Activity
+                    }
+                    .setCancelable(false)
+                    .show()
+            } else {
+                Log.e("TuFragmento", "No se puede mostrar el diálogo: Fragmento no adjunto")
+            }
+        } catch (e: Exception) {
+            Log.e("TuFragmento", "Error al mostrar el diálogo: ${e.message}")
+        }
     }
 
     private fun existeSesionIniciada(): Boolean {

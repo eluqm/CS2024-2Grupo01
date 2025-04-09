@@ -15,11 +15,17 @@ import org.jetbrains.exposed.sql.*
 
 fun Application.configureDatabases() {
     val dbConnection: Connection = connectToPostgres(embedded = true)
+
+    //Rutas generales
+    routing {
+        get("/db-check") {
+            call.respond(dbConnection.isValid(2))
+        }
+    }
+
     val cityService = CityService(dbConnection)
 
     routing {
-
-
 
         // Create city
         post("/cities") {

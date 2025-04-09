@@ -37,12 +37,11 @@ import retrofit2.http.Query
 
 interface ApiRest {
 
+    @GET("db-check")
+    suspend fun checkDatabaseConnection(): Response<Boolean>
 
     @GET("sesiones_mentoria/existe/{grupoId}")
     suspend fun existeSesionHoy(@Path("grupoId") grupoId: Int): Response<Map<String, Boolean>>
-
-
-
 
 
     @GET("/cities/{id}")

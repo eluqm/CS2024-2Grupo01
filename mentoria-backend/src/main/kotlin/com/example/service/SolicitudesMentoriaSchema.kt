@@ -8,6 +8,15 @@ import java.sql.Connection
 import java.sql.Statement
 import java.time.LocalDateTime
 
+/**
+ * Modelo de datos que representa una solicitud de mentoría.
+ *
+ * @property coordinadorId Identificador del coordinador que realiza la solicitud.
+ * @property mentorId Identificador del mentor al que se dirige la solicitud.
+ * @property fechaSolicitud Fecha y hora en que se registró la solicitud. Generada automáticamente por la base de datos.
+ * @property estado Estado actual de la solicitud (ej: "pendiente", "aprobada", "rechazada").
+ * @property mensaje Texto descriptivo de la solicitud.
+ */
 @Serializable
 data class SolicitudMentoria(
     val coordinadorId: Int,
@@ -17,6 +26,13 @@ data class SolicitudMentoria(
     val estado: String,
     val mensaje: String
 )
+
+/**
+ * Servicio para la gestión de solicitudes de mentoría en la base de datos.
+ * Proporciona operaciones CRUD para las solicitudes de mentoría.
+ *
+ * @property connection Conexión a la base de datos.
+ */
 class SolicitudesMentoriaService(private val connection: Connection) {
     companion object {
         private const val INSERT_SOLICITUD = "INSERT INTO solicitudes_mentoria (coordinador_id, mentor_id, estado, mensaje) VALUES (?, ?, ?, ?)"
@@ -25,6 +41,13 @@ class SolicitudesMentoriaService(private val connection: Connection) {
         private const val DELETE_SOLICITUD = "DELETE FROM solicitudes_mentoria WHERE solicitud_id = ?"
     }
 
+    /**
+     * Crea una nueva solicitud de mentoría en la base de datos.
+     *
+     * @param solicitud Objeto SolicitudMentoria con los datos a insertar.
+     * @return Identificador generado para la nueva solicitud.
+     * @throws Exception Si no se puede recuperar el ID generado.
+     */
     suspend fun create(solicitud: SolicitudMentoria): Int = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_SOLICITUD, Statement.RETURN_GENERATED_KEYS)
         statement.setInt(1, solicitud.coordinadorId)
@@ -41,6 +64,13 @@ class SolicitudesMentoriaService(private val connection: Connection) {
         }
     }
 
+    /**
+     * Recupera una solicitud de mentoría específica por su ID.
+     *
+     * @param solicitudId Identificador de la solicitud a buscar.
+     * @return Objeto SolicitudMentoria con los datos recuperados.
+     * @throws Exception Si no se encuentra la solicitud con el ID especificado.
+     */
     suspend fun read(solicitudId: Int): SolicitudMentoria = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_SOLICITUD_BY_ID)
         statement.setInt(1, solicitudId)
@@ -59,6 +89,12 @@ class SolicitudesMentoriaService(private val connection: Connection) {
         }
     }
 
+    /**
+     * Actualiza los datos de una solicitud de mentoría existente.
+     *
+     * @param solicitudId Identificador de la solicitud a actualizar.
+     * @param solicitud Objeto SolicitudMentoria con los nuevos datos.
+     */
     suspend fun update(solicitudId: Int, solicitud: SolicitudMentoria) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_SOLICITUD)
         statement.setInt(1, solicitud.coordinadorId)
@@ -69,6 +105,11 @@ class SolicitudesMentoriaService(private val connection: Connection) {
         statement.executeUpdate()
     }
 
+    /**
+     * Elimina una solicitud de mentoría de la base de datos.
+     *
+     * @param solicitudId Identificador de la solicitud a eliminar.
+     */
     suspend fun delete(solicitudId: Int) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_SOLICITUD)
         statement.setInt(1, solicitudId)

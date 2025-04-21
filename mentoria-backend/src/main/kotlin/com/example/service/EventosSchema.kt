@@ -16,7 +16,17 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import java.util.Base64
 
-
+/**
+ * Modelo de datos que representa un evento.
+ *
+ * @property eventoId Identificador único del evento. Puede ser nulo cuando se crea un nuevo evento.
+ * @property nombre Nombre descriptivo del evento.
+ * @property horarioId Identificador del horario asociado al evento.
+ * @property descripcion Descripción detallada del evento. Puede ser nulo.
+ * @property poster Imagen del cartel del evento en formato de bytes.
+ * @property url URL relacionada con el evento. Puede ser nulo.
+ * @property fecha_evento Fecha en que se realizará el evento en formato de texto.
+ */
 @Serializable
 data class Evento(
     val eventoId: Int? = null,
@@ -28,6 +38,12 @@ data class Evento(
     val fecha_evento: String
 )
 
+/**
+ * Servicio para la gestión de eventos en la base de datos.
+ * Proporciona operaciones CRUD para los eventos.
+ *
+ * @property connection Conexión a la base de datos.
+ */
 class EventosService(private val connection: Connection) {
     companion object {
         private const val INSERT_EVENTO = "INSERT INTO eventos (nombre, horario_id, descripcion, poster, url, fecha_evento) VALUES (?, ?, ?, ?, ?, ?)"
@@ -36,6 +52,13 @@ class EventosService(private val connection: Connection) {
         private const val DELETE_EVENTO = "DELETE FROM eventos WHERE evento_id = ?"
     }
 
+    /**
+     * Crea un nuevo evento en la base de datos.
+     *
+     * @param evento Objeto Evento con los datos a insertar.
+     * @return Identificador generado para el nuevo evento.
+     * @throws Exception Si no se puede recuperar el ID generado.
+     */
     suspend fun create(evento: Evento): Int = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_EVENTO, Statement.RETURN_GENERATED_KEYS)
         statement.setString(1, evento.nombre)
@@ -55,6 +78,13 @@ class EventosService(private val connection: Connection) {
         }
     }
 
+    /**
+     * Recupera un evento específico por su ID.
+     *
+     * @param eventoId Identificador del evento a buscar.
+     * @return Objeto Evento con los datos recuperados.
+     * @throws Exception Si no se encuentra el evento con el ID especificado.
+     */
     suspend fun read(eventoId: Int): Evento = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_EVENTO_BY_ID)
         statement.setInt(1, eventoId)
@@ -74,6 +104,11 @@ class EventosService(private val connection: Connection) {
         }
     }
 
+    /**
+     * Recupera todos los eventos ordenados por fecha en orden descendente.
+     *
+     * @return Lista de objetos Evento con todos los eventos de la base de datos.
+     */
     suspend fun readAll(): List<Evento> = withContext(Dispatchers.IO) {
         val eventos = mutableListOf<Evento>()
 
@@ -98,7 +133,12 @@ class EventosService(private val connection: Connection) {
         return@withContext eventos
     }
 
-
+    /**
+     * Actualiza los datos de un evento existente.
+     *
+     * @param eventoId Identificador del evento a actualizar.
+     * @param evento Objeto Evento con los nuevos datos.
+     */
     suspend fun update(eventoId: Int, evento: Evento) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_EVENTO)
         statement.setString(1, evento.nombre)
@@ -111,6 +151,11 @@ class EventosService(private val connection: Connection) {
         statement.executeUpdate()
     }
 
+    /**
+     * Elimina un evento de la base de datos.
+     *
+     * @param eventoId Identificador del evento a eliminar.
+     */
     suspend fun delete(eventoId: Int) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_EVENTO)
         statement.setInt(1, eventoId)

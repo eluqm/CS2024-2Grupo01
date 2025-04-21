@@ -5,9 +5,21 @@ import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
 
+/**
+ * Modelo de datos que representa una escuela en el sistema.
+ *
+ * @property escuelaId Identificador único de la escuela (auto-generado)
+ * @property nombre Nombre de la escuela
+ */
 @Serializable
 data class Escuela(val escuelaId: Int?, val nombre: String)
 
+/**
+ * Servicio que gestiona las operaciones CRUD relacionadas con escuelas.
+ * Implementa operaciones asíncronas usando corrutinas de Kotlin.
+ *
+ * @property connection Conexión a la base de datos
+ */
 class EscuelasService(private val connection: Connection) {
     companion object {
         private const val CREATE_TABLE_ESCUELAS =
@@ -17,16 +29,25 @@ class EscuelasService(private val connection: Connection) {
         private const val UPDATE_ESCUELA = "UPDATE escuelas SET nombre = ? WHERE escuela_id = ?"
         private const val DELETE_ESCUELA = "DELETE FROM escuelas WHERE escuela_id = ?"
         private const val SELECT_ALL_ESCUELAS = "SELECT * FROM escuelas"
-
     }
 
+    /**
+     * Inicializa el servicio.
+     * Contiene código comentado para crear la tabla si es necesario.
+     */
     init {
         val statement = connection.createStatement()
         // Descomentar la siguiente línea para crear la tabla si es necesario
         // statement.executeUpdate(CREATE_TABLE_ESCUELAS)
     }
 
-    // Crear nueva escuela
+    /**
+     * Crea una nueva escuela en la base de datos.
+     *
+     * @param escuela Datos de la escuela a crear
+     * @return ID generado para la nueva escuela
+     * @throws Exception Si no se puede recuperar el ID de la escuela insertada
+     */
     suspend fun create(escuela: Escuela): Int = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_ESCUELA, Statement.RETURN_GENERATED_KEYS)
         statement.setString(1, escuela.nombre)
@@ -40,7 +61,13 @@ class EscuelasService(private val connection: Connection) {
         }
     }
 
-    // Leer una escuela
+    /**
+     * Obtiene una escuela por su ID.
+     *
+     * @param id ID de la escuela a buscar
+     * @return Objeto Escuela con los datos de la escuela encontrada
+     * @throws Exception Si la escuela no existe
+     */
     suspend fun read(id: Int): Escuela = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_ESCUELA_BY_ID)
         statement.setInt(1, id)
@@ -55,7 +82,11 @@ class EscuelasService(private val connection: Connection) {
         }
     }
 
-    //Leer todas la escuelas
+    /**
+     * Obtiene todas las escuelas registradas en el sistema.
+     *
+     * @return Lista de todas las escuelas
+     */
     suspend fun readAll(): List<Escuela> = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_ALL_ESCUELAS)
         val resultSet = statement.executeQuery()
@@ -71,8 +102,12 @@ class EscuelasService(private val connection: Connection) {
         return@withContext escuelas
     }
 
-
-    // Actualizar una escuela
+    /**
+     * Actualiza los datos de una escuela existente.
+     *
+     * @param id ID de la escuela a actualizar
+     * @param escuela Nuevos datos de la escuela
+     */
     suspend fun update(id: Int, escuela: Escuela) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_ESCUELA)
         statement.setString(1, escuela.nombre)
@@ -80,7 +115,11 @@ class EscuelasService(private val connection: Connection) {
         statement.executeUpdate()
     }
 
-    // Eliminar una escuela
+    /**
+     * Elimina una escuela por su ID.
+     *
+     * @param id ID de la escuela a eliminar
+     */
     suspend fun delete(id: Int) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_ESCUELA)
         statement.setInt(1, id)

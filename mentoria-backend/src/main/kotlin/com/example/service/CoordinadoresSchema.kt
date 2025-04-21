@@ -5,11 +5,23 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
+
+/**
+ * Modelo de datos que representa un coordinador en el sistema.
+ *
+ * @property userId Identificador del usuario asociado al coordinador
+ */
 @Serializable
 data class Coordinador(
     val userId: Int
 )
 
+/**
+ * Servicio que gestiona las operaciones CRUD relacionadas con coordinadores.
+ * Implementa operaciones asíncronas usando corrutinas de Kotlin.
+ *
+ * @property connection Conexión a la base de datos
+ */
 class CoordinadoresService(private val connection: Connection) {
     companion object {
         private const val CREATE_TABLE_COORDINADORES =
@@ -20,13 +32,23 @@ class CoordinadoresService(private val connection: Connection) {
         private const val DELETE_COORDINADOR = "DELETE FROM coordinadores WHERE coordinador_id = ?"
     }
 
+    /**
+     * Inicializa el servicio.
+     * Contiene código comentado para crear la tabla si es necesario.
+     */
     init {
         val statement = connection.createStatement()
         // Descomentar la siguiente línea para crear la tabla si es necesario
         // statement.executeUpdate(CREATE_TABLE_COORDINADORES)
     }
 
-    // Crear nuevo coordinador
+    /**
+     * Crea un nuevo coordinador en la base de datos.
+     *
+     * @param coordinador Datos del coordinador a crear
+     * @return ID generado para el nuevo coordinador
+     * @throws Exception Si no se puede recuperar el ID del coordinador insertado
+     */
     suspend fun create(coordinador: Coordinador): Int = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_COORDINADOR, Statement.RETURN_GENERATED_KEYS)
         statement.setInt(1, coordinador.userId)
@@ -40,7 +62,13 @@ class CoordinadoresService(private val connection: Connection) {
         }
     }
 
-    // Leer un coordinador
+    /**
+     * Obtiene un coordinador por su ID.
+     *
+     * @param coordinadorId ID del coordinador a buscar
+     * @return Objeto Coordinador con los datos del coordinador encontrado
+     * @throws Exception Si el coordinador no existe
+     */
     suspend fun read(coordinadorId: Int): Coordinador = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_COORDINADOR_BY_ID)
         statement.setInt(1, coordinadorId)
@@ -55,7 +83,12 @@ class CoordinadoresService(private val connection: Connection) {
         }
     }
 
-    // Actualizar un coordinador
+    /**
+     * Actualiza los datos de un coordinador existente.
+     *
+     * @param coordinadorId ID del coordinador a actualizar
+     * @param coordinador Nuevos datos del coordinador
+     */
     suspend fun update(coordinadorId: Int, coordinador: Coordinador) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_COORDINADOR)
         statement.setInt(1, coordinador.userId)
@@ -63,7 +96,11 @@ class CoordinadoresService(private val connection: Connection) {
         statement.executeUpdate()
     }
 
-    // Eliminar un coordinador
+    /**
+     * Elimina un coordinador por su ID.
+     *
+     * @param coordinadorId ID del coordinador a eliminar
+     */
     suspend fun delete(coordinadorId: Int) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_COORDINADOR)
         statement.setInt(1, coordinadorId)

@@ -7,6 +7,15 @@ import java.sql.Connection
 import java.sql.Statement
 import java.time.LocalDateTime
 
+/**
+ * Modelo de datos que representa un mensaje dentro de un grupo.
+ *
+ * @property mensajeId Identificador único del mensaje. Puede ser nulo cuando se crea un nuevo mensaje.
+ * @property grupoId Identificador del grupo al que pertenece el mensaje.
+ * @property remitenteId Identificador del usuario que envía el mensaje.
+ * @property textoMensaje Contenido textual del mensaje.
+ * @property enviadoEn Fecha y hora en que se envió el mensaje. Generada automáticamente por la base de datos.
+ */
 @Serializable
 data class MensajeGrupo(
     val mensajeId: Int? = null,
@@ -16,6 +25,15 @@ data class MensajeGrupo(
     val enviadoEn: String? = null
 )
 
+/**
+ * Modelo de datos que representa un mensaje en formato de chat.
+ *
+ * @property emisor Nombre del usuario que envía el mensaje.
+ * @property fecha Fecha en que se envió el mensaje en formato de texto.
+ * @property mensaje Contenido textual del mensaje.
+ * @property hora Hora en que se envió el mensaje en formato de texto.
+ * @property rol Rol del usuario que envía el mensaje en el sistema.
+ */
 @Serializable
 data class Chat(
     val emisor: String,
@@ -25,6 +43,12 @@ data class Chat(
     val rol: String
 )
 
+/**
+ * Servicio para la gestión de mensajes de grupo en la base de datos.
+ * Proporciona operaciones CRUD para los mensajes y funcionalidades para recuperarlos en formato de chat.
+ *
+ * @property connection Conexión a la base de datos.
+ */
 @Serializable
 class MensajesGrupoService(private val connection: Connection) {
     companion object {
@@ -35,6 +59,13 @@ class MensajesGrupoService(private val connection: Connection) {
         private const val SELECT_LIST_MENSAJES_BY_GRUPO_ID = "SELECT * FROM mensajes_grupo WHERE grupo_id = ? ORDER BY enviado_en ASC"
     }
 
+    /**
+     * Crea un nuevo mensaje en la base de datos.
+     *
+     * @param mensaje Objeto MensajeGrupo con los datos a insertar.
+     * @return Identificador generado para el nuevo mensaje.
+     * @throws Exception Si no se puede recuperar el ID generado.
+     */
     suspend fun create(mensaje: MensajeGrupo): Int = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_MENSAJE, Statement.RETURN_GENERATED_KEYS)
         statement.setInt(1, mensaje.grupoId)
@@ -50,8 +81,13 @@ class MensajesGrupoService(private val connection: Connection) {
         }
     }
 
-
-
+    /**
+     * Recupera un mensaje específico por su ID.
+     *
+     * @param mensajeId Identificador del mensaje a buscar.
+     * @return Objeto MensajeGrupo con los datos recuperados.
+     * @throws Exception Si no se encuentra el mensaje con el ID especificado.
+     */
     suspend fun read(mensajeId: Int): MensajeGrupo = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_MENSAJE_BY_ID)
         statement.setInt(1, mensajeId)
@@ -69,6 +105,14 @@ class MensajesGrupoService(private val connection: Connection) {
         }
     }
 
+    /**
+     * Recupera todos los mensajes asociados a los grupos en los que participa un usuario,
+     * formateados como objetos Chat.
+     *
+     * @param userId Identificador del usuario cuyos chats se desean recuperar.
+     * @return Lista de objetos Chat con los mensajes formateados.
+     * @throws Exception Si el usuario no pertenece a ningún grupo o no tiene mensajes.
+     */
     suspend fun readChatsByUser(userId: Int): List<Chat> = withContext(Dispatchers.IO) {
         val chats = mutableListOf<Chat>()
 
@@ -121,8 +165,13 @@ class MensajesGrupoService(private val connection: Connection) {
         return@withContext chats
     }
 
-
-    // Consulta auxiliar para obtener el nombre del usuario por ID
+    /**
+     * Método auxiliar para obtener el nombre y rol de un usuario por su ID.
+     *
+     * @param usuarioId Identificador del usuario.
+     * @return Par con el nombre y el rol del usuario.
+     * @throws Exception Si no se encuentra el usuario con el ID especificado.
+     */
     private fun getUsuarioAndRoleNombreById(usuarioId: Int): Pair<String, String> {
         val statementUsuario = connection.prepareStatement(
             "SELECT nombre_usuario, tipo_usuario FROM usuarios WHERE user_id = ?"
@@ -139,9 +188,12 @@ class MensajesGrupoService(private val connection: Connection) {
         }
     }
 
-
-
-
+    /**
+     * Actualiza los datos de un mensaje existente.
+     *
+     * @param mensajeId Identificador del mensaje a actualizar.
+     * @param mensaje Objeto MensajeGrupo con los nuevos datos.
+     */
     suspend fun update(mensajeId: Int, mensaje: MensajeGrupo) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_MENSAJE)
         statement.setInt(1, mensaje.grupoId)
@@ -151,6 +203,11 @@ class MensajesGrupoService(private val connection: Connection) {
         statement.executeUpdate()
     }
 
+    /**
+     * Elimina un mensaje de la base de datos.
+     *
+     * @param mensajeId Identificador del mensaje a eliminar.
+     */
     suspend fun delete(mensajeId: Int) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_MENSAJE)
         statement.setInt(1, mensajeId)

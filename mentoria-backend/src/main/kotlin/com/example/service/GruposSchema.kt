@@ -6,6 +6,16 @@ import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
 
+/**
+ * Clase de datos que representa un grupo de mentoría.
+ *
+ * @property grupoId ID del grupo, null si aún no se ha insertado en la base de datos
+ * @property jefeId ID del líder/mentor del grupo
+ * @property nombre Nombre del grupo
+ * @property horarioId ID del horario del grupo, null si no está asignado
+ * @property descripcion Descripción del grupo, puede ser null
+ * @property creadoEn Fecha cuando se creó el grupo, null si no está establecida
+ */
 @Serializable
 data class Grupo(
     val grupoId: Int? = null,
@@ -16,6 +26,16 @@ data class Grupo(
     val creadoEn: String? = null
 )
 
+/**
+ * Clase de datos extendida para información del grupo incluyendo el nombre del mentor.
+ *
+ * @property grupoId ID del grupo, null si aún no se ha insertado en la base de datos
+ * @property jefeId ID del líder/mentor del grupo
+ * @property jefeName Nombre completo del líder/mentor del grupo
+ * @property nombre Nombre del grupo
+ * @property descripcion Descripción del grupo, puede ser null
+ * @property creadoEn Fecha cuando se creó el grupo, null si no está establecida
+ */
 @Serializable
 data class GrupoMentoriaPlus(
     val grupoId: Int? = null,
@@ -26,6 +46,15 @@ data class GrupoMentoriaPlus(
     val creadoEn: String? = null
 )
 
+/**
+ * Clase de datos para información de sesión de mentoría.
+ *
+ * @property temaSesion Tema de la sesión
+ * @property lugar Lugar donde se lleva a cabo la sesión
+ * @property fechaRegistrada Fecha cuando se registró la sesión
+ * @property participantes Representación en cadena de texto de la proporción de participantes
+ * @property foto Fotografía de la sesión como array de bytes
+ */
 @Serializable
 data class SesionInfo(
     val temaSesion: String,
@@ -35,6 +64,15 @@ data class SesionInfo(
     val foto: ByteArray
 )
 
+/**
+ * Clase de datos para información de listado de usuarios.
+ *
+ * @property id ID del usuario
+ * @property nombreCompletoUsuario Nombre completo del usuario
+ * @property email Correo electrónico del usuario
+ * @property celularUsuario Número de teléfono del usuario
+ * @property dniUsuario DNI (número de identificación) del usuario
+ */
 @Serializable
 data class UsuarioLista(
     val id: Int,
@@ -44,14 +82,19 @@ data class UsuarioLista(
     val dniUsuario: String
 )
 
+/**
+ * Clase de servicio para gestionar grupos de mentoría en la base de datos.
+ * Proporciona operaciones CRUD y consultas especializadas para grupos de mentoría.
+ *
+ * @property connection Conexión activa a la base de datos
+ */
 class GruposService(private val connection: Connection) {
     companion object {
+        // Consultas SQL
         private const val INSERT_GRUPO = "INSERT INTO grupos (jefe_id, nombre, descripcion) VALUES (?, ?, ?)"
         private const val SELECT_GRUPO_BY_ID = "SELECT * FROM grupos WHERE grupo_id = ?"
         private const val UPDATE_GRUPO = "UPDATE grupos SET jefe_id = ?, nombre = ?, horario_id = ?, descripcion = ? WHERE grupo_id = ?"
         private const val DELETE_GRUPO = "DELETE FROM grupos WHERE grupo_id = ?"
-
-        // Nuevas consultas, en teoria solo devuelve uno
         private const val SELECT_GRUPOS_BY_MENTOR = "SELECT * FROM grupos WHERE jefe_id = ?"
         private const val SELECT_MENTORIADOS_BY_GRUPO = """
             SELECT u.user_id, concat(u.nombre_usuario, ' ',u.apellido_usuario) as nombre_completo, u.email, u.celular_usuario, u.dni_usuario
@@ -84,7 +127,13 @@ class GruposService(private val connection: Connection) {
         """
     }
 
-    // Crear un nuevo grupo
+    /**
+     * Crea un nuevo grupo de mentoría en la base de datos.
+     *
+     * @param grupo Datos del grupo a crear
+     * @return ID del grupo recién creado
+     * @throws Exception si no se puede recuperar el ID generado
+     */
     suspend fun create(grupo: Grupo): Int = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_GRUPO, Statement.RETURN_GENERATED_KEYS)
         statement.setInt(1, grupo.jefeId)
@@ -96,11 +145,17 @@ class GruposService(private val connection: Connection) {
         if (generatedKeys.next()) {
             return@withContext generatedKeys.getInt(1)
         } else {
-            throw Exception("Unable to retrieve the id of the newly inserted grupo")
+            throw Exception("No se pudo recuperar el ID del grupo recién insertado")
         }
     }
 
-    // Leer un grupo por su ID
+    /**
+     * Recupera un grupo por su ID.
+     *
+     * @param grupoId ID del grupo a recuperar
+     * @return Objeto Grupo con los datos del grupo
+     * @throws Exception si el grupo no se encuentra
+     */
     suspend fun read(grupoId: Int): Grupo = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_GRUPO_BY_ID)
         statement.setInt(1, grupoId)
@@ -115,13 +170,17 @@ class GruposService(private val connection: Connection) {
                 creadoEn = resultSet.getString("fecha_creacion")
             )
         } else {
-            throw Exception("Grupo not found")
+            throw Exception("Grupo no encontrado")
         }
     }
 
-    // Obtener usuarios mentoriados por jefeId
+    /**
+     * Obtiene usuarios mentoriados por ID del mentor.
+     *
+     * @param jefeId ID del mentor
+     * @return Lista de usuarios mentoriados
+     */
     suspend fun getMiembrosPorJefe(jefeId: Int): List<UsuarioLista> = withContext(Dispatchers.IO) {
-        // Prepara la consulta
         val query = """
         SELECT ment.mentoriado_id as ment_id, CONCAT(u.nombre_usuario, ' ', u.apellido_usuario) AS nombre_completo, 
                u.email, u.celular_usuario, u.dni_usuario
@@ -130,15 +189,12 @@ class GruposService(private val connection: Connection) {
         JOIN miembros_grupo mg ON u.user_id = mg.user_id
         JOIN grupos g ON mg.grupo_id = g.grupo_id
         WHERE g.jefe_id = ?
-    """.trimIndent()
+        """.trimIndent()
 
         val statement = connection.prepareStatement(query)
         statement.setInt(1, jefeId)
-
-        // Ejecuta la consulta
         val resultSet = statement.executeQuery()
 
-        // Construir la lista de usuarios
         val usuarios = mutableListOf<UsuarioLista>()
         while (resultSet.next()) {
             usuarios.add(
@@ -152,12 +208,15 @@ class GruposService(private val connection: Connection) {
             )
         }
 
-        // Devuelve la lista
         return@withContext usuarios
     }
 
-
-    // Actualizar un grupo
+    /**
+     * Actualiza un grupo existente.
+     *
+     * @param grupoId ID del grupo a actualizar
+     * @param grupo Datos actualizados del grupo
+     */
     suspend fun update(grupoId: Int, grupo: Grupo) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_GRUPO)
         statement.setInt(1, grupo.jefeId)
@@ -167,38 +226,43 @@ class GruposService(private val connection: Connection) {
         statement.executeUpdate()
     }
 
-    // Eliminar un grupo
+    /**
+     * Elimina un grupo por su ID.
+     *
+     * @param grupoId ID del grupo a eliminar
+     */
     suspend fun delete(grupoId: Int) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_GRUPO)
         statement.setInt(1, grupoId)
         statement.executeUpdate()
     }
 
-    // Obtener los usuarios mentoriados de un grupo específico
+    /**
+     * Obtiene usuarios mentoriados asociados con un mentor específico.
+     *
+     * @param mentorId ID del mentor
+     * @return Lista de usuarios mentoriados
+     * @throws IllegalArgumentException si no se encuentra un grupo para el mentor
+     */
     suspend fun getUsuariosMentoriadosPorMentor(mentorId: Int): List<UsuarioLista> = withContext(Dispatchers.IO) {
-
-        // Primera consulta: Obtener grupo asociado al mentor
         val statement = connection.prepareStatement(SELECT_GRUPOS_BY_MENTOR)
         statement.setInt(1, mentorId)
         val resultSet = statement.executeQuery()
 
-        // Comprobar si hay resultados y obtener el grupo_id
         if (!resultSet.next()) {
             throw IllegalArgumentException("No se encontró un grupo para el mentor con ID $mentorId")
         }
         val grupoId = resultSet.getInt("grupo_id")
 
-        // Segunda consulta: Obtener usuarios mentoriados del grupo
         val statement2 = connection.prepareStatement(SELECT_MENTORIADOS_BY_GRUPO)
         statement2.setInt(1, grupoId)
         val resultSet2 = statement2.executeQuery()
 
-        // Construcción de la lista de usuarios
         val usuarios = mutableListOf<UsuarioLista>()
         while (resultSet2.next()) {
             usuarios.add(
                 UsuarioLista(
-                    id = resultSet2.getInt("user_id"), // corregido: debe coincidir con el alias de la consulta
+                    id = resultSet2.getInt("user_id"),
                     nombreCompletoUsuario = resultSet2.getString("nombre_completo"),
                     email = resultSet2.getString("email"),
                     celularUsuario = resultSet2.getString("celular_usuario"),
@@ -209,7 +273,12 @@ class GruposService(private val connection: Connection) {
         return@withContext usuarios
     }
 
-
+    /**
+     * Obtiene sesiones de mentoría por ID del mentor.
+     *
+     * @param jefeId ID del mentor
+     * @return Lista de información de sesiones
+     */
     suspend fun getSesionesPorJefe(jefeId: Int): List<SesionInfo> = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_SESIONES_POR_JEFE)
         statement.setInt(1, jefeId)
@@ -231,21 +300,27 @@ class GruposService(private val connection: Connection) {
         return@withContext sesiones
     }
 
+    /**
+     * Obtiene todos los grupos por ID de escuela con información extendida.
+     *
+     * @param escuelaId ID de la escuela
+     * @return Lista de grupos con información extendida
+     * @throws Exception si no se encuentran grupos para la escuela
+     */
     suspend fun readAllByEscuelaId(escuelaId: Int): List<GrupoMentoriaPlus> = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(
             """
-        SELECT 
-            g.grupo_id,
-            g.jefe_id,
-            CONCAT(u.nombre_usuario, ' ', u.apellido_usuario) AS jefe_name,
-            g.nombre,
-            g.descripcion,
-            g.creado_en
-        FROM grupos g
-        JOIN usuarios u ON g.jefe_id = u.user_id
-        WHERE u.escuela_id = ? order by creado_en desc
-
-        """
+            SELECT 
+                g.grupo_id,
+                g.jefe_id,
+                CONCAT(u.nombre_usuario, ' ', u.apellido_usuario) AS jefe_name,
+                g.nombre,
+                g.descripcion,
+                g.creado_en
+            FROM grupos g
+            JOIN usuarios u ON g.jefe_id = u.user_id
+            WHERE u.escuela_id = ? order by creado_en desc
+            """
         )
         statement.setInt(1, escuelaId)
         val resultSet = statement.executeQuery()
@@ -272,6 +347,13 @@ class GruposService(private val connection: Connection) {
         return@withContext grupos
     }
 
+    /**
+     * Encuentra el ID del grupo asociado con un usuario (ya sea como miembro o líder).
+     *
+     * @param userId ID del usuario
+     * @return ID del grupo
+     * @throws Exception si el usuario no se encuentra en ningún grupo
+     */
     suspend fun hallarGrupoID(userId: Int): Int {
         val query = """
             SELECT grupo_id 
@@ -290,11 +372,10 @@ class GruposService(private val connection: Connection) {
             val resultSet = statement.executeQuery()
 
             if (!resultSet.next()) {
-                throw Exception("User not found in any group")
+                throw Exception("Usuario no encontrado en ningún grupo")
             }
 
             return resultSet.getInt("grupo_id")
         }
     }
-
 }

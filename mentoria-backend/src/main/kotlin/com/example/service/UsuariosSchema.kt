@@ -5,6 +5,22 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
+
+/**
+ * Modelo de datos que representa un usuario en el sistema.
+ *
+ * @property userId Identificador único del usuario (auto-generado)
+ * @property dniUsuario Documento de identidad del usuario
+ * @property nombreUsuario Nombre del usuario
+ * @property apellidoUsuario Apellido del usuario
+ * @property celularUsuario Número de celular del usuario
+ * @property passwordHash Hash de la contraseña del usuario
+ * @property escuelaId Identificador de la escuela a la que pertenece
+ * @property semestre Semestre académico actual del usuario (puede ser nulo)
+ * @property email Dirección de correo electrónico del usuario
+ * @property tipoUsuario Tipo de usuario (estudiante, profesor, etc.)
+ * @property creadoEn Fecha y hora de creación del usuario (auto-generada)
+ */
 @Serializable
 data class Usuarios(
     val userId: Int? = null,
@@ -20,9 +36,21 @@ data class Usuarios(
     val creadoEn: String? = null
 )
 
+/**
+ * Respuesta que indica si un usuario existe o no.
+ *
+ * @property exists Booleano que indica si el usuario existe
+ */
 @Serializable
 data class UserExistResponse(val exists: Boolean)
 
+/**
+ * Vista simplificada de usuario para listados.
+ *
+ * @property id Identificador único del usuario
+ * @property fullName Nombre completo del usuario (nombre + apellido)
+ * @property semester Semestre académico del usuario
+ */
 @Serializable
 data class UserView(
     val id: Int?,
@@ -30,7 +58,12 @@ data class UserView(
     val semester: String?
 )
 
-
+/**
+ * Servicio que gestiona las operaciones CRUD y consultas relacionadas con usuarios.
+ * Implementa operaciones asíncronas usando corrutinas de Kotlin.
+ *
+ * @property connection Conexión a la base de datos
+ */
 class UsuariosService(private val connection: Connection) {
     companion object {
         private const val INSERT_USUARIO = "INSERT INTO usuarios (dni_usuario, nombre_usuario, apellido_usuario, celular_usuario, password_hash, escuela_id, semestre, email, tipo_usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
@@ -61,9 +94,15 @@ class UsuariosService(private val connection: Connection) {
                 "      FROM miembros_grupo m\n" +
                 "      WHERE m.user_id = u.user_id\n" +
                 "  );"
-
     }
 
+    /**
+     * Crea un nuevo usuario en la base de datos.
+     *
+     * @param usuario Datos del usuario a crear
+     * @return ID generado para el nuevo usuario
+     * @throws Exception Si no se puede recuperar el ID del usuario insertado
+     */
     suspend fun create(usuario: Usuarios): Int = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_USUARIO, Statement.RETURN_GENERATED_KEYS)
         statement.setString(1, usuario.dniUsuario)
@@ -85,6 +124,13 @@ class UsuariosService(private val connection: Connection) {
         }
     }
 
+    /**
+     * Busca un usuario por su DNI.
+     *
+     * @param dniUsuario DNI del usuario a buscar
+     * @return Objeto Usuarios con los datos del usuario encontrado
+     * @throws Exception Si el usuario no existe
+     */
     suspend fun readByDni(dniUsuario: String): Usuarios = withContext(Dispatchers.IO) {
         val query = "SELECT * FROM usuarios WHERE dni_usuario = ?"
         val statement = connection.prepareStatement(query)
@@ -110,6 +156,12 @@ class UsuariosService(private val connection: Connection) {
         }
     }
 
+    /**
+     * Verifica si existe un usuario con el DNI especificado.
+     *
+     * @param dniUsuario DNI a verificar
+     * @return true si existe un usuario con ese DNI, false en caso contrario
+     */
     suspend fun userExistsByDni(dniUsuario: String): Boolean = withContext(Dispatchers.IO) {
         val query = "SELECT COUNT(*) FROM usuarios WHERE dni_usuario = ?"
         val statement = connection.prepareStatement(query)
@@ -119,7 +171,13 @@ class UsuariosService(private val connection: Connection) {
         return@withContext resultSet.getInt(1) > 0
     }
 
-
+    /**
+     * Obtiene un usuario por su ID.
+     *
+     * @param userId ID del usuario a buscar
+     * @return Objeto Usuarios con los datos del usuario encontrado
+     * @throws Exception Si el usuario no existe
+     */
     suspend fun read(userId: Int): Usuarios = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_USUARIO_BY_ID)
         statement.setInt(1, userId)
@@ -144,6 +202,12 @@ class UsuariosService(private val connection: Connection) {
         }
     }
 
+    /**
+     * Actualiza los datos de un usuario existente.
+     *
+     * @param userId ID del usuario a actualizar
+     * @param usuario Nuevos datos del usuario
+     */
     suspend fun update(userId: Int, usuario:Usuarios) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_USUARIO)
         statement.setString(1, usuario.dniUsuario)
@@ -159,12 +223,23 @@ class UsuariosService(private val connection: Connection) {
         statement.executeUpdate()
     }
 
+    /**
+     * Elimina un usuario por su ID.
+     *
+     * @param userId ID del usuario a eliminar
+     */
     suspend fun delete(userId: Int) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_USUARIO)
         statement.setInt(1, userId)
         statement.executeUpdate()
     }
 
+    /**
+     * Obtiene una lista de usuarios por tipo.
+     *
+     * @param tipoUsuario Tipo de usuario a buscar
+     * @return Lista de usuarios del tipo especificado
+     */
     suspend fun readByType(tipoUsuario: String): List<Usuarios> = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_USUARIOS_BY_TIPO)
         statement.setString(1, tipoUsuario)
@@ -192,10 +267,17 @@ class UsuariosService(private val connection: Connection) {
         return@withContext usuariosList
     }
 
+    /**
+     * Busca usuarios por tipo y escuela que no sean jefes de grupo.
+     *
+     * @param tipoUsuario Tipo de usuario a buscar
+     * @param escuelaId ID de la escuela a la que pertenecen
+     * @return Lista de vistas de usuario del tipo y escuela especificados que no son jefes de grupo
+     */
     suspend fun findUsuariosByTypeAndSchool(tipoUsuario: String, escuelaId: Int): List<UserView> = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(SELECT_USUARIOS_BY_TIPO_AND_SCHOOL) // Asegúrate de que la consulta está actualizada
-        statement.setString(1, tipoUsuario) // Filtro por tipo de usuario
-        statement.setInt(2, escuelaId) // Filtro por ID de escuela
+        val statement = connection.prepareStatement(SELECT_USUARIOS_BY_TIPO_AND_SCHOOL)
+        statement.setString(1, tipoUsuario)
+        statement.setInt(2, escuelaId)
         val resultSet = statement.executeQuery()
 
         val usuariosList = mutableListOf<UserView>()
@@ -212,10 +294,18 @@ class UsuariosService(private val connection: Connection) {
         return@withContext usuariosList
     }
 
+    /**
+     * Busca usuarios por tipo, escuela y semestre que no pertenecen a ningún grupo.
+     *
+     * @param tipoUsuario Tipo de usuario a buscar
+     * @param escuelaId ID de la escuela a la que pertenecen
+     * @param semestre Semestre académico de los usuarios
+     * @return Lista de vistas de usuario que cumplen con los criterios especificados y no pertenecen a ningún grupo
+     */
     suspend fun findUsuariosByTypeAndSchoolAndSemester(tipoUsuario: String, escuelaId: Int, semestre: String): List<UserView> = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(SELECT_USUARIOS_BY_TIPO_AND_SCHOOL_AND_SEMESTER) // Asegúrate de que la consulta está actualizada
-        statement.setString(1, tipoUsuario) // Filtro por tipo de usuario
-        statement.setInt(2, escuelaId) // Filtro por ID de escuela
+        val statement = connection.prepareStatement(SELECT_USUARIOS_BY_TIPO_AND_SCHOOL_AND_SEMESTER)
+        statement.setString(1, tipoUsuario)
+        statement.setInt(2, escuelaId)
         statement.setString(3, semestre)
         val resultSet = statement.executeQuery()
 
@@ -232,9 +322,4 @@ class UsuariosService(private val connection: Connection) {
 
         return@withContext usuariosList
     }
-
-
-
-
-
 }

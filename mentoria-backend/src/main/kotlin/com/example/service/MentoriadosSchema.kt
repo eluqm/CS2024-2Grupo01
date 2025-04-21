@@ -6,9 +6,23 @@ import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
 
+/**
+ * Modelo de datos que representa un mentoriado en el sistema.
+ *
+ * @property userId Identificador del usuario asociado al mentoriado
+ */
+@Serializable
 data class Mentoriado(
     val userId: Int
-)@Serializable
+)
+
+/**
+ * Servicio que gestiona las operaciones CRUD relacionadas con mentoriados.
+ * Implementa operaciones asíncronas usando corrutinas de Kotlin.
+ *
+ * @property connection Conexión a la base de datos
+ */
+@Serializable
 class MentoriadosService(private val connection: Connection) {
     companion object {
         private const val INSERT_MENTORIADO = "INSERT INTO mentoriados (user_id) VALUES (?)"
@@ -17,6 +31,13 @@ class MentoriadosService(private val connection: Connection) {
         private const val DELETE_MENTORIADO = "DELETE FROM mentoriados WHERE mentoriado_id = ?"
     }
 
+    /**
+     * Crea un nuevo mentoriado en la base de datos.
+     *
+     * @param mentoriado Datos del mentoriado a crear
+     * @return ID generado para el nuevo mentoriado
+     * @throws Exception Si no se puede recuperar el ID del mentoriado insertado
+     */
     suspend fun create(mentoriado: Mentoriado): Int = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_MENTORIADO, Statement.RETURN_GENERATED_KEYS)
         statement.setInt(1, mentoriado.userId)
@@ -30,6 +51,13 @@ class MentoriadosService(private val connection: Connection) {
         }
     }
 
+    /**
+     * Obtiene un mentoriado por su ID.
+     *
+     * @param mentoriadoId ID del mentoriado a buscar
+     * @return Objeto Mentoriado con los datos del mentoriado encontrado
+     * @throws Exception Si el mentoriado no existe
+     */
     suspend fun read(mentoriadoId: Int): Mentoriado = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_MENTORIADO_BY_ID)
         statement.setInt(1, mentoriadoId)
@@ -43,12 +71,25 @@ class MentoriadosService(private val connection: Connection) {
             throw Exception("Mentoriado not found")
         }
     }
+
+    /**
+     * Actualiza los datos de un mentoriado existente.
+     *
+     * @param mentoriadoId ID del mentoriado a actualizar
+     * @param mentoriado Nuevos datos del mentoriado
+     */
     suspend fun update(mentoriadoId: Int, mentoriado: Mentoriado) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(UPDATE_MENTORIADO)
         statement.setInt(1, mentoriado.userId)
         statement.setInt(2, mentoriadoId)
         statement.executeUpdate()
     }
+
+    /**
+     * Elimina un mentoriado por su ID.
+     *
+     * @param mentoriadoId ID del mentoriado a eliminar
+     */
     suspend fun delete(mentoriadoId: Int) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_MENTORIADO)
         statement.setInt(1, mentoriadoId)

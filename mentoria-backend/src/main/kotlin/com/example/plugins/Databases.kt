@@ -13,11 +13,27 @@ import java.sql.*
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
 
+/**
+ * Configura la conexión a la base de datos y define las rutas de la API relacionadas
+ * con los servicios de acceso a datos.
+ *
+ * Esta función es el punto central de configuración para todos los endpoints de la API
+ * que requieren acceso a la base de datos. Establece una conexión a PostgreSQL y define
+ * rutas para verificar la disponibilidad de la base de datos.
+ *
+ * @param Application Receptor de extensión para la aplicación Ktor.
+ */
 fun Application.configureDatabases() {
     val dbConnection: Connection = connectToPostgres(embedded = true)
 
     //Rutas generales
     routing {
+        /**
+         * Endpoint para verificar la disponibilidad de la conexión a la base de datos.
+         *
+         * GET /db-check
+         * @return Boolean - true si la conexión está activa, false en caso contrario.
+         */
         get("/db-check") {
             call.respond(dbConnection.isValid(2))
         }

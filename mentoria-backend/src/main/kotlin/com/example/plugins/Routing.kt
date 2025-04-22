@@ -15,11 +15,12 @@ fun Application.configureRouting() {
     }
     routing {
         get("/") {
-            call.respondText("Hello World!")
+            call.respondRedirect("/static/login.html")
         }
         // Static plugin. Try to access `/static/index.html`
-        static("/static") {
+        static("static") {
             resources("static")
+            defaultResource("login.html") // Opcional: cambiar el recurso por defecto
         }
     }
 }

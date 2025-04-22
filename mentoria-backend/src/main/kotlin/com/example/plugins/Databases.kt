@@ -79,6 +79,14 @@ fun Application.configureDatabases() {
 
     val usuariosService = UsuariosService(dbConnection)
     routing {
+
+        // Get all users
+        get("/usuarios") {
+            val usuarios = usuariosService.getAll()
+            call.respond(HttpStatusCode.OK, usuarios)
+        }
+
+
         // Create user
         post("/usuarios") {
             val usuarios = call.receive<Usuarios>()

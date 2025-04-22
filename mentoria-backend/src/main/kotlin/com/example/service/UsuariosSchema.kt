@@ -94,7 +94,41 @@ class UsuariosService(private val connection: Connection) {
                 "      FROM miembros_grupo m\n" +
                 "      WHERE m.user_id = u.user_id\n" +
                 "  );"
+        private const val SELECT_ALL_USUARIOS = """
+                                                    SELECT user_id, dni_usuario, nombre_usuario, apellido_usuario, celular_usuario, 
+                                                           password_hash, escuela_id, semestre, email, tipo_usuario, creado_en 
+                                                    FROM usuarios
+                                                """
+
     }
+
+    suspend fun getAll(): List<Usuarios> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_ALL_USUARIOS)
+        val resultSet = statement.executeQuery()
+
+        val usuarios = mutableListOf<Usuarios>()
+
+        while (resultSet.next()) {
+            usuarios.add(
+                Usuarios(
+                    userId = resultSet.getInt("user_id"),
+                    dniUsuario = resultSet.getString("dni_usuario"),
+                    nombreUsuario = resultSet.getString("nombre_usuario"),
+                    apellidoUsuario = resultSet.getString("apellido_usuario"),
+                    celularUsuario = resultSet.getString("celular_usuario"),
+                    passwordHash = resultSet.getString("password_hash"),
+                    escuelaId = resultSet.getInt("escuela_id"),
+                    semestre = resultSet.getString("semestre"),
+                    email = resultSet.getString("email"),
+                    tipoUsuario = resultSet.getString("tipo_usuario"),
+                    creadoEn = resultSet.getString("creado_en")
+                )
+            )
+        }
+
+        return@withContext usuarios
+    }
+
 
     /**
      * Crea un nuevo usuario en la base de datos.

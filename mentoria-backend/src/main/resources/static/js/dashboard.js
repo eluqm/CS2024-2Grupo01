@@ -3,14 +3,10 @@ const tables = [
     { name: 'Usuarios', icon: 'fa-users', endpoint: '/usuarios', relatedEndpoints: ['/escuelas'] },
     { name: 'Escuelas', icon: 'fa-school', endpoint: '/escuelas' },
     { name: 'Grupos', icon: 'fa-users', endpoint: '/grupos' },
-    { name: 'Mentores', icon: 'fa-user-tie', endpoint: '/mentores' },
-    { name: 'Mentoriados', icon: 'fa-user-graduate', endpoint: '/mentoriados' },
     { name: 'Horarios', icon: 'fa-calendar-alt', endpoint: '/horarios' },
     { name: 'Sesiones', icon: 'fa-chalkboard-teacher', endpoint: '/sesiones_mentoria' },
     { name: 'Asistencias', icon: 'fa-clipboard-list', endpoint: '/asistencias_sesiones' },
-    { name: 'Eventos', icon: 'fa-calendar-check', endpoint: '/eventos' },
-    { name: 'Notificaciones', icon: 'fa-bell', endpoint: '/notificaciones' },
-    { name: 'Mensajes', icon: 'fa-comments', endpoint: '/mensajes_grupo' }
+    { name: 'Eventos', icon: 'fa-calendar-check', endpoint: '/readAllEventos' }
 ];
 
 // Generar las tarjetas

@@ -54,6 +54,7 @@ class AsistenciasSesionesService(private val connection: Connection) {
         private const val SELECT_ASISTENCIA_BY_ID = "SELECT * FROM asistencias_sesiones WHERE asistencia_id = ?"
         private const val UPDATE_ASISTENCIA = "UPDATE asistencias_sesiones SET sesion_id = ?, mentoriado_id = ?, asistio = ? WHERE asistencia_id = ?"
         private const val DELETE_ASISTENCIA = "DELETE FROM asistencias_sesiones WHERE asistencia_id = ?"
+        private const val SELECT_ALL_ASISTENCIAS = "SELECT * FROM asistencias_sesiones ORDER BY hora_fecha_registrada DESC"
     }
 
     /**
@@ -136,5 +137,28 @@ class AsistenciasSesionesService(private val connection: Connection) {
         val statement = connection.prepareStatement(DELETE_ASISTENCIA)
         statement.setInt(1, asistenciaId)
         statement.executeUpdate()
+    }
+
+    /**
+     * Obtiene todas las asistencias registradas.
+     *
+     * @return Lista de objetos AsistenciaSesionLectura con todas las asistencias
+     */
+    suspend fun readAll(): List<AsistenciaSesionLectura> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_ALL_ASISTENCIAS)
+        val resultSet = statement.executeQuery()
+
+        val asistencias = mutableListOf<AsistenciaSesionLectura>()
+        while (resultSet.next()) {
+            asistencias.add(
+                AsistenciaSesionLectura(
+                    sesionId = resultSet.getInt("sesion_id"),
+                    mentoriadoId = resultSet.getInt("mentoriado_id"),
+                    asistio = resultSet.getBoolean("asistio"),
+                    horaFechaRegistrada = resultSet.getTimestamp("hora_fecha_registrada")?.toLocalDateTime()
+                )
+            )
+        }
+        return@withContext asistencias
     }
 }

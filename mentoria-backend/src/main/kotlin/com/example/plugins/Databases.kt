@@ -449,12 +449,12 @@ fun Application.configureDatabases() {
 
 
         // Update schedule
-        /*put("/horarios/{id}") {
+        put("/horarios/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
             val horario = call.receive<Horario>()
             horariosService.update(id, horario)
             call.respond(HttpStatusCode.OK)
-        }*/
+        }
         put("/horariosPut/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
 
@@ -526,14 +526,25 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.Created, id)
         }
 
+        // Get all sessions
+        get("/sesiones_mentoria") {
+
+            val sesiones = sesionesMentoriaService.readAll()
+            if (sesiones.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, sesiones)
+            }else {
+                call.respond(HttpStatusCode.NoContent, "No se encontraron sesiones")
+            }
+        }
+
         // Read mentoring session
         get("/sesiones_mentoria/{id}") {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            val sesion = sesionesMentoriaService.read(id)
-            if (sesion != null) {
+            try {
+                val sesion = sesionesMentoriaService.read(id)
                 call.respond(HttpStatusCode.OK, sesion)
-            } else {
-                call.respond(HttpStatusCode.NotFound)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.NotFound, mapOf("error" to "Sesión no encontrada"))
             }
         }
 
@@ -581,6 +592,17 @@ fun Application.configureDatabases() {
             val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
             val grupo = gruposService.read(id)
             call.respond(HttpStatusCode.OK, grupo)
+        }
+
+        // Get all groups
+        get("/grupos") {
+
+            val grupos = gruposService.getAllGrupos()
+            if (grupos.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, grupos)
+            } else {
+                call.respond(HttpStatusCode.NoContent, "No se encontraron grupos")
+            }
         }
 
         // Update group
@@ -679,19 +701,15 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.Created, id)
         }
 
-        post("/asistencias_sesiones_grupal") {
-            // Recibir una lista de asistencias
-            val asistencias = call.receive<List<AsistenciaSesion>>()
-
-            // Llamar al servicio para registrar todas las asistencias
-            asistencias.forEach { asistencia ->
-                asistenciasSesionesService.create(asistencia)
+        // Get all attendances
+        get("/asistencias_sesiones") {
+            val asistencias = asistenciasSesionesService.readAll()
+            if (asistencias.isNotEmpty()) {
+                call.respond(HttpStatusCode.OK, asistencias)
+            } else {
+                call.respond(HttpStatusCode.NoContent, "No se encontraron asistencias")
             }
-
-            // Responder con un estado 201 Created
-            call.respond(HttpStatusCode.Created)
         }
-
 
         // Read attendance
         get("/asistencias_sesiones/{id}") {
@@ -846,7 +864,7 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.Created, id)
         }
 
-        get("/readAllEventos") {
+        get("/readAllEventosreadAllEventos") {
             try {
                 // Llamamos a la función readAll() para obtener todos los eventos
                 val eventos = eventosService.readAll()

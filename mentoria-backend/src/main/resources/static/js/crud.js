@@ -85,6 +85,7 @@ const tableConfigs = {
             { data: 'apellidoUsuario', title: 'Apellido' },
             { data: 'celularUsuario', title: 'Celular' },
             { data: 'email', title: 'Email' },
+            { data: 'escuelaId', visible: false },
             { 
                 data: 'escuelaId', 
                 title: 'Escuela', 
@@ -139,6 +140,433 @@ const tableConfigs = {
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn btn-sm btn-danger" onclick="deleteRecord(${row.escuelaId})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        ]
+    },
+    '/horarios': {
+        title: 'Horarios',
+        fields: [
+            { name: 'horarioId', type: 'hidden' },
+            { 
+                name: 'lugar', 
+                type: 'text', 
+                label: 'Lugar', 
+                required: true,
+                maxLength: 255,
+                placeholder: 'Ej: Aula 101, Laboratorio 2'
+            },
+            { 
+                name: 'dia', 
+                type: 'select', 
+                label: 'Día', 
+                required: true,
+                options: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+            },
+            { 
+                name: 'horaInicio', 
+                type: 'time', 
+                label: 'Hora Inicio', 
+                required: true,
+                min: '06:00',
+                max: '22:00'
+            },
+            { 
+                name: 'horaFin', 
+                type: 'time', 
+                label: 'Hora Fin', 
+                required: true,
+                min: '06:00',
+                max: '22:00'
+            },
+            { 
+                name: 'estado', 
+                type: 'select', 
+                label: 'Estado', 
+                required: true,
+                options: [
+                    { value: 'true', text: 'Activo' },
+                    { value: 'false', text: 'Inactivo' }
+                ]
+            },
+            { 
+                name: 'nombreGrupo', 
+                type: 'text', 
+                label: 'Nombre del Grupo', 
+                required: true,
+                maxLength: 255,
+                placeholder: 'Ej: Grupo A, Grupo B'
+            },
+            { 
+                name: 'nombreCompletoJefe', 
+                type: 'text', 
+                label: 'Nombre del Jefe', 
+                required: true,
+                maxLength: 255,
+                placeholder: 'Nombre completo del jefe de grupo'
+            },
+            { 
+                name: 'nombreEscuela', 
+                type: 'text', 
+                label: 'Nombre de la Escuela', 
+                required: true,
+                maxLength: 255,
+                placeholder: 'Nombre completo de la escuela'
+            }
+        ],
+        columns: [
+            { data: 'horarioId', title: 'ID', visible: false },
+            { data: 'nombreGrupo', title: 'Grupo' },
+            { data: 'nombreCompletoJefe', title: 'Mentor' },
+            { data: 'nombreEscuela', title: 'Carrera' },
+            { data: 'lugar', title: 'Lugar' },
+            { data: 'dia', title: 'Día' },
+            { data: 'horaInicio', title: 'Hora Inicio' },
+            { data: 'horaFin', title: 'Hora Fin' },
+            { 
+                data: 'estado', 
+                title: 'Estado',
+                render: function(data) {
+                    return data ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>';
+                }
+            },
+            { 
+                data: null, 
+                title: 'Acciones',
+                render: function(data, type, row) {
+                    return `
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editRecord(${row.horarioId})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteRecord(${row.horarioId})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        ]
+    },
+    '/grupos': {
+        title: 'Grupos',
+        fields: [
+            { name: 'grupoId', type: 'hidden' },
+            { 
+                name: 'nombre', 
+                type: 'text', 
+                label: 'Nombre del Grupo', 
+                required: true,
+                maxLength: 255
+            },
+            { 
+                name: 'jefeId', 
+                type: 'select', 
+                label: 'Mentor', 
+                required: true,
+                options: [] // Se llenará dinámicamente con los mentores
+            },
+            { 
+                name: 'descripcion', 
+                type: 'textarea', 
+                label: 'Descripción', 
+                required: false,
+                maxLength: 1000
+            }
+        ],
+        columns: [
+            { data: 'grupoId', title: 'ID', visible: false },
+            { data: 'nombre', title: 'Nombre del Grupo' },
+            { data: 'jefeName', title: 'Mentor' },
+            { data: 'descripcion', title: 'Descripción' },
+            { data: 'creadoEn', title: 'Fecha de Creación' },
+            { 
+                data: null, 
+                title: 'Acciones',
+                render: function(data, type, row) {
+                    return `
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editRecord(${row.grupoId})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteRecord(${row.grupoId})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        ]
+    },
+    '/sesiones_mentoria': {
+        title: 'Sesiones de Mentoría',
+        fields: [
+            { name: 'sesionId', type: 'hidden' },
+            { 
+                name: 'grupoId', 
+                type: 'select', 
+                label: 'Grupo', 
+                required: true,
+                options: [] // Se llenará dinámicamente con los grupos
+            },
+            { 
+                name: 'estado', 
+                type: 'select', 
+                label: 'Estado', 
+                required: true,
+                options: [
+                    { value: 'pendiente', text: 'Pendiente' },
+                    { value: 'en_progreso', text: 'En Progreso' },
+                    { value: 'completada', text: 'Completada' },
+                    { value: 'cancelada', text: 'Cancelada' }
+                ]
+            },
+            { 
+                name: 'temaSesion', 
+                type: 'text', 
+                label: 'Tema de la Sesión', 
+                required: true,
+                maxLength: 255
+            },
+            { 
+                name: 'notas', 
+                type: 'textarea', 
+                label: 'Notas', 
+                required: false,
+                maxLength: 1000
+            },
+            { 
+                name: 'fotografia', 
+                type: 'file', 
+                label: 'Fotografía', 
+                required: true,
+                accept: 'image/*'
+            }
+        ],
+        columns: [
+            { data: 'sesionId', title: 'ID', visible: false },
+            { data: 'grupoId', title: 'ID Grupo', visible: false },
+            { 
+                data: 'grupoId', 
+                title: 'Grupo',
+                render: function(data, type, row) {
+                    // Se llenará dinámicamente con el nombre del grupo
+                    return data;
+                }
+            },
+            { 
+                data: 'estado', 
+                title: 'Estado',
+                render: function(data) {
+                    const estados = {
+                        'pendiente': '<span class="badge bg-warning">Pendiente</span>',
+                        'en_progreso': '<span class="badge bg-info">En Progreso</span>',
+                        'completada': '<span class="badge bg-success">Completada</span>',
+                        'cancelada': '<span class="badge bg-danger">Cancelada</span>'
+                    };
+                    return estados[data] || data;
+                }
+            },
+            { data: 'temaSesion', title: 'Tema' },
+            { data: 'notas', title: 'Notas' },
+            { 
+                data: 'fotografia', 
+                title: 'Fotografía',
+                render: function(data) {
+                    if (data) {
+                        return `<img src="data:image/jpeg;base64,${data}" style="max-width: 100px; max-height: 100px;" />`;
+                    }
+                    return 'Sin imagen';
+                }
+            },
+            { 
+                data: null, 
+                title: 'Acciones',
+                render: function(data, type, row) {
+                    return `
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editRecord(${row.sesionId})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteRecord(${row.sesionId})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        ]
+    },
+    '/readAllEventos': {
+        title: 'Eventos',
+        fields: [
+            { name: 'eventoId', type: 'hidden' },
+            { 
+                name: 'nombre', 
+                type: 'text', 
+                label: 'Nombre del Evento', 
+                required: true,
+                maxLength: 255
+            },
+            { 
+                name: 'horarioId', 
+                type: 'select', 
+                label: 'Horario', 
+                required: true,
+                options: [] // Se llenará dinámicamente con los horarios
+            },
+            { 
+                name: 'descripcion', 
+                type: 'textarea', 
+                label: 'Descripción', 
+                required: false,
+                maxLength: 1000
+            },
+            { 
+                name: 'poster', 
+                type: 'file', 
+                label: 'Poster', 
+                required: true,
+                accept: 'image/*'
+            },
+            { 
+                name: 'url', 
+                type: 'url', 
+                label: 'URL', 
+                required: false,
+                maxLength: 255
+            },
+            { 
+                name: 'fecha_evento', 
+                type: 'date', 
+                label: 'Fecha del Evento', 
+                required: true
+            }
+        ],
+        columns: [
+            { data: 'eventoId', title: 'ID', visible: false },
+            { data: 'nombre', title: 'Nombre' },
+            { data: 'horarioId', title: 'ID Horario', visible: false },
+            { 
+                data: 'horarioId', 
+                title: 'Horario',
+                render: function(data, type, row) {
+                    // Se llenará dinámicamente con la información del horario
+                    return data;
+                }
+            },
+            { data: 'descripcion', title: 'Descripción' },
+            { 
+                data: 'poster', 
+                title: 'Poster',
+                render: function(data) {
+                    if (data) {
+                        return `<img src="data:image/jpeg;base64,${data}" style="max-width: 100px; max-height: 100px;" />`;
+                    }
+                    return 'Sin imagen';
+                }
+            },
+            { data: 'url', title: 'URL' },
+            { data: 'fecha_evento', title: 'Fecha' },
+            { 
+                data: null, 
+                title: 'Acciones',
+                render: function(data, type, row) {
+                    return `
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editRecord(${row.eventoId})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteRecord(${row.eventoId})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        ]
+    },
+    '/asistencias_sesiones': {
+        title: 'Asistencias a Sesiones',
+        fields: [
+            { name: 'asistenciaId', type: 'hidden' },
+            { 
+                name: 'sesionId', 
+                type: 'select', 
+                label: 'Sesión', 
+                required: true,
+                options: [] // Se llenará dinámicamente con las sesiones
+            },
+            { 
+                name: 'mentoriadoId', 
+                type: 'select', 
+                label: 'Mentoriado', 
+                required: true,
+                options: [] // Se llenará dinámicamente con los mentoriados
+            },
+            { 
+                name: 'asistio', 
+                type: 'select', 
+                label: 'Asistió', 
+                required: true,
+                options: [
+                    { value: 'true', text: 'Sí' },
+                    { value: 'false', text: 'No' }
+                ]
+            }
+        ],
+        columns: [
+            { data: 'asistenciaId', title: 'ID', visible: false },
+            { data: 'sesionId', title: 'ID Sesión', visible: false },
+            { 
+                data: 'sesionId', 
+                title: 'Sesión',
+                render: function(data, type, row) {
+                    // Se llenará dinámicamente con la información de la sesión
+                    return data;
+                }
+            },
+            { data: 'mentoriadoId', title: 'ID Mentoriado', visible: false },
+            { 
+                data: 'mentoriadoId', 
+                title: 'Mentoriado',
+                render: function(data, type, row) {
+                    // Se llenará dinámicamente con la información del mentoriado
+                    return data;
+                }
+            },
+            { 
+                data: 'asistio', 
+                title: 'Asistió',
+                render: function(data) {
+                    return data ? '<span class="badge bg-success">Sí</span>' : '<span class="badge bg-danger">No</span>';
+                }
+            },
+            { 
+                data: 'horaFechaRegistrada', 
+                title: 'Fecha/Hora Registro',
+                render: function(data) {
+                    if (data) {
+                        const date = new Date(data);
+                        return date.toLocaleString();
+                    }
+                    return 'No registrado';
+                }
+            },
+            { 
+                data: null, 
+                title: 'Acciones',
+                render: function(data, type, row) {
+                    return `
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editRecord(${row.asistenciaId})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteRecord(${row.asistenciaId})">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -280,8 +708,10 @@ function generateFilters() {
     document.querySelectorAll('.filter-input').forEach(input => {
         input.addEventListener('input', function() {
             // Obtener el índice de la columna basado en el nombre del campo
-            const columnIndex = tableConfigs[currentTable].columns.findIndex(col => col.data === this.dataset.field);
-            
+            const columnIndex = dataTable.columns().indexes().toArray().find(i => {
+                return dataTable.column(i).dataSrc() === this.dataset.field;
+            });
+
             // Si es un select, usar búsqueda exacta
             if (this.tagName.toLowerCase() === 'select') {
                 const value = this.value;

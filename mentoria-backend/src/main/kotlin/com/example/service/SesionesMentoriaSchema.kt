@@ -35,10 +35,23 @@ data class SesionMentoria(
 class SesionesMentoriaService(private val connection: Connection) {
     companion object {
         // Consultas SQL
-        private const val INSERT_SESION = "INSERT INTO sesiones_mentoria (grupo_id, estado, tema_sesion , notas, fotografia) VALUES (?, ?, ?, ?, ?)"
+        private const val INSERT_SESION = "INSERT INTO sesiones_mentoria (grupo_id, estado, tema_sesion, notas, fotografia) VALUES (?, ?, ?, ?, ?)"
         private const val SELECT_SESION_BY_ID = "SELECT * FROM sesiones_mentoria WHERE sesion_id = ?"
         private const val UPDATE_SESION = "UPDATE sesiones_mentoria SET grupo_id = ?, hora_programada = ?, estado = ?, tema_sesion = ? , notas = ?, fotografia = ? WHERE grupo_id = ?"
         private const val DELETE_SESION = "DELETE FROM sesiones_mentoria WHERE sesion_id = ?"
+        private const val SELECT_ALL_SESIONES = """
+            SELECT 
+                s.sesion_id,
+                s.grupo_id,
+                s.estado,
+                s.tema_sesion,
+                s.notas,
+                s.fotografia,
+                g.nombre as nombre_grupo
+            FROM sesiones_mentoria s
+            JOIN grupos g ON s.grupo_id = g.grupo_id
+            ORDER BY s.sesion_id DESC
+        """
     }
 
     /**
@@ -138,5 +151,30 @@ class SesionesMentoriaService(private val connection: Connection) {
 
         val resultSet = statement.executeQuery()
         return@withContext if (resultSet.next()) resultSet.getBoolean(1) else false
+    }
+
+    /**
+     * Obtiene todas las sesiones de mentoría con información del grupo.
+     *
+     * @return Lista de sesiones de mentoría
+     */
+    suspend fun readAll(): List<SesionMentoria> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_ALL_SESIONES)
+        val resultSet = statement.executeQuery()
+
+        val sesiones = mutableListOf<SesionMentoria>()
+        while (resultSet.next()) {
+            sesiones.add(
+                SesionMentoria(
+                    sesionId = resultSet.getInt("sesion_id"),
+                    grupoId = resultSet.getInt("grupo_id"),
+                    estado = resultSet.getString("estado"),
+                    temaSesion = resultSet.getString("tema_sesion"),
+                    notas = resultSet.getString("notas"),
+                    fotografia = resultSet.getBytes("fotografia")
+                )
+            )
+        }
+        return@withContext sesiones
     }
 }

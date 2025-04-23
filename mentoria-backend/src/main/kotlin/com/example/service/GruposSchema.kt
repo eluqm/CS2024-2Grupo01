@@ -125,6 +125,18 @@ class GruposService(private val connection: Connection) {
                 s.tema_sesion, h.lugar, fecha_registrada, foto, g.grupo_id
             ORDER BY fecha_registrada DESC
         """
+        private const val SELECT_ALL_GRUPOS = """
+            SELECT 
+                g.grupo_id,
+                g.jefe_id,
+                CONCAT(u.nombre_usuario, ' ', u.apellido_usuario) AS jefe_name,
+                g.nombre,
+                g.descripcion,
+                g.creado_en
+            FROM grupos g
+            JOIN usuarios u ON g.jefe_id = u.user_id
+            ORDER BY g.creado_en DESC
+        """
     }
 
     /**
@@ -377,5 +389,32 @@ class GruposService(private val connection: Connection) {
 
             return resultSet.getInt("grupo_id")
         }
+    }
+
+    /**
+     * Obtiene todos los grupos con información extendida.
+     *
+     * @return Lista de grupos con información extendida
+     */
+    suspend fun getAllGrupos(): List<GrupoMentoriaPlus> = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_ALL_GRUPOS)
+        val resultSet = statement.executeQuery()
+
+        val grupos = mutableListOf<GrupoMentoriaPlus>()
+
+        while (resultSet.next()) {
+            grupos.add(
+                GrupoMentoriaPlus(
+                    grupoId = resultSet.getInt("grupo_id"),
+                    jefeId = resultSet.getInt("jefe_id"),
+                    jefeName = resultSet.getString("jefe_name"),
+                    nombre = resultSet.getString("nombre"),
+                    descripcion = resultSet.getString("descripcion"),
+                    creadoEn = resultSet.getString("creado_en")
+                )
+            )
+        }
+
+        return@withContext grupos
     }
 }

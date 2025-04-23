@@ -1,6 +1,7 @@
 let currentTable = '';
 let dataTable = null;
 let currentEditId = null;
+let schoolsData = []; // Variable para almacenar los datos de escuelas
 
 // Configuración de campos por tabla
 const tableConfigs = {
@@ -50,10 +51,10 @@ const tableConfigs = {
             },
             { 
                 name: 'escuelaId', 
-                type: 'number', 
-                label: 'ID Escuela', 
+                type: 'select', 
+                label: 'Escuela',
                 required: true,
-                min: 1
+                options: [] // Se llenará dinámicamente
             },
             { 
                 name: 'semestre', 
@@ -84,6 +85,15 @@ const tableConfigs = {
             { data: 'apellidoUsuario', title: 'Apellido' },
             { data: 'celularUsuario', title: 'Celular' },
             { data: 'email', title: 'Email' },
+            { 
+                data: 'escuelaId', 
+                title: 'Escuela', 
+                render: function(data, type, row) {
+                    // Buscar el nombre de la escuela correspondiente al ID
+                    const escuela = schoolsData.find(e => e.escuelaId === parseInt(data));
+                    return escuela ? escuela.nombre : data;
+                }
+            },
             { data: 'tipoUsuario', title: 'Tipo' },
             { data: 'semestre', title: 'Semestre' },
             { 
@@ -107,12 +117,37 @@ const tableConfigs = {
     '/escuelas': {
         title: 'Escuelas',
         fields: [
-            { name: 'id', type: 'hidden' },
-            { name: 'nombre', type: 'text', label: 'Nombre', required: true },
-            { name: 'direccion', type: 'text', label: 'Dirección', required: true },
-            { name: 'telefono', type: 'text', label: 'Teléfono', required: true }
+            { name: 'escuelaId', type: 'hidden' },
+            { 
+                name: 'nombre', 
+                type: 'text', 
+                label: 'Nombre', 
+                required: true,
+                maxLength: 255
+            }
+        ],
+        columns: [
+            { data: 'escuelaId', title: 'ID' },
+            { data: 'nombre', title: 'Nombre' },
+            { 
+                data: null,
+                title: 'Acciones', 
+                render: function(data, type, row) {
+                    return `
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="editRecord(${row.escuelaId})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteRecord(${row.escuelaId})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            }
         ]
     },
+
     // Agregar configuraciones para otras tablas...
 };
 
@@ -120,6 +155,7 @@ const tableConfigs = {
 document.addEventListener('DOMContentLoaded', function() {
     const urlParams = new URLSearchParams(window.location.search);
     currentTable = urlParams.get('table');
+    const relatedTables = urlParams.get('relatedTables');
     
     if (!currentTable || !tableConfigs[currentTable]) {
         window.location.href = 'dashboard.html';
@@ -129,11 +165,45 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('pageTitle').textContent = tableConfigs[currentTable].title;
     document.getElementById('tableTitle').textContent = tableConfigs[currentTable].title;
 
-    initializeTable();
-    generateFilters();
-    generateForm();
-    loadData();
+    // Si estamos en la tabla usuarios o si tenemos tablas relacionadas
+    if (currentTable === '/usuarios' || (relatedTables && relatedTables.includes('/escuelas'))) {
+        // Primero cargamos los datos de escuelas
+        loadSchoolsData().then(() => {
+            initializeTable();
+            generateFilters();
+            generateForm();
+            loadData();
+        });
+    } else {
+        initializeTable();
+        generateFilters();
+        generateForm();
+        loadData();
+    }
 });
+
+// Cargar datos de escuelas
+async function loadSchoolsData() {
+    try {
+        const response = await fetch('/escuelas');
+        if (!response.ok) throw new Error('Error al cargar datos de escuelas');
+        
+        schoolsData = await response.json();
+        
+        // Actualizar las opciones del campo escuelaId en el formulario de usuarios
+        if (tableConfigs['/usuarios'] && tableConfigs['/usuarios'].fields) {
+            const escuelaField = tableConfigs['/usuarios'].fields.find(f => f.name === 'escuelaId');
+            if (escuelaField) {
+                escuelaField.options = schoolsData.map(school => ({
+                    value: school.escuelaId.toString(),
+                    text: school.nombre
+                }));
+            }
+        }
+    } catch (error) {
+        showAlert('Error al cargar datos de escuelas: ' + error.message, 'danger');
+    }
+}
 
 // Inicializar DataTable
 function initializeTable() {
@@ -156,18 +226,41 @@ function generateFilters() {
     filtersContainer.innerHTML = '';
 
     tableConfigs[currentTable].fields.forEach(field => {
+        if (field.type === 'password'){
+            return; 
+        }
         if (field.type !== 'hidden') {
             const col = document.createElement('div');
             col.className = 'col-md-3 mb-3';
             
             let input = '';
             if (field.type === 'select') {
-                input = `
-                    <select class="form-select filter-input" data-field="${field.name}">
-                        <option value="">Todos</option>
-                        ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
-                    </select>
-                `;
+                // Caso especial para el filtro de escuelas
+                if (field.name === 'escuelaId' && currentTable === '/usuarios') {
+                    console.log("cola");
+                    input = `
+                        <select class="form-select filter-input" data-field="${field.name}">
+                            <option value="">Todas</option>
+                            ${schoolsData.map(school => 
+                                `<option value="${school.escuelaId}">${school.nombre}</option>`
+                            ).join('')}
+                        </select>
+                    `;
+                } else {
+                    // Para otros selects
+                    const options = Array.isArray(field.options) 
+                        ? field.options.map(opt => typeof opt === 'object' ? opt : { value: opt, text: opt })
+                        : [];
+                    
+                    input = `
+                        <select class="form-select filter-input" data-field="${field.name}">
+                            <option value="">Todos</option>
+                            ${options.map(opt => 
+                                `<option value="${opt.value || opt}">${opt.text || opt}</option>`
+                            ).join('')}
+                        </select>
+                    `;
+                }
             } else {
                 input = `
                     <input type="${field.type}" class="form-control filter-input" 
@@ -186,9 +279,21 @@ function generateFilters() {
     // Agregar evento de filtrado
     document.querySelectorAll('.filter-input').forEach(input => {
         input.addEventListener('input', function() {
-            const field = this.dataset.field;
-            const value = this.value;
-            dataTable.column(field + ':name').search(value).draw();
+            // Obtener el índice de la columna basado en el nombre del campo
+            const columnIndex = tableConfigs[currentTable].columns.findIndex(col => col.data === this.dataset.field);
+            
+            // Si es un select, usar búsqueda exacta
+            if (this.tagName.toLowerCase() === 'select') {
+                const value = this.value;
+                dataTable.column(columnIndex).search(value ? '^' + value + '$' : '', true, false).draw();
+                return;
+            } else {
+                if (columnIndex !== -1) {
+                    const value = this.value;
+                    dataTable.column(columnIndex).search(value).draw(); 
+                    return;
+                }
+            }
         });
     });
 }
@@ -199,17 +304,44 @@ function generateForm() {
     form.innerHTML = '';
 
     tableConfigs[currentTable].fields.forEach(field => {
+        if (field.type === 'hidden'){
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = field.name;
+            form.appendChild(hiddenInput);
+            return;
+        }
+
         const div = document.createElement('div');
         div.className = 'mb-3';
 
         let input = '';
         if (field.type === 'select') {
-            input = `
-                <select class="form-select" name="${field.name}" 
-                    ${field.required ? 'required' : ''}>
-                    ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
-                </select>
-            `;
+            // Caso especial para el select de escuelas
+            if (field.name === 'escuelaId' && currentTable === '/usuarios') {
+                input = `
+                    <select class="form-select" name="${field.name}" ${field.required ? 'required' : ''}>
+                        <option value="">Seleccione una escuela</option>
+                        ${schoolsData.map(school => 
+                            `<option value="${school.escuelaId}">${school.nombre}</option>`
+                        ).join('')}
+                    </select>
+                `;
+            } else {
+                // Para otros selects
+                const options = Array.isArray(field.options) 
+                    ? field.options.map(opt => typeof opt === 'object' ? opt : { value: opt, text: opt })
+                    : [];
+                
+                input = `
+                    <select class="form-select" name="${field.name}" ${field.required ? 'required' : ''}>
+                        <option value="">Seleccione</option>
+                        ${options.map(opt => 
+                            `<option value="${opt.value || opt}">${opt.text || opt}</option>`
+                        ).join('')}
+                    </select>
+                `;
+            }
         } else {
             const validationAttrs = [];
             if (field.required) validationAttrs.push('required');
@@ -241,6 +373,17 @@ async function loadData() {
         if (!response.ok) throw new Error('Error al cargar datos');
         
         const data = await response.json();
+        
+        // Si estamos en la tabla de usuarios, procesamos los datos para mostrar nombres de escuelas
+        if (currentTable === '/usuarios') {
+            data.forEach(user => {
+                const escuela = schoolsData.find(e => e.escuelaId === parseInt(user.escuelaId));
+                if (escuela) {
+                    user.escuelaName = escuela.nombre;
+                }
+            });
+        }
+        
         dataTable.clear();
         dataTable.rows.add(data);
         dataTable.draw();
@@ -283,35 +426,58 @@ document.getElementById('saveButton').addEventListener('click', async function()
 });
 
 // Editar registro
-function editRecord(id) {
+async function editRecord(id) {
     currentEditId = id;
-    const row = dataTable.row(`#${id}`).data();
     
-    const form = document.getElementById('dataForm');
-    tableConfigs[currentTable].fields.forEach(field => {
-        const input = form.querySelector(`[name="${field.name}"]`);
-        if (input) input.value = row[field.name];
-    });
+    try {
+        // Obtener el registro específico por ID
+        const response = await fetch(`${currentTable}/${id}`);
+        if (!response.ok) throw new Error('Error al obtener datos del registro');
+        
+        const row = await response.json();
+        
+        const form = document.getElementById('dataForm');
+        
+        // Limpiar formulario primero
+        form.reset();
+        
+        // Completar los campos del formulario
+        tableConfigs[currentTable].fields.forEach(field => {
+            const input = form.querySelector(`[name="${field.name}"]`);
+            if (input) {
+                if (field.name === 'passwordHash' && currentTable === '/usuarios') {
+                    // No mostrar la contraseña al editar
+                    input.value = '';
+                    input.placeholder = 'Dejar en blanco para mantener la actual';
+                    input.required = false;
+                } else {
+                    input.value = row[field.name] || '';
+                }
+            }
+        });
 
-    document.getElementById('modalTitle').textContent = 'Editar Usuario';
-    $('#createModal').modal('show');
+        document.getElementById('modalTitle').textContent = `Editar ${tableConfigs[currentTable].title.slice(0, -1)}`;
+        $('#createModal').modal('show');
+    } catch (error) {
+        showAlert(`Error al editar registro: ${error.message}`, 'danger');
+    }
 }
 
 // Eliminar registro
 async function deleteRecord(id) {
-    if (!confirm('¿Está seguro de eliminar este usuario? Esta acción no se puede deshacer.')) return;
+    if (!confirm(`¿Está seguro de eliminar este ${tableConfigs[currentTable].title.slice(0, -1)}? Esta acción no se puede deshacer.`)) return;
 
     try {
         const response = await fetch(`${currentTable}/${id}`, {
             method: 'DELETE'
         });
 
-        if (!response.ok) throw new Error('Error al eliminar usuario');
+        if (!response.ok) throw new Error(`Error al eliminar ${tableConfigs[currentTable].title.slice(0, -1)}`);
 
-        showAlert('Usuario eliminado correctamente', 'success');
+        showAlert(`${tableConfigs[currentTable].title.slice(0, -1)} eliminado correctamente`, 'success');
         loadData();
     } catch (error) {
-        showAlert('Error al eliminar usuario: ' + error.message, 'danger');
+        showAlert(`Error al eliminar: ${error.message}`, 'danger');
     }
 }
 
@@ -332,9 +498,28 @@ function showAlert(message, type) {
     }, 5000);
 }
 
+// Abrir modal para crear nuevo registro
+document.getElementById('newButton').addEventListener('click', function() {
+    const form = document.getElementById('dataForm');
+    form.reset();
+    currentEditId = null;
+    document.getElementById('modalTitle').textContent = `Nuevo ${tableConfigs[currentTable].title.slice(0, -1)}`;
+    
+    // Restablecer campos obligatorios
+    if (currentTable === '/usuarios') {
+        const passwordField = form.querySelector('[name="passwordHash"]');
+        if (passwordField) {
+            passwordField.required = true;
+            passwordField.placeholder = '';
+        }
+    }
+    
+    $('#createModal').modal('show');
+});
+
 // Limpiar formulario al cerrar modal
 $('#createModal').on('hidden.bs.modal', function() {
     document.getElementById('dataForm').reset();
     currentEditId = null;
-    document.getElementById('modalTitle').textContent = 'Nuevo Usuario';
-}); 
+    document.getElementById('modalTitle').textContent = `Nuevo ${tableConfigs[currentTable].title.slice(0, -1)}`;
+});

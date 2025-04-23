@@ -36,6 +36,22 @@ data class Usuarios(
     val creadoEn: String? = null
 )
 
+@Serializable
+data class UsuarioEscuela(
+    val userId: Int? = null,
+    val dniUsuario: String,
+    val nombreUsuario: String,
+    val apellidoUsuario: String,
+    val celularUsuario: String,
+    val passwordHash: String,
+    val escuelaId: Int,
+    val escuelaName: String,
+    val semestre: String?,
+    val email: String,
+    val tipoUsuario: String,
+    val creadoEn: String? = null
+)
+
 /**
  * Respuesta que indica si un usuario existe o no.
  *
@@ -94,10 +110,19 @@ class UsuariosService(private val connection: Connection) {
                 "      FROM miembros_grupo m\n" +
                 "      WHERE m.user_id = u.user_id\n" +
                 "  );"
+        private const val SELECT_ALL_USUARIOS2 = """
+                                                    SELECT user_id, dni_usuario, nombre_usuario, apellido_usuario, celular_usuario, 
+                                                           password_hash, u.escuela_id, e.nombre as escuelaName, semestre, email, tipo_usuario, creado_en 
+                                                    FROM usuarios u
+                                                    INNER JOIN escuelas e on e.escuela_id = u.escuela_id
+                                                    
+                                                """
         private const val SELECT_ALL_USUARIOS = """
                                                     SELECT user_id, dni_usuario, nombre_usuario, apellido_usuario, celular_usuario, 
-                                                           password_hash, escuela_id, semestre, email, tipo_usuario, creado_en 
-                                                    FROM usuarios
+                                                           password_hash, u.escuela_id, e.nombre as escuelaName, semestre, email, tipo_usuario, creado_en 
+                                                    FROM usuarios u
+                                                    INNER JOIN escuelas e on e.escuela_id = u.escuela_id
+                                                    
                                                 """
 
     }

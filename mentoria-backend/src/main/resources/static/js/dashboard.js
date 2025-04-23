@@ -1,6 +1,6 @@
 // Tablas disponibles en el sistema
 const tables = [
-    { name: 'Usuarios', icon: 'fa-users', endpoint: '/usuarios' },
+    { name: 'Usuarios', icon: 'fa-users', endpoint: '/usuarios', relatedEndpoints: ['/escuelas'] },
     { name: 'Escuelas', icon: 'fa-school', endpoint: '/escuelas' },
     { name: 'Grupos', icon: 'fa-users', endpoint: '/grupos' },
     { name: 'Mentores', icon: 'fa-user-tie', endpoint: '/mentores' },
@@ -22,7 +22,7 @@ function generateCards() {
         const card = document.createElement('div');
         card.className = 'col';
         card.innerHTML = `
-            <div class="card h-100" data-endpoint="${table.endpoint}">
+            <div class="card h-100" data-endpoint="${table.endpoint}" data-name="${table.name}">
                 <div class="card-body text-center">
                     <i class="fas ${table.icon} fa-3x mb-3"></i>
                     <h5 class="card-title">${table.name}</h5>
@@ -53,7 +53,18 @@ document.getElementById('cardsContainer').addEventListener('click', function(e) 
     const card = e.target.closest('.card');
     if (card) {
         const endpoint = card.dataset.endpoint;
-        window.location.href = `crud.html?table=${endpoint}`;
+        const tableName = card.dataset.name;
+        
+        if (tableName === 'Usuarios') {
+            // Para la tabla Usuarios, también necesitamos consultar a Escuelas
+            const related = tables.find(t => t.name === 'Usuarios').relatedEndpoints || [];
+            
+            // Redirigir con parámetros para consultar ambas tablas
+            window.location.href = `crud.html?table=${endpoint}&relatedTables=${related.join(',')}`;
+        } else {
+            // Para otras tablas, comportamiento normal
+            window.location.href = `crud.html?table=${endpoint}`;
+        }
     }
 });
 
@@ -72,4 +83,4 @@ window.addEventListener('load', function() {
     } else {
         generateCards();
     }
-}); 
+});

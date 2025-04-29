@@ -1,0 +1,386 @@
+create table if not exists escuelas
+(
+    escuela_id serial
+        primary key,
+    nombre     varchar(255),
+    acronimo   varchar(10) not null
+);
+
+alter table escuelas
+    owner to foxi;
+
+create table if not exists usuarios
+(
+    user_id          serial
+        primary key,
+    dni_usuario      varchar(20)  not null
+        unique,
+    nombre_usuario   varchar(255) not null,
+    apellido_usuario varchar(255) not null,
+    celular_usuario  varchar(15)  not null,
+    password_hash    varchar(255) not null,
+    escuela_id       integer      not null
+        references escuelas
+            on delete cascade,
+    semestre         varchar(5)
+        constraint usuarios_semestre_check
+            check ((semestre)::text = ANY
+                   ((ARRAY ['I'::character varying, 'II'::character varying, 'III'::character varying, 'IV'::character varying, 'V'::character varying, 'VI'::character varying, 'VII'::character varying, 'VIII'::character varying, 'IX'::character varying, 'X'::character varying, 'XI'::character varying, 'XII'::character varying])::text[])),
+    email            varchar(255) not null,
+    tipo_usuario     varchar(20)  not null
+        constraint usuarios_tipo_usuario_check
+            check ((tipo_usuario)::text = ANY
+                   ((ARRAY ['psicologia'::character varying, 'coordinador'::character varying, 'mentor'::character varying, 'mentoriado'::character varying])::text[])),
+    creado_en        timestamp default CURRENT_TIMESTAMP
+);
+
+alter table usuarios
+    owner to foxi;
+
+create table if not exists psicologia
+(
+    psicologia_id serial
+        primary key,
+    user_id       integer not null
+        references usuarios
+            on delete cascade
+);
+
+alter table psicologia
+    owner to foxi;
+
+create table if not exists coordinadores
+(
+    coordinador_id serial
+        primary key,
+    user_id        integer not null
+        references usuarios
+            on delete cascade
+);
+
+alter table coordinadores
+    owner to foxi;
+
+create table if not exists mentores
+(
+    mentor_id serial
+        primary key,
+    user_id   integer not null
+        references usuarios
+            on delete cascade
+);
+
+alter table mentores
+    owner to foxi;
+
+create table if not exists mentoriados
+(
+    mentoriado_id serial
+        primary key,
+    user_id       integer not null
+        references usuarios
+            on delete cascade
+);
+
+alter table mentoriados
+    owner to foxi;
+
+create table if not exists horarios
+(
+    horario_id  serial
+        primary key,
+    lugar       varchar(255),
+    dia         varchar(15),
+    hora_inicio varchar(20) not null,
+    hora_fin    varchar(20) not null,
+    estado      boolean
+);
+
+alter table horarios
+    owner to foxi;
+
+create table if not exists grupos
+(
+    grupo_id    serial
+        primary key,
+    jefe_id     integer not null
+        references usuarios
+            on delete cascade,
+    nombre      varchar(255),
+    horario_id  integer
+        references horarios
+            on delete cascade,
+    descripcion text,
+    creado_en   timestamp default (CURRENT_TIMESTAMP - '05:00:00'::interval)
+);
+
+alter table grupos
+    owner to foxi;
+
+create table if not exists miembros_grupo
+(
+    miembro_grupo_id serial
+        primary key,
+    grupo_id         integer not null
+        references grupos
+            on delete cascade,
+    user_id          integer not null
+        references usuarios
+            on delete cascade
+);
+
+alter table miembros_grupo
+    owner to foxi;
+
+create table if not exists sesiones_mentoria
+(
+    sesion_id   serial
+        primary key,
+    grupo_id    integer                                                      not null
+        references grupos
+            on delete cascade,
+    estado      varchar(15)                                                  not null
+        constraint sesiones_mentoria_estado_check
+            check ((estado)::text = ANY
+                   ((ARRAY ['programada'::character varying, 'realizada'::character varying, 'cancelada'::character varying])::text[])),
+    tema_sesion varchar(100)                                                 not null,
+    notas       text,
+    fotografia  bytea                                                        not null,
+    fecha_hora  timestamp default (CURRENT_TIMESTAMP - '05:00:00'::interval) not null
+);
+
+alter table sesiones_mentoria
+    owner to foxi;
+
+create table if not exists asistencias_sesiones
+(
+    asistencia_id         serial
+        primary key,
+    sesion_id             integer not null
+        references sesiones_mentoria
+            on delete cascade,
+    mentoriado_id         integer not null
+        references mentoriados
+            on delete cascade,
+    asistio               boolean not null,
+    hora_fecha_registrada timestamp default (CURRENT_TIMESTAMP - '05:00:00'::interval)
+);
+
+alter table asistencias_sesiones
+    owner to foxi;
+
+create table if not exists solicitudes_mentoria
+(
+    solicitud_id    serial
+        primary key,
+    psicologia_id   integer     not null
+        references psicologia
+            on delete cascade,
+    mentor_id       integer     not null
+        references mentores
+            on delete cascade,
+    fecha_solicitud timestamp default (CURRENT_TIMESTAMP - '05:00:00'::interval),
+    estado          varchar(15) not null
+        constraint solicitudes_mentoria_estado_check
+            check ((estado)::text = ANY
+                   ((ARRAY ['pendiente'::character varying, 'aceptada'::character varying, 'rechazada'::character varying])::text[])),
+    mensaje         text        not null
+);
+
+alter table solicitudes_mentoria
+    owner to foxi;
+
+create table if not exists evaluaciones_comentarios
+(
+    evaluacion_id         serial
+        primary key,
+    evaluado_id           integer     not null
+        references usuarios
+            on delete cascade,
+    evaluador_id          integer     not null
+        references usuarios
+            on delete cascade,
+    puntuacion_categorica varchar(15) not null
+        constraint evaluaciones_comentarios_puntuacion_categorica_check
+            check ((puntuacion_categorica)::text = ANY
+                   ((ARRAY ['Destacable'::character varying, 'Pasable'::character varying, 'Bajo'::character varying])::text[])),
+    comentario            text
+);
+
+alter table evaluaciones_comentarios
+    owner to foxi;
+
+create table if not exists mensajes_grupo
+(
+    mensaje_id    serial
+        primary key,
+    grupo_id      integer not null
+        references grupos
+            on delete cascade,
+    remitente_id  integer not null
+        references usuarios
+            on delete cascade,
+    texto_mensaje text    not null,
+    enviado_en    timestamp default (CURRENT_TIMESTAMP - '05:00:00'::interval)
+);
+
+alter table mensajes_grupo
+    owner to foxi;
+
+create table if not exists eventos
+(
+    evento_id    serial
+        primary key,
+    nombre       varchar(255) not null,
+    horario_id   integer      not null
+        references horarios
+            on delete cascade,
+    descripcion  text,
+    poster       bytea        not null,
+    url          varchar(255),
+    fecha_evento date         not null
+);
+
+alter table eventos
+    owner to foxi;
+
+create table if not exists notificaciones
+(
+    notificacion_id    serial
+        primary key,
+    user_id            integer     not null
+        references usuarios
+            on delete cascade,
+    texto_notificacion text        not null,
+    tipo_notificacion  varchar(20) not null
+        constraint notificaciones_tipo_notificacion_check
+            check ((tipo_notificacion)::text = ANY
+                   ((ARRAY ['alerta'::character varying, 'recordatorio'::character varying, 'otro'::character varying])::text[])),
+    creado_en          timestamp default CURRENT_TIMESTAMP,
+    leido              boolean   default false,
+    evento_id          integer     not null
+        references eventos
+            on delete cascade
+);
+
+alter table notificaciones
+    owner to foxi;
+
+create table if not exists salones
+(
+    salon_id integer not null
+        primary key,
+    nombre   varchar(50)
+);
+
+alter table salones
+    owner to foxi;
+
+create table if not exists horas_academicas
+(
+    hora_id     integer not null
+        primary key,
+    hora_inicio varchar(20)
+);
+
+alter table horas_academicas
+    owner to foxi;
+
+create table if not exists mentoriados_eliminados
+(
+    usuario_id integer not null
+        primary key
+        references usuarios
+            on delete cascade,
+    razon      varchar(200)
+);
+
+alter table mentoriados_eliminados
+    owner to foxi;
+
+create or replace function insertar_usuario_tipo() returns trigger
+    language plpgsql
+as
+$$
+BEGIN
+    -- Caso para psicología
+    IF NEW.tipo_usuario = 'psicologia' THEN
+        -- Insertamos en la tabla psicologia
+        INSERT INTO psicologia (user_id) VALUES (NEW.user_id);
+        -- Insertamos al grupo maestro (grupo_id = 3) a los usuarios de tipo psicología
+        INSERT INTO miembros_grupo (grupo_id, user_id) VALUES (3, NEW.user_id);
+
+    -- Caso para coordinador
+    ELSIF NEW.tipo_usuario = 'coordinador' THEN
+        -- Insertamos en la tabla coordinadores
+        INSERT INTO coordinadores (user_id) VALUES (NEW.user_id);
+        -- Insertamos al grupo maestro (grupo_id = 3) a los usuarios de tipo coordinador
+        INSERT INTO miembros_grupo (grupo_id, user_id) VALUES (3, NEW.user_id);
+
+    -- Caso para mentor
+    ELSIF NEW.tipo_usuario = 'mentor' THEN
+        -- Insertamos en la tabla mentores
+        INSERT INTO mentores (user_id) VALUES (NEW.user_id);
+
+    -- Caso para mentoriado
+    ELSIF NEW.tipo_usuario = 'mentoriado' THEN
+        -- Permitimos que escuela_id sea NULL si no se proporciona
+        INSERT INTO mentoriados (user_id) VALUES (NEW.user_id);
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+alter function insertar_usuario_tipo() owner to foxi;
+
+create trigger trigger_insertar_usuario_tipo
+    after insert
+    on usuarios
+    for each row
+execute procedure insertar_usuario_tipo();
+
+create or replace function eliminar_usuario_tipo() returns trigger
+    language plpgsql
+as
+$$
+BEGIN
+    -- Caso para psicología
+    IF EXISTS (SELECT 1 FROM psicologia WHERE user_id = OLD.user_id) THEN
+        -- Eliminamos de la tabla psicologia
+        DELETE FROM psicologia WHERE user_id = OLD.user_id;
+    END IF;
+
+    -- Caso para coordinador
+    IF EXISTS (SELECT 1 FROM coordinadores WHERE user_id = OLD.user_id) THEN
+        -- Eliminamos de la tabla coordinadores
+        DELETE FROM coordinadores WHERE user_id = OLD.user_id;
+    END IF;
+
+    -- Caso para mentor
+    IF EXISTS (SELECT 1 FROM mentores WHERE user_id = OLD.user_id) THEN
+        -- Eliminamos de la tabla mentores
+        DELETE FROM mentores WHERE user_id = OLD.user_id;
+    END IF;
+
+    -- Caso para mentoriado
+    IF EXISTS (SELECT 1 FROM mentoriados WHERE user_id = OLD.user_id) THEN
+        -- Eliminamos de la tabla mentoriados
+        DELETE FROM mentoriados WHERE user_id = OLD.user_id;
+    END IF;
+
+    -- Eliminamos de la tabla miembros_grupo (grupo_id debe ser 3, ya que es el grupo maestro)
+    DELETE FROM miembros_grupo WHERE user_id = OLD.user_id;
+
+    RETURN OLD;
+END;
+$$;
+
+alter function eliminar_usuario_tipo() owner to foxi;
+
+create trigger trigger_eliminar_usuario_tipo
+    before delete
+    on usuarios
+    for each row
+execute procedure eliminar_usuario_tipo();
+

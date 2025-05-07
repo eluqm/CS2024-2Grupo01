@@ -10,7 +10,7 @@ data class Usuario(
     val celularUsuario: String,
     var passwordHash: String = "123456789",
     val escuelaId: Int,
-    val semestre: String?,
+    val semestre: String? = null,
     val email: String,
     val tipoUsuario: String = "mentoriado",
     val creadoEn: String? = null

@@ -246,8 +246,13 @@ class PsicoCargaDatosFragment : Fragment(R.layout.fragment_psico_carga_datos) {
     }
 
     private val escuelaMap = mapOf(
-        "derecho" to 1, "software" to 2, "psicología" to 3,
-        "administración" to 4, "comunicación" to 5, "comercial" to 6,
-        "arquitectura" to 7, "industrial" to 8
+        "derecho" to 3,
+        "software" to 2,
+        "psicología" to 7,
+        "administración" to 4,
+        "comunicación" to 6,
+        "comercial" to 5,
+        "arquitectura" to 8,
+        "industrial" to 1
     )
 }

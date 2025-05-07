@@ -154,42 +154,43 @@ fun Application.configureDatabases() {
         }
     }
 
-    val cityService = CityService(dbConnection)
+    val tokensService = TokensService(dbConnection)
 
     routing {
-
-        // Create city
-        post("/cities") {
-            val city = call.receive<City>()
-            val id = cityService.create(city)
-            call.respond(HttpStatusCode.Created, id)
-        }
-
-        // Read city
-        get("/cities/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
+        get("/tokens/psicologia") {
             try {
-                val city = cityService.read(id)
-                call.respond(HttpStatusCode.OK, city)
+                val tokens = tokensService.getTokensPsicologia()
+                call.respond(HttpStatusCode.OK, tokens)
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.NotFound)
+                call.respond(HttpStatusCode.InternalServerError, e.message.toString())
             }
         }
 
-        // Update city
-        put("/cities/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            val user = call.receive<City>()
-            cityService.update(id, user)
-            call.respond(HttpStatusCode.OK)
+        get("/tokens/horario/{id}") {
+            val horarioId = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("ID de horario inválido")
+            try {
+                val tokens = tokensService.getTokensByHorario(horarioId)
+                call.respond(HttpStatusCode.OK, tokens)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, e.message.toString())
+            }
         }
 
-        // Delete city
-        delete("/cities/{id}") {
-            val id = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("Invalid ID")
-            cityService.delete(id)
-            call.respond(HttpStatusCode.OK)
+        get("/tokens/grupo/horario/{horarioId}") {
+            try {
+                val horarioId = call.parameters["horarioId"]?.toIntOrNull()
+                if (horarioId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "El parámetro horarioId es requerido y debe ser un número")
+                    return@get
+                }
+
+                val tokens = tokensService.getTokensByGrupoHorario(horarioId)
+                call.respond(HttpStatusCode.OK, tokens)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, e.message.toString())
+            }
         }
+
     }
 
     val usuariosService = UsuariosService(dbConnection)

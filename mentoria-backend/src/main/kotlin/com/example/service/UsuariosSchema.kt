@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import java.sql.Connection
 import java.sql.Statement
+import java.sql.Types
 
 /**
  * Modelo de datos que representa un usuario en el sistema.
@@ -30,7 +31,7 @@ data class Usuarios(
     val celularUsuario: String,
     val passwordHash: String,
     val escuelaId: Int,
-    val semestre: String?,
+    val semestre: String? = null,
     val email: String,
     val tipoUsuario: String,
     val creadoEn: String? = null
@@ -275,7 +276,11 @@ class UsuariosService(private val connection: Connection) {
         statement.setString(4, usuario.celularUsuario)
         statement.setString(5, usuario.passwordHash)
         statement.setInt(6, usuario.escuelaId)
-        statement.setString(7, usuario.semestre)
+        if (usuario.semestre == null) {
+            statement.setNull(7, Types.NULL)  // Indica que el campo es NULL (de tipo VARCHAR)
+        } else {
+            statement.setString(7, usuario.semestre)  // Valor no-nulo
+        }
         statement.setString(8, usuario.email)
         statement.setString(9, usuario.tipoUsuario)
         statement.setInt(10, userId)

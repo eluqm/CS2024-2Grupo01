@@ -967,8 +967,14 @@ fun Application.configureDatabases() {
 fun Application.connectToPostgres(embedded: Boolean): Connection {
     Class.forName("org.postgresql.Driver")
     if (embedded) {
-        return DriverManager.getConnection("jdbc:postgresql://serverikus.postgres.database.azure.com:5432/mentoriapp", "foxi", "ola.cmma.bd1")
+        // Conexión a AWS RDS con nombre de BD explícito
+        return DriverManager.getConnection(
+            "jdbc:postgresql://mentoriapp.cwlak0wa0zo6.us-east-1.rds.amazonaws.com:5432/mentoriapp",
+            "postgresito",
+            "2GEENv4pmGbna4OGUWRA"
+        )
     } else {
+        // Conexión configurable (para diferentes entornos)
         val url = environment.config.property("postgres.url").getString()
         val user = environment.config.property("postgres.user").getString()
         val password = environment.config.property("postgres.password").getString()

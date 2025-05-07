@@ -26,6 +26,121 @@ import org.jetbrains.exposed.sql.*
 fun Application.configureDatabases() {
     val dbConnection: Connection = connectToPostgres(embedded = true)
 
+    FirebaseAdmin.initialize()
+
+    // Configurar rutas
+    routing {
+        // Endpoint: GET /tokens/user/{userId}
+        get("/tokens/user/{userId}") {
+            val userIdParam = call.parameters["userId"] ?: run {
+                call.respond(HttpStatusCode.BadRequest, TokenResponse(success = false, message = "User ID es requerido"))
+                return@get
+            }
+
+            val userId = userIdParam.toIntOrNull() ?: run {
+                call.respond(HttpStatusCode.BadRequest, TokenResponse(success = false, message = "User ID inválido"))
+                return@get
+            }
+
+            val deviceTokenService = DeviceTokenService(dbConnection)
+            val tokens = deviceTokenService.getTokensByUserId(userId)
+
+            if (tokens.isEmpty()) {
+                call.respond(HttpStatusCode.NotFound, TokenResponse(success = false, message = "No se encontraron tokens para este usuario"))
+            } else {
+                call.respond(HttpStatusCode.OK, mapOf("success" to true, "tokens" to tokens))
+            }
+        }
+        // Endpoint para registrar un dispositivo
+        post("/register-device") {
+            val registration = call.receive<DeviceRegistration>()
+
+            val userId = registration.userId ?: run {
+                call.respond(HttpStatusCode.BadRequest, TokenResponse(success = false, message = "User ID es requerido"))
+                return@post
+            }
+
+            val token = registration.token
+
+            // Guardar en BD
+            val deviceTokenService = DeviceTokenService(dbConnection)
+            val success = deviceTokenService.registerToken(userId, token)
+
+            if (success) {
+                call.respond(HttpStatusCode.OK, TokenResponse(success = true, message = "Token registrado/actualizado"))
+            } else {
+                call.respond(HttpStatusCode.InternalServerError, TokenResponse(success = false, message = "Error al guardar el token"))
+            }
+        }
+
+        // Endpoint para enviar notificación a un dispositivo específico
+        post("/send-notification") {
+            val request = call.receive<NotificationRequest>()
+
+            // Crear servicio FCM
+            val fcmService = FCMService()
+
+            try {
+                // Enviar notificación
+                val result = withContext(Dispatchers.IO) {
+                    fcmService.sendMessageToDevice(
+                        request.token,
+                        request.title,
+                        request.body
+                    )
+                }
+
+                call.respond(HttpStatusCode.OK, NotificationResponse(success = true, messageId = result))
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    NotificationResponse(success = false, messageId = e.message)
+                )
+            }
+        }
+
+        // Endpoint: POST /notify-user
+        post("/notify-user") {
+            val request = call.receive<NotificationRequest>()
+            val userId = request.token.toIntOrNull() // Aquí puedes cambiar esto por otro campo si prefieres
+
+            if (userId == null) {
+                call.respond(HttpStatusCode.BadRequest, NotificationResponse(success = false, messageId = "Invalid user ID"))
+                return@post
+            }
+
+            val deviceTokenService = DeviceTokenService(dbConnection)
+            val tokens = deviceTokenService.getTokensByUserId(userId)
+
+            if (tokens.isEmpty()) {
+                call.respond(HttpStatusCode.NotFound, NotificationResponse(success = false, messageId = "No tokens found for this user"))
+                return@post
+            }
+
+            val fcmService = FCMService()
+            var allSuccess = true
+            var lastMessageId: String? = null
+
+            for (token in tokens) {
+                try {
+                    val messageId = withContext(Dispatchers.IO) {
+                        fcmService.sendMessageToDevice(token, request.title, request.body)
+                    }
+                    lastMessageId = messageId
+                } catch (e: Exception) {
+                    allSuccess = false
+                    e.printStackTrace()
+                }
+            }
+
+            if (allSuccess && lastMessageId != null) {
+                call.respond(HttpStatusCode.OK, NotificationResponse(success = true, messageId = lastMessageId))
+            } else {
+                call.respond(HttpStatusCode.OK, NotificationResponse(success = false, messageId = lastMessageId))
+            }
+        }
+    }
+
     //Rutas generales
     routing {
         /**

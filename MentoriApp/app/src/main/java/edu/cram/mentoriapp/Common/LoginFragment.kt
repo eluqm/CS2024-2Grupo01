@@ -215,6 +215,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun guardarUsuarioEnSesion(usuario: Usuario, grupoId: Int?) {
+
+        val fcmManager = FCMManager(requireContext())
+        fcmManager.getAndRegisterToken(usuario.userId!!) { token ->
+            token?.let {
+                Log.d("LoginFragment", "Token FCM registrado: $it")
+                saveTokenLocally(it)
+            }
+        }
+
         val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putInt("userId", usuario.userId!!)
@@ -237,5 +246,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         editor.apply()
     }
 
+    private fun saveTokenLocally(token: String) {
+        val sharedPrefs = requireActivity().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        sharedPrefs.edit().putString("fcm_token", token).apply()
+    }
 
 }

@@ -1,5 +1,11 @@
 package edu.cram.mentoriapp.Service
 
+import edu.cram.mentoriapp.Common.DeviceRegistration
+import edu.cram.mentoriapp.Common.NotificationRequest
+import edu.cram.mentoriapp.Common.NotificationResponse
+import edu.cram.mentoriapp.Common.TokenRequest
+import edu.cram.mentoriapp.Common.TokenResponse
+import edu.cram.mentoriapp.Common.TokensResponse
 import edu.cram.mentoriapp.Model.AsistenciaSesion
 import edu.cram.mentoriapp.Model.Chat
 import edu.cram.mentoriapp.Model.Cities
@@ -328,4 +334,16 @@ interface ApiRest {
 
     @DELETE("/notificaciones/{id}")
     suspend fun deleteNotificacion(@Path("id") id: Int): retrofit2.Response<Unit>
+
+    // Registrar token FCM del dispositivo en el servidor
+    @POST("register-device")
+    suspend fun registerFcmToken(@Body registration: DeviceRegistration): Response<TokenResponse>
+
+    // Enviar notificación a un dispositivo específico (opcional desde el cliente)
+    @POST("send-notification")
+    suspend fun sendNotification(@Body notificationRequest: NotificationRequest): Response<NotificationResponse>
+
+    // Obtener tokens de un usuario (por userId)
+    @GET("tokens/user/{userId}")
+    suspend fun getTokensByUserId(@Path("userId") userId: Int): Response<TokensResponse>
 }

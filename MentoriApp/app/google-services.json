@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "328798891325",
+    "project_id": "mentoriapp-1cb9a",
+    "storage_bucket": "mentoriapp-1cb9a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:328798891325:android:c766b254aa14c76a3b2954",
+        "android_client_info": {
+          "package_name": "edu.cram.mentoriapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtE0yC-aGe6HubQStOrBzaTTGLuHSt7WM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

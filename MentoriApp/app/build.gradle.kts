@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -59,11 +60,16 @@ dependencies {
     //carga de imagenes
     implementation("com.github.bumptech.glide:glide:4.15.1")
 
+    implementation(platform(libs.firebase.bom))
+
+    implementation(libs.firebase.analytics)
+
 
 
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.cardview)
+    implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

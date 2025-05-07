@@ -61,6 +61,21 @@ fun Application.configureDatabases() {
             }
         }
 
+        get("/tokens/grupo/horario/{horarioId}") {
+            try {
+                val horarioId = call.parameters["horarioId"]?.toIntOrNull()
+                if (horarioId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "El parámetro horarioId es requerido y debe ser un número")
+                    return@get
+                }
+
+                val tokens = tokensService.getTokensByGrupoHorario(horarioId)
+                call.respond(HttpStatusCode.OK, tokens)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, e.message.toString())
+            }
+        }
+
     }
 
     val usuariosService = UsuariosService(dbConnection)

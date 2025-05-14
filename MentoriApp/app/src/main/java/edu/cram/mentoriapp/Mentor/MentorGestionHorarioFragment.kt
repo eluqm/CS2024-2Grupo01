@@ -8,6 +8,7 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.gson.Gson
+import edu.cram.mentoriapp.Common.NotificationRequest
 import edu.cram.mentoriapp.Model.Horario
 import edu.cram.mentoriapp.R
 import edu.cram.mentoriapp.Service.ApiRest
@@ -101,10 +102,51 @@ class MentorGestionHorarioFragment : Fragment(R.layout.fragment_gestion_horario)
                 horaFin = horaFinString,
                 estado = estado
             ) {
-                // Navegar solo cuando la API haya respondido correctamente
-                view.findNavController().apply {
-                    popBackStack(R.id.mentorHomeFragment, false) // Volver al menú principal
-                    navigate(R.id.mentorHomeFragment) // Ir al mentorHomeFragment
+                viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        // 1. Obtener tokens de psicología
+                        val tokensResponse = apiRest.getTokensPsicologia()
+
+                        if (tokensResponse.isSuccessful && !tokensResponse.body().isNullOrEmpty()) {
+                            val tokens = tokensResponse.body()!!
+                            // Recuperar datos mentor:
+                            val sharedPreferences = requireActivity().getSharedPreferences("usuarioSesion", android.content.Context.MODE_PRIVATE)
+                            val mentorNombre = sharedPreferences.getString("nombreUsuario"," ")
+                            // 2. Enviar notificación a cada token
+                            tokens.forEach { fcmToken ->
+                                val notificationRequest = NotificationRequest(
+                                    token = fcmToken.fcmToken,
+                                    title = "Nuevo horario asignado",
+                                    body = "El mentor ${mentorNombre} ha asignado un nuevo horario, indique el lugar y confirme"
+                                )
+
+                                val notificationResponse = apiRest.sendNotification(notificationRequest)
+
+                                if (!notificationResponse.isSuccessful) {
+                                    Log.e("Notification", "Error enviando notificación a psicología")
+                                }
+                            }
+                        }
+
+                        // 3. Navegar después de completar todo
+                        withContext(Dispatchers.Main) {
+                            view.findNavController().apply {
+                                popBackStack(R.id.mentorHomeFragment, false)
+                                navigate(R.id.mentorHomeFragment)
+                            }
+                        }
+
+                    } catch (e: Exception) {
+                        Log.e("FlowError", "Error en el flujo: ${e.message}")
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Error al completar el proceso", Toast.LENGTH_SHORT).show()
+                            // Navegar igual aunque falle la notificación
+                            view.findNavController().apply {
+                                popBackStack(R.id.mentorHomeFragment, false)
+                                navigate(R.id.mentorHomeFragment)
+                            }
+                        }
+                    }
                 }
             }
 

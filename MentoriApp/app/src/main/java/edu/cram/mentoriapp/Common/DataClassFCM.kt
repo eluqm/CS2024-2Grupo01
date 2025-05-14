@@ -28,3 +28,6 @@ data class TokensResponse(
     val tokens: List<String>? = null,
     val message: String? = null
 ): Serializable
+
+
+data class FCMToken(val fcmToken: String): Serializable

@@ -1,6 +1,7 @@
 package edu.cram.mentoriapp.Service
 
 import edu.cram.mentoriapp.Common.DeviceRegistration
+import edu.cram.mentoriapp.Common.FCMToken
 import edu.cram.mentoriapp.Common.NotificationRequest
 import edu.cram.mentoriapp.Common.NotificationResponse
 import edu.cram.mentoriapp.Common.TokenRequest
@@ -346,4 +347,17 @@ interface ApiRest {
     // Obtener tokens de un usuario (por userId)
     @GET("tokens/user/{userId}")
     suspend fun getTokensByUserId(@Path("userId") userId: Int): Response<TokensResponse>
+
+    // Obtener tokens de psicología
+    @GET("tokens/psicologia")
+    suspend fun getTokensPsicologia(): Response<List<FCMToken>>
+
+    // Obtener tokens por horario (jefes-mentores)
+    @GET("tokens/horario/{id}")
+    suspend fun getTokensByHorario(@Path("id") horarioId: Int): Response<List<FCMToken>>
+
+    // Obtener tokens por grupo y horario (mentoriados)
+    @GET("tokens/grupo/horario/{horarioId}")
+    suspend fun getTokensByGrupoHorario(@Path("horarioId") horarioId: Int): Response<List<FCMToken>>
+
 }

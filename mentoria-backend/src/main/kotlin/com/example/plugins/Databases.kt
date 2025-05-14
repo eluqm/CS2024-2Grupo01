@@ -165,7 +165,7 @@ fun Application.configureDatabases() {
                 call.respond(HttpStatusCode.InternalServerError, e.message.toString())
             }
         }
-
+        //jefes-mentores
         get("/tokens/horario/{id}") {
             val horarioId = call.parameters["id"]?.toInt() ?: throw IllegalArgumentException("ID de horario inválido")
             try {
@@ -175,7 +175,7 @@ fun Application.configureDatabases() {
                 call.respond(HttpStatusCode.InternalServerError, e.message.toString())
             }
         }
-
+        //mentoriados
         get("/tokens/grupo/horario/{horarioId}") {
             try {
                 val horarioId = call.parameters["horarioId"]?.toIntOrNull()

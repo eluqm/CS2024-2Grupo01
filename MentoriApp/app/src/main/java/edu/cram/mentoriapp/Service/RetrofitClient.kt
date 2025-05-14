@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitClient {
     fun makeRetrofitClient(): ApiRest {
         return Retrofit.Builder()
-            .baseUrl("https://d1ce-2803-a3e0-1940-e950-a029-9f60-3414-f280.ngrok-free.app") // Cambia por la URL de tu servidor Ktor
+            .baseUrl("https://e6c0-190-119-187-251.ngrok-free.app ") // Cambia por la URL de tu servidor Ktor
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiRest::class.java)

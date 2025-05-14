@@ -5,11 +5,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 //.baseUrl("http://10.0.2.2:8095") // Cambia por la URL de tu servidor Ktor
-// AZURE: 104.41.57.147
+// AZURE: 20.172.70.125
 object RetrofitClient {
     fun makeRetrofitClient(): ApiRest {
         return Retrofit.Builder()
-            .baseUrl("https://e6c0-190-119-187-251.ngrok-free.app ") // Cambia por la URL de tu servidor Ktor
+            .baseUrl("http://20.172.70.125:8095") // Cambia por la URL de tu servidor Ktor
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiRest::class.java)

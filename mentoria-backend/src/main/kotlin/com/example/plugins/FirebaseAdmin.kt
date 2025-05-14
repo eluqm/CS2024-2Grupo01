@@ -9,8 +9,7 @@ object FirebaseAdmin {
     fun initialize() {
         try {
             // Ruta a tu archivo de credenciales (lo descargas desde la consola de Firebase)
-            val serviceAccount = FileInputStream("C:\\Users\\CharlsMikhail\\VSC\\CS2024-2Grupo01\\mentoria-backend\\src\\main\\kotlin\\com\\example\\plugins\\mentoriapp-1cb9a-firebase-adminsdk-fbsvc-131a92f35f.json")
-
+            val serviceAccount = FileInputStream("src/main/resources/mentoriapp-1cb9a-firebase-adminsdk-fbsvc-248e6a04a6.json")
             val options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build()

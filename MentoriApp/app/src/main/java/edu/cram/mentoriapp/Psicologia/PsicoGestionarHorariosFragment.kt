@@ -51,18 +51,18 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
         recyclerView.addItemDecoration(decoration1)
         recyclerView.addItemDecoration(decoration2)
 
-        // AQUÍ ES DONDE DEBE IR EL CÓDIGO
+        // Evitar que el scroll del recyclerView sea interceptado por el parent
         recyclerView.setOnTouchListener { v, event ->
             v.parent.requestDisallowInterceptTouchEvent(true)
             false
         }
 
-        // Y luego continúas con el resto del código
+        // Cargar los horarios
         fetchHorarios()
     }
 
     private fun fetchHorarios() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = apiRest.getHorarios()
                 if (response.isSuccessful) {
@@ -110,7 +110,6 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
         }
     }
 
-
     private fun mostrarOpcionesConflicto(eventos: List<HorarioDetalles>?) {
         if (eventos.isNullOrEmpty()) return
 
@@ -128,9 +127,7 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
             .show()
     }
 
-
-
-    @SuppressLint("MissingInflatedId", "SuspiciousIndentation")
+    @SuppressLint("MissingInflatedId")
     private fun initDialogo(horarioDetalles: Any) {
         // Inflar el layout del diálogo
         val dialogView = layoutInflater.inflate(R.layout.dialog_horario, null)
@@ -148,57 +145,46 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
             textViewHoraInicio.text = "Hora de inicio: ${horarioDetalles.horaInicio}"
             textViewHoraFin.text = "Hora de fin: ${horarioDetalles.horaFin?.substring(0,5)}"
         }
-
         // Si el objeto pasado es de tipo `HorarioDetalles`, usamos sus valores
         else if (horarioDetalles is HorarioDetalles) {
-            editTextLugar.setText("Lugar ${horarioDetalles.lugar}")
+            editTextLugar.setText(horarioDetalles.lugar ?: "")
             textViewMentor.text = "Mentor: ${horarioDetalles.nombreCompletoJefe}"
             textViewDia.text = "Día: ${horarioDetalles.dia}"
             textViewHoraInicio.text = "Hora de inicio: ${horarioDetalles.horaInicio}"
             textViewHoraFin.text = "Hora de fin: ${horarioDetalles.horaFin.substring(0,5)}"
         }
 
-        if(horarioDetalles is HorarioCell){
-            if(horarioDetalles.estado){
+        if (horarioDetalles is HorarioCell) {
+            if (horarioDetalles.estado) {
+                // Si el horario ya está confirmado, solo mostrar información
                 editTextLugar.isEnabled = false
-
-                val dialog = AlertDialog.Builder(requireContext())
+                AlertDialog.Builder(requireContext())
                     .setTitle("Detalles del Horario")
                     .setView(dialogView)
                     .setNegativeButton("Okey") { dialog, _ -> dialog.dismiss() }
                     .create()
-
-                dialog.show()
-            }else{
-                val dialog = AlertDialog.Builder(requireContext())
+                    .show()
+            } else {
+                // Si el horario está pendiente, permitir confirmar
+                AlertDialog.Builder(requireContext())
                     .setTitle("Detalles del Horario")
                     .setView(dialogView)
                     .setPositiveButton("Confirmar") { dialog, _ ->
-                        // Aquí puedes actualizar el lugar o cualquier otro dato
                         val lugarActualizado = editTextLugar.text.toString()
-
-                        // Verificamos si el horarioId es nulo antes de crear el objeto de actualización
-                        // Si es un `HorarioCell`, actualizar con su id y lugar
                         if (horarioDetalles.horarioId != null) {
-                            val horarioUpdate = HorarioUpdate(
-                                horarioId = horarioDetalles.horarioId,  // Debe tener un id válido
-                                lugar = lugarActualizado,
-                                estado = true
+                            confirmarYNotificarHorario(
+                                horarioId = horarioDetalles.horarioId,
+                                lugar = lugarActualizado
                             )
-                            updateHorario(horarioUpdate)
                         } else {
-                            // Manejo de caso cuando horarioId es nulo
                             Toast.makeText(requireContext(), "Horario ID no disponible", Toast.LENGTH_SHORT).show()
                         }
                         dialog.dismiss()
                     }
                     .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
                     .create()
-
-                dialog.show()
+                    .show()
             }
-
-
         } else if (horarioDetalles is HorarioDetalles) {
             if (horarioDetalles.estado) {
                 // Modo visualización (horario ya aceptado)
@@ -237,136 +223,106 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
         }
     }
 
-
-    // Función principal
+    // Función principal para confirmar horario y enviar notificaciones
     private fun confirmarYNotificarHorario(horarioId: Int, lugar: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             val loadingDialog = showLoadingDialog("Confirmando horario...")
             Log.d(TAG, "Iniciando proceso de confirmación de horario #$horarioId con lugar: $lugar")
 
             try {
-                // 1. ACTUALIZAR HORARIO (ESPERAR COMPLETACIÓN)
-                val updateResponse = apiRest.updateHorario(
-                    id = horarioId,
-                    horario = HorarioUpdate(
-                        horarioId = horarioId,
-                        lugar = lugar,
-                        estado = true
-                    )
+                // 1. PRIMERO: Actualizar horario en la base de datos
+                val horarioUpdate = HorarioUpdate(
+                    horarioId = horarioId,
+                    lugar = lugar,
+                    estado = true
                 )
 
-                if (updateResponse.isSuccessful) {
-                    Log.d(TAG, "✅ Horario #$horarioId actualizado exitosamente")
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "✅ Horario actualizado exitosamente", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Log.e(TAG, "❌ Error al actualizar horario #$horarioId: Código ${updateResponse.code()}")
+                val updateResult = withContext(Dispatchers.IO) {
+                    apiRest.updateHorario(horarioId, horarioUpdate)
+                }
+
+                if (!updateResult.isSuccessful) {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
                             requireContext(),
-                            "❌ Error al actualizar horario: Código ${updateResponse.code()}",
+                            "Error al actualizar horario: Código ${updateResult.code()}",
                             Toast.LENGTH_SHORT
                         ).show()
                         loadingDialog.dismiss()
-                        return@withContext
                     }
                     return@launch
                 }
 
-                // 2. OBTENER TOKENS (PARALELO)
-                Log.d(TAG, "Obteniendo tokens FCM para el horario #$horarioId...")
-                val tokenMentoresResponse = async { apiRest.getTokensByHorario(horarioId) }
-                val tokenMentoriadosResponse = async { apiRest.getTokensByGrupoHorario(horarioId) }
+                Log.d(TAG, "✅ Horario #$horarioId actualizado exitosamente")
 
-                val tokensMentoresResult = tokenMentoresResponse.await()
-                val tokensMentoriadosResult = tokenMentoriadosResponse.await()
-
-                // Verificar respuestas de tokens
-                if (!tokensMentoresResult.isSuccessful) {
-                    Log.e(TAG, "❌ Error al obtener tokens de mentores: Código ${tokensMentoresResult.code()}")
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(),
-                            "❌ Error al obtener tokens de mentores: ${tokensMentoresResult.code()}",
-                            Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                if (!tokensMentoriadosResult.isSuccessful) {
-                    Log.e(TAG, "❌ Error al obtener tokens de mentoriados: Código ${tokensMentoriadosResult.code()}")
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(),
-                            "❌ Error al obtener tokens de mentoriados: ${tokensMentoriadosResult.code()}",
-                            Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-                // 3. FILTRAR TOKENS VÁLIDOS
-                val tokensMentores = tokensMentoresResult.body() ?: emptyList()
-                val tokensMentoriados = tokensMentoriadosResult.body() ?: emptyList()
-
-                Log.d(TAG, "📱 Tokens obtenidos - Mentores: ${tokensMentores.size}, Mentoriados: ${tokensMentoriados.size}")
-
-                val allTokens = mutableSetOf<FCMToken>().apply {
-                    addAll(tokensMentores)
-                    addAll(tokensMentoriados)
-                }
-
+                // 2. SEGUNDO: Obtener tokens de forma paralela
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        requireContext(),
-                        "📱 Tokens encontrados: ${allTokens.size} (${tokensMentores.size} mentores, ${tokensMentoriados.size} mentoriados)",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(), "Obteniendo destinatarios para notificaciones...", Toast.LENGTH_SHORT).show()
                 }
 
-                // 4. ENVIAR NOTIFICACIONES
+                val mentoresDeferred = async(Dispatchers.IO) {
+                    apiRest.getTokensByHorario(horarioId)
+                }
+
+                val mentoriadosDeferred = async(Dispatchers.IO) {
+                    apiRest.getTokensByGrupoHorario(horarioId)
+                }
+
+                val mentoresResponse = mentoresDeferred.await()
+                val mentoriadosResponse = mentoriadosDeferred.await()
+
+                val allTokens = mutableSetOf<FCMToken>()
+
+                // Procesar tokens de mentores
+                if (mentoresResponse.isSuccessful) {
+                    mentoresResponse.body()?.let { tokens ->
+                        allTokens.addAll(tokens)
+                        Log.d(TAG, "✅ Obtenidos ${tokens.size} tokens de mentores")
+                    }
+                } else {
+                    Log.e(TAG, "❌ Error al obtener tokens de mentores: ${mentoresResponse.code()}")
+                }
+
+                // Procesar tokens de mentoriados
+                if (mentoriadosResponse.isSuccessful) {
+                    mentoriadosResponse.body()?.let { tokens ->
+                        allTokens.addAll(tokens)
+                        Log.d(TAG, "✅ Obtenidos ${tokens.size} tokens de mentoriados")
+                    }
+                } else {
+                    Log.e(TAG, "❌ Error al obtener tokens de mentoriados: ${mentoriadosResponse.code()}")
+                }
+
+                // 3. TERCERO: Enviar notificaciones
                 if (allTokens.isNotEmpty()) {
-                    Log.d(TAG, "🔔 Iniciando envío de ${allTokens.size} notificaciones...")
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(),
+                            "Enviando ${allTokens.size} notificaciones...",
+                            Toast.LENGTH_SHORT).show()
+                    }
+
                     val notificationResults = sendNotificationsToAllTokens(allTokens, lugar)
 
                     withContext(Dispatchers.Main) {
-                        val exitosas = notificationResults.success
-                        val fallidas = notificationResults.failed
-
-                        if (exitosas > 0) {
-                            Toast.makeText(
-                                requireContext(),
-                                "✅ $exitosas notificaciones enviadas exitosamente",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        if (fallidas > 0) {
-                            Toast.makeText(
-                                requireContext(),
-                                "⚠️ $fallidas notificaciones fallaron. Revisa el log para más detalles",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        Toast.makeText(requireContext(),
+                            "Notificaciones: ${notificationResults.success} exitosas, ${notificationResults.failed} fallidas",
+                            Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Log.w(TAG, "⚠️ No se encontraron tokens registrados para enviar notificaciones")
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            requireContext(),
-                            "⚠️ No se encontraron dispositivos para notificar",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(requireContext(),
+                            "No se encontraron dispositivos para notificar",
+                            Toast.LENGTH_SHORT).show()
                     }
                 }
 
-                // 5. MOSTRAR RESULTADO FINAL
+                // 4. CUARTO: Actualizar UI
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        requireContext(),
-                        "✅ Proceso de confirmación de horario completado",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(),
+                        "✅ Horario confirmado exitosamente",
+                        Toast.LENGTH_SHORT).show()
+                    fetchHorarios() // Actualizar la vista con los cambios
                 }
-
-                // 6. Actualizar UI
-                fetchHorarios()
 
             } catch (e: Exception) {
                 Log.e(TAG, "❌ Error en el proceso de confirmación: ${e.message}", e)
@@ -400,60 +356,57 @@ class PsicoGestionarHorariosFragment : Fragment(R.layout.fragment_psico_gestiona
         }.show()
     }
 
-    // Función mejorada para enviar notificaciones con seguimiento detallado
-    private suspend fun sendNotificationsToAllTokens(tokens: Set<FCMToken>, lugar: String): NotificationResults {
+    // Función optimizada para enviar notificaciones con seguimiento detallado
+    private suspend fun sendNotificationsToAllTokens(tokens: Set<FCMToken>, lugar: String): NotificationResults = withContext(Dispatchers.IO) {
         var exitosas = 0
         var fallidas = 0
 
+        // Preparar la notificación
+        val notificationTitle = "✅ Horario Confirmado"
+        val notificationBody = "El horario en $lugar ha sido confirmado"
+
         tokens.forEachIndexed { index, token ->
             try {
-                Log.d(TAG, "🔔 Enviando notificación ${index + 1}/${tokens.size} a token: ${token.fcmToken.take(10)}...")
-
-                val response = apiRest.sendNotification(
-                    NotificationRequest(
-                        token = token.fcmToken,
-                        title = "✅ Horario Confirmado",
-                        body = "El horario en $lugar ha sido aceptado"
-                    )
+                val notificationRequest = NotificationRequest(
+                    token = token.fcmToken,
+                    title = notificationTitle,
+                    body = notificationBody
                 )
+
+                val response = apiRest.sendNotification(notificationRequest)
 
                 if (response.isSuccessful) {
                     exitosas++
-                    Log.d(TAG, "✅ Notificación enviada exitosamente a token ${token.fcmToken.take(10)}...")
+                    Log.d(TAG, "✅ Notificación ${index + 1}/${tokens.size} enviada exitosamente")
                 } else {
                     fallidas++
-                    Log.e(TAG, "❌ Error al enviar notificación a token ${token.fcmToken.take(10)}: Código ${response.code()}, Mensaje: ${response.message()}")
+                    Log.e(TAG, "❌ Error al enviar notificación ${index + 1}/${tokens.size}: Código ${response.code()}")
+                }
 
-                    // Log del cuerpo de la respuesta si está disponible
-                    response.errorBody()?.string()?.let { errorBody ->
-                        Log.e(TAG, "Detalles del error: $errorBody")
+                // Mostrar progreso periódicamente
+                if ((index + 1) % 5 == 0 || index == tokens.size - 1) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Enviando notificaciones: ${index + 1}/${tokens.size}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             } catch (e: Exception) {
                 fallidas++
-                Log.e(TAG, "❌ Excepción al enviar notificación a token ${token.fcmToken.take(10)}: ${e.message}", e)
-            }
-
-            // Actualizamos el progreso en la UI cada 5 notificaciones o al finalizar
-            if ((index + 1) % 5 == 0 || index == tokens.size - 1) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        requireContext(),
-                        "📤 Progreso notificaciones: ${index + 1}/${tokens.size} (✅$exitosas ❌$fallidas)",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                Log.e(TAG, "❌ Excepción al enviar notificación: ${e.message}")
             }
         }
 
         // Log resumen final
         Log.d(TAG, "📊 Resumen de notificaciones - Total: ${tokens.size}, ✅ Exitosas: $exitosas, ❌ Fallidas: $fallidas")
 
-        return NotificationResults(exitosas, fallidas)
+        return@withContext NotificationResults(exitosas, fallidas)
     }
 
     private fun updateHorario(horarioUpdate: HorarioUpdate) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val response = apiRest.updateHorario(horarioUpdate.horarioId, horarioUpdate)
                 if (response.isSuccessful) {

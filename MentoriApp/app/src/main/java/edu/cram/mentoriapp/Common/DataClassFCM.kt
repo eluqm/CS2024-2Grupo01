@@ -9,6 +9,7 @@ data class NotificationRequest(
     val title: String,
     val body: String
 ): Serializable
+
 data class NotificationResponse(
     val success: Boolean,
     val messageId: String? = null
